@@ -45,35 +45,8 @@ const revealObserver = new IntersectionObserver(
 );
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
-// ----- Count-up stats -----
-const animateCount = (el) => {
-  const target = Number(el.dataset.count);
-  const duration = 1400;
-  const start = performance.now();
-  const tick = (now) => {
-    const p = Math.min((now - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - p, 3);
-    el.textContent = Math.round(target * eased);
-    if (p < 1) requestAnimationFrame(tick);
-  };
-  requestAnimationFrame(tick);
-};
-
-const statObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        animateCount(entry.target);
-        statObserver.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.5 }
-);
-document.querySelectorAll("[data-count]").forEach((el) => statObserver.observe(el));
-
 // ----- Active nav highlight -----
-const sections = ["about", "services", "contact"].map((id) => document.getElementById(id));
+const sections = ["services", "about", "portfolio", "contact"].map((id) => document.getElementById(id));
 const navLinks = document.querySelectorAll(".nav-link");
 
 const sectionObserver = new IntersectionObserver(

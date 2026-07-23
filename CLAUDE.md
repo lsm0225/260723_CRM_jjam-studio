@@ -30,3 +30,4 @@
 
 - 2026-07-23: 최초 제작. 모던&미니멀 시안 제작 후 레퍼런스(sockorea.com) 반영하여 다크&볼드 스타일로 리디자인. 히어로/About/Services/Contact/푸터 완성. GitHub 저장소 생성 및 GitHub Pages 배포.
 - 2026-07-23: 히어로 배경에 Vimeo 영상(1207998411) 무음 자동재생 적용. 어두운 오버레이로 타이포 가독성 확보.
+- 2026-07-23: 메뉴를 JJAM / SERVICE / ABOUT / PORTFOLIO / CONTACT 구성으로 변경(섹션 순서도 동일하게 재배치). ABOUT 섹션을 클라이언트 시안대로 리뉴얼 — "방송 현업의 깊이로, 새로운 문화를 만듭니다" 카피 + jjam agency 소개문 + CEO 이은정 프로필(사진 대신 영상 assets/ceo-profile.mp4 자동재생) + WHY JJAM? 3항목. PORTFOLIO 섹션 신설(현재 Vimeo 영상 1건, 추가 콘텐츠 필요). 회사 정체성이 영상 제작사(jjam agency)로 확인됨 — SERVICES 섹션 내용(브랜딩/그래픽 중심)은 영상 제작 중심으로 개편 필요할 수 있음(클라이언트 확인 대기).
