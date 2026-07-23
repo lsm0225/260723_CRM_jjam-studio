@@ -73,7 +73,7 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 // ----- Active nav highlight -----
-const sections = ["services", "about", "portfolio", "contact"].map((id) => document.getElementById(id));
+const sections = ["about", "services", "portfolio", "client", "contact"].map((id) => document.getElementById(id));
 const navLinks = document.querySelectorAll(".nav-link");
 
 const sectionObserver = new IntersectionObserver(
