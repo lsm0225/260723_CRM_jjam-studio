@@ -11,7 +11,7 @@
   --color-ink-soft: #5b5954;
   --color-line: #ece8d2;
   --color-line-dark: #2a2a2e;
-  --color-accent: #e8362b;
+  --color-accent: #be2d2f; /* 로고 별 컬러와 동일한 크림슨 레드 */
   --color-kakao: #fee500;
   --color-kakao-ink: #191919;
   --color-white: #ffffff;
@@ -89,13 +89,8 @@ ul { list-style: none; }
   justify-content: space-between;
   gap: 32px;
 }
-.header__logo {
-  font-weight: 900;
-  font-size: 1.2rem;
-  letter-spacing: -0.02em;
-  color: var(--color-white);
-}
-.header__logo span { color: var(--color-accent); font-size: 0.7em; vertical-align: super; }
+.header__logo { display: flex; align-items: center; }
+.header__logo img { height: 44px; width: auto; display: block; }
 .header__nav { display: flex; gap: 36px; }
 .nav-link {
   font-size: 0.95rem;
@@ -119,7 +114,7 @@ ul { list-style: none; }
 }
 .header__cta:hover { transform: translateY(-2px); }
 .header__cta--consult { background: var(--color-accent); color: var(--color-white); }
-.header__cta--consult:hover { background: #ff4437; }
+.header__cta--consult:hover { background: #d64345; }
 .header__cta--kakao { background: var(--color-kakao); color: var(--color-kakao-ink); }
 .header__cta--kakao:hover { filter: brightness(1.05); }
 .header__cta--kakao svg { width: 17px; height: 17px; }
@@ -190,7 +185,7 @@ ul { list-style: none; }
   inset: 0;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 60% 50% at 78% 22%, rgba(232, 54, 43, 0.22), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 78% 22%, rgba(190, 45, 47, 0.26), transparent 60%),
     radial-gradient(ellipse 50% 45% at 15% 80%, rgba(70, 70, 90, 0.35), transparent 65%),
     repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 9px),
     var(--color-dark);
@@ -290,7 +285,7 @@ ul { list-style: none; }
 }
 .btn:hover { transform: translateY(-2px); }
 .btn--accent { background: var(--color-accent); color: var(--color-white); }
-.btn--accent:hover { background: #ff4437; }
+.btn--accent:hover { background: #d64345; }
 .btn--outline {
   border-color: rgba(255, 255, 255, 0.35);
   color: var(--color-white);
@@ -394,7 +389,7 @@ ul { list-style: none; }
 .why-card:hover {
   transform: translateY(-8px);
   background: var(--color-white);
-  border-color: rgba(232, 54, 43, 0.35);
+  border-color: rgba(190, 45, 47, 0.35);
   box-shadow: 0 24px 60px rgba(19, 19, 18, 0.1);
 }
 .why-card__ghost {
@@ -420,7 +415,7 @@ ul { list-style: none; }
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: rgba(232, 54, 43, 0.09);
+  background: rgba(190, 45, 47, 0.09);
   color: var(--color-accent);
   margin-bottom: 30px;
   transition: background 0.35s, color 0.35s, transform 0.35s var(--ease);
@@ -551,7 +546,7 @@ ul { list-style: none; }
 .form-field textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(232, 54, 43, 0.18);
+  box-shadow: 0 0 0 3px rgba(190, 45, 47, 0.18);
 }
 .form-note {
   font-size: 0.9rem;
@@ -573,8 +568,7 @@ ul { list-style: none; }
   gap: 24px;
   flex-wrap: wrap;
 }
-.footer__logo { font-weight: 900; font-size: 1.05rem; letter-spacing: -0.02em; }
-.footer__logo span { color: var(--color-accent); font-size: 0.7em; vertical-align: super; }
+.footer__logo img { height: 52px; width: auto; display: block; }
 .footer__copy {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.45);
