@@ -90,19 +90,91 @@ const sectionObserver = new IntersectionObserver(
 );
 sections.forEach((s) => s && sectionObserver.observe(s));
 
+// ----- 대표 약력 모달 -----
+const profileBtn = document.getElementById("profileBtn");
+const profileModal = document.getElementById("profileModal");
+
+if (profileBtn && profileModal) {
+  const openModal = () => {
+    profileModal.hidden = false;
+    document.body.style.overflow = "hidden";
+  };
+  const closeModal = () => {
+    profileModal.hidden = true;
+    document.body.style.overflow = "";
+  };
+
+  profileBtn.addEventListener("click", openModal);
+  profileModal.querySelectorAll("[data-close]").forEach((el) => el.addEventListener("click", closeModal));
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !profileModal.hidden) closeModal();
+  });
+}
+
 // ----- Contact form (mailto fallback) -----
 const form = document.getElementById("contactForm");
 const formNote = document.getElementById("formNote");
+const fileInput = document.getElementById("file");
+const fileName = document.getElementById("fileName");
+
+if (fileInput && fileName) {
+  fileInput.addEventListener("change", () => {
+    const f = fileInput.files[0];
+    if (!f) {
+      fileName.hidden = true;
+      return;
+    }
+    if (f.size > 50 * 1024 * 1024) {
+      fileInput.value = "";
+      fileName.hidden = false;
+      fileName.textContent = "50MB를 초과하는 파일은 이메일/카카오톡으로 별도 전달해주세요.";
+      return;
+    }
+    fileName.hidden = false;
+    fileName.textContent = `첨부: ${f.name}`;
+  });
+}
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
-  const name = form.name.value.trim();
-  const email = form.email.value.trim();
-  const message = form.message.value.trim();
 
-  const subject = encodeURIComponent(`[홈페이지 문의] ${name}님의 프로젝트 문의`);
-  const body = encodeURIComponent(`이름: ${name}\n이메일: ${email}\n\n${message}`);
+  const company = form.company.value.trim();
+  const name = form.name.value.trim();
+  const phone = form.phone.value.trim();
+  const email = form.email.value.trim();
+  const type = form.querySelector('input[name="type"]:checked');
+  const message = form.message.value.trim();
+  const agree = form.agree.checked;
+  const attached = fileInput && fileInput.files[0] ? fileInput.files[0].name : "";
+
+  if (!name || !phone || !email) {
+    formNote.textContent = "이름, 연락처, 이메일은 필수 입력 항목입니다.";
+    return;
+  }
+  if (!type) {
+    formNote.textContent = "문의 유형을 선택해주세요.";
+    return;
+  }
+  if (!agree) {
+    formNote.textContent = "개인정보 수집 및 이용에 동의해주세요.";
+    return;
+  }
+
+  const subject = encodeURIComponent(`[무료 상담신청] ${name}님 — ${type.value}`);
+  const lines = [
+    `업체명: ${company || "-"}`,
+    `이름: ${name}`,
+    `연락처: ${phone}`,
+    `이메일: ${email}`,
+    `문의 유형: ${type.value}`,
+    attached ? `첨부 예정 파일: ${attached} (메일에 직접 첨부해주세요)` : "",
+    "",
+    message,
+  ].filter(Boolean);
+  const body = encodeURIComponent(lines.join("\n"));
   window.location.href = `mailto:hello@jjamstudio.com?subject=${subject}&body=${body}`;
 
-  formNote.textContent = "메일 앱이 열립니다. 전송 버튼을 눌러 문의를 완료해주세요.";
+  formNote.textContent = attached
+    ? "메일 앱이 열립니다. 선택하신 파일을 메일에 첨부한 뒤 전송해주세요."
+    : "메일 앱이 열립니다. 전송 버튼을 눌러 문의를 완료해주세요.";
 });
