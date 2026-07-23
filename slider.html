@@ -132,7 +132,7 @@ function makeSlider(host, items){
   tot.textContent=String(items.length).padStart(2,"0");
   const slides=[...track.querySelectorAll(".slide")];
   const dots=[...dotsEl.querySelectorAll(".dot")];
-  let idx=0;
+  let idx=0, blurTimer;
 
   const vpW=()=>host.querySelector(".viewport").getBoundingClientRect().width;
   // 슬라이드 폭을 뷰포트 기준으로 명시 지정 → 가운데 정렬 정확
@@ -164,10 +164,11 @@ function makeSlider(host, items){
     dots.forEach((d,i)=>d.classList.toggle("on",i===idx));
     cur.textContent=String(idx+1).padStart(2,"0");
     bar.style.width=((idx+1)/items.length*100)+"%";
-    track.classList.add("is-sliding");
     center();
+    track.classList.add("is-sliding");                 // 슬라이드 중 가로 모션 블러
+    clearTimeout(blurTimer);
+    blurTimer=setTimeout(()=>track.classList.remove("is-sliding"),680);  // 전환(.6s) 후 항상 해제
   }
-  track.addEventListener("transitionend",e=>{ if(e.propertyName==="transform") track.classList.remove("is-sliding"); });
   function go(i){ const n=Math.max(0,Math.min(items.length-1,i)); if(n===idx) return; idx=n; update(); }
   host.querySelector(".prev").onclick=()=>go(idx-1);
   host.querySelector(".next").onclick=()=>go(idx+1);
