@@ -389,6 +389,14 @@ function applyContent(c, ov) {
     if (l2 && h.line2) l2.innerHTML = mark(h.line2);
     const hd = document.querySelector(".hero__desc");
     if (hd && h.desc) hd.textContent = h.desc;
+    // 배경 영상 교체 (Vimeo 링크 → 플레이어 src)
+    if (h.video) {
+      const m = String(h.video).match(/vimeo\.com\/(?:video\/)?(\d+)/) || String(h.video).match(/^(\d{6,})$/);
+      const hv = document.querySelector(".hero__video");
+      if (m && hv && !hv.src.includes(`/video/${m[1]}?`)) {
+        hv.src = `https://player.vimeo.com/video/${m[1]}?background=1&autoplay=1&loop=1&muted=1&byline=0&title=0&portrait=0&controls=0&dnt=1`;
+      }
+    }
   }
 
   // About

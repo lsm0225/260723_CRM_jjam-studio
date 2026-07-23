@@ -21,6 +21,7 @@ const DEFAULTS = {
     line2: "Content Production",
     accent: "Premium",
     desc: "제이잼스튜디오는 브랜드의 본질을 담아 오래 기억되는 콘텐츠를 만듭니다.",
+    video: "https://vimeo.com/1207998411", // 배경 영상 (Vimeo 링크)
   },
   about: {
     title: "방송 현업의 깊이로,\n새로운 문화를 만듭니다",
