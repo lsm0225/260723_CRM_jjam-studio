@@ -35,11 +35,12 @@
   .viewport{position:relative;z-index:1;overflow:visible;}
   .track{display:flex;gap:18px;will-change:transform;transition:transform .6s cubic-bezier(.5,0,.2,1);}
   .track.is-sliding{filter:url(#hblur);}
-  .slide{position:relative;flex:0 0 60%;aspect-ratio:16/9;border:0;padding:0;background:#111;border-radius:12px;overflow:hidden;cursor:pointer;opacity:.4;transform:scale(.88);transition:opacity .5s,transform .5s cubic-bezier(.22,1,.36,1);}
+  .slide{position:relative;flex:0 0 auto;width:60%;aspect-ratio:16/9;border:0;padding:0;background:#111;border-radius:12px;overflow:hidden;cursor:pointer;opacity:.4;transform:scale(.88);transition:opacity .5s,transform .5s cubic-bezier(.22,1,.36,1);}
   .slide.active{opacity:1;transform:scale(1);box-shadow:0 30px 70px rgba(0,0,0,.25);}
   .slide img{width:100%;height:100%;object-fit:cover;}
   .slide iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
   .slide .play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:rgba(190,45,47,.94);display:flex;align-items:center;justify-content:center;opacity:0;transition:.3s;}
+  .slide.active .play{opacity:1;width:64px;height:64px;}
   .slide:not(.active):hover .play{opacity:1;}
   .slide .play::before{content:"";margin-left:3px;border-left:15px solid #fff;border-top:9px solid transparent;border-bottom:9px solid transparent;}
   .slide .stit{position:absolute;left:0;right:0;bottom:0;padding:30px 16px 14px;background:linear-gradient(to top,rgba(0,0,0,.8),transparent);color:#fff;font-size:.92rem;font-weight:600;text-align:left;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;transition:opacity .3s;}
@@ -58,7 +59,7 @@
   .dot{width:7px;height:7px;border-radius:50%;background:var(--line);border:0;padding:0;cursor:pointer;transition:.2s;}
   .dot.on{background:var(--accent);width:20px;border-radius:5px;}
 
-  @media(max-width:640px){.slide{flex:0 0 82%;}}
+  @media(max-width:640px){.slide{width:84%;}}
 </style>
 </head>
 <body>
@@ -130,73 +131,67 @@ function makeSlider(host, items){
   tot.textContent=String(items.length).padStart(2,"0");
   const slides=[...track.querySelectorAll(".slide")];
   const dots=[...dotsEl.querySelectorAll(".dot")];
-  let idx=0, inView=false;
+  let idx=0;
 
-  function center(){
-    const sw=slides[0].getBoundingClientRect().width;
-    const vpW=host.querySelector(".viewport").getBoundingClientRect().width;
-    const x=vpW/2-(idx*(sw+GAP)+sw/2);
-    track.style.transform=`translateX(${x}px)`;
+  const vpW=()=>host.querySelector(".viewport").getBoundingClientRect().width;
+  // 슬라이드 폭을 뷰포트 기준으로 명시 지정 → 가운데 정렬 정확
+  function layout(){
+    const w=vpW();
+    const sw=Math.round(w*(w<640?0.84:0.6));
+    slides.forEach(s=>s.style.width=sw+"px");
+    return {w,sw};
   }
-  function playCenter(){
-    slides.forEach((s,i)=>{
-      if(i===idx && inView){
-        if(!s.querySelector("iframe")){
-          const f=document.createElement("iframe");
-          f.src=`https://www.youtube-nocookie.com/embed/${s.dataset.id}?autoplay=1&mute=1&controls=1&rel=0&playsinline=1`;
-          f.allow="autoplay; fullscreen; picture-in-picture";
-          s.appendChild(f); s.classList.add("playing");
-        }
-      }else{
-        const f=s.querySelector("iframe"); if(f) f.remove(); s.classList.remove("playing");
-      }
-    });
+  function targetX(){ const {w,sw}=layout(); return w/2-(idx*(sw+GAP)+sw/2); }
+  function center(){ track.style.transform=`translateX(${targetX()}px)`; }
+
+  function stopAll(){ slides.forEach(s=>{ const f=s.querySelector("iframe"); if(f) f.remove(); s.classList.remove("playing"); }); }
+  function playActive(){
+    const s=slides[idx];
+    if(s.querySelector("iframe")) return;
+    const f=document.createElement("iframe");
+    f.src=`https://www.youtube-nocookie.com/embed/${s.dataset.id}?autoplay=1&rel=0&playsinline=1`;
+    f.allow="autoplay; fullscreen; picture-in-picture"; f.allowFullscreen=true;
+    s.appendChild(f); s.classList.add("playing");
+    const pl=s.querySelector(".play"); if(pl) pl.style.opacity="";   // 재생 중엔 버튼 숨김
   }
   function update(){
-    slides.forEach((s,i)=>s.classList.toggle("active",i===idx));
+    stopAll();                                 // 이동 시 재생 중지 (자동재생 없음)
+    slides.forEach((s,i)=>{
+      s.classList.toggle("active",i===idx);
+      const pl=s.querySelector(".play"); if(pl) pl.style.opacity=(i===idx?"1":"");  // 가운데만 재생버튼 노출
+    });
     dots.forEach((d,i)=>d.classList.toggle("on",i===idx));
     cur.textContent=String(idx+1).padStart(2,"0");
     bar.style.width=((idx+1)/items.length*100)+"%";
-    center();
     track.classList.add("is-sliding");
-    playCenter();
+    center();
   }
   track.addEventListener("transitionend",e=>{ if(e.propertyName==="transform") track.classList.remove("is-sliding"); });
-  function go(i){ idx=Math.max(0,Math.min(items.length-1,i)); update(); }
+  function go(i){ const n=Math.max(0,Math.min(items.length-1,i)); if(n===idx) return; idx=n; update(); }
   host.querySelector(".prev").onclick=()=>go(idx-1);
   host.querySelector(".next").onclick=()=>go(idx+1);
   dots.forEach(d=>d.onclick=()=>go(+d.dataset.i));
-  slides.forEach((s,i)=>s.onclick=()=>{ if(i!==idx) go(i); });
+  // 가운데 슬라이드는 클릭 시 재생, 옆 슬라이드는 이동
+  slides.forEach((s,i)=>s.onclick=()=>{ if(i!==idx) go(i); else if(!s.classList.contains("playing")) playActive(); });
   window.addEventListener("resize",center);
 
-  // 엔트런스: 영상들이 오른쪽 → 왼쪽으로 밀려 들어오고, PORTFOLIO 글씨가 써짐
+  // 초기 상태: 활성/도트/바 세팅 후 슬라이드는 화면 오른쪽 밖에서 투명 대기
+  update(); track.classList.remove("is-sliding");
+  (function preEnter(){ track.style.transition="none"; track.style.transform=`translateX(${targetX()+vpW()}px)`; slides.forEach(s=>s.style.opacity="0"); void track.offsetWidth; track.style.transition=""; })();
+
+  // 뷰 진입 시: ① PORTFOLIO 글씨 써짐 → ② 2초 후 오른쪽 → 가운데로 영상 진입
+  let entered=false;
   function runEntrance(){
     wm.classList.add("write");
-    const sw=slides[0].getBoundingClientRect().width;
-    const vpW=host.querySelector(".viewport").getBoundingClientRect().width;
-    const targetX=vpW/2-(idx*(sw+GAP)+sw/2);
-    track.style.transition="none";
-    track.style.transform=`translateX(${targetX+180}px)`;
-    slides.forEach((s,i)=>{ s.style.opacity="0"; s.style.transitionDelay=(i*0.06)+"s"; });
-    void track.offsetWidth;                 // 리플로우
-    track.style.transition="";
-    track.classList.add("is-sliding");
-    track.style.transform=`translateX(${targetX}px)`;
-    slides.forEach(s=>{ s.style.opacity=""; }); // CSS(active/inactive)로 복귀하며 페이드인
     setTimeout(()=>{
-      track.classList.remove("is-sliding");
-      slides.forEach(s=>s.style.transitionDelay="");
-    },720);
+      track.style.transition="transform .95s cubic-bezier(.5,0,.2,1)";
+      track.classList.add("is-sliding");
+      center();
+      slides.forEach((s,i)=>{ s.style.transition=`opacity .6s ease ${i*0.05}s, transform .5s cubic-bezier(.22,1,.36,1)`; s.style.opacity=""; });
+      setTimeout(()=>{ track.classList.remove("is-sliding"); track.style.transition=""; slides.forEach(s=>s.style.transition=""); },1050);
+    },2000);
   }
-
-  let entered=false;
-  new IntersectionObserver(es=>{
-    inView=es[0].isIntersecting;
-    if(inView && !entered){ entered=true; runEntrance(); }
-    playCenter();
-  },{threshold:.35}).observe(host);
-
-  update();  // 즉시 초기화 (백그라운드 탭에서도 위치 계산)
+  new IntersectionObserver(es=>{ if(es[0].isIntersecting && !entered){ entered=true; runEntrance(); } },{threshold:.3}).observe(host);
 }
 
 // A
