@@ -361,28 +361,65 @@ ul { list-style: none; }
   margin-top: 36px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  border-top: 1px solid var(--color-line);
-  border-bottom: 1px solid var(--color-line);
+  gap: 24px;
 }
-.why-item {
-  padding: 44px 36px 52px;
+.why-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 44px 36px 48px;
+  transition: transform 0.35s var(--ease), box-shadow 0.35s, border-color 0.35s, background 0.35s;
 }
-.why-item + .why-item { border-left: 1px solid var(--color-line); }
-.why-item__num {
-  display: block;
-  font-size: 1.3rem;
-  font-weight: 800;
+.why-card:hover {
+  transform: translateY(-8px);
+  background: var(--color-white);
+  border-color: rgba(232, 54, 43, 0.35);
+  box-shadow: 0 24px 60px rgba(19, 19, 18, 0.1);
+}
+.why-card__ghost {
+  position: absolute;
+  top: 14px;
+  right: 22px;
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--color-ink);
+  opacity: 0.05;
+  transition: opacity 0.35s, color 0.35s;
+}
+.why-card:hover .why-card__ghost {
   color: var(--color-accent);
-  opacity: 0.55;
-  margin-bottom: 44px;
+  opacity: 0.12;
 }
-.why-item h3 {
-  font-size: 1.22rem;
+.why-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: rgba(232, 54, 43, 0.09);
+  color: var(--color-accent);
+  margin-bottom: 30px;
+  transition: background 0.35s, color 0.35s, transform 0.35s var(--ease);
+}
+.why-card__icon svg { width: 26px; height: 26px; }
+.why-card:hover .why-card__icon {
+  background: var(--color-accent);
+  color: var(--color-white);
+  transform: scale(1.06) rotate(-4deg);
+}
+.why-card h3 {
+  font-size: 1.28rem;
   font-weight: 800;
+  line-height: 1.4;
   letter-spacing: -0.01em;
   margin-bottom: 14px;
 }
-.why-item p {
+.why-card p {
   font-size: 0.98rem;
   color: var(--color-ink-soft);
   line-height: 1.75;
@@ -530,7 +567,6 @@ ul { list-style: none; }
 @media (max-width: 980px) {
   .services__grid { grid-template-columns: repeat(2, 1fr); }
   .why__grid { grid-template-columns: 1fr; }
-  .why-item + .why-item { border-left: 0; border-top: 1px solid var(--color-line); }
 }
 
 @media (max-width: 900px) {
