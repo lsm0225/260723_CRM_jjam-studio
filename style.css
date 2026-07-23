@@ -479,72 +479,36 @@ ul { list-style: none; }
   line-height: 1.75;
 }
 
-/* Why JJAM? */
+/* Why JJAM? — 미니멀 에디토리얼 (상단 룰 + 넘버) */
 .why { margin-top: 130px; }
 .why__grid {
   margin-top: 36px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: 44px;
 }
-.why-card {
-  position: relative;
-  overflow: hidden;
-  background: var(--color-bg);
-  border: 1px solid transparent;
-  border-radius: 20px;
-  padding: 44px 36px 48px;
-  transition: transform 0.35s var(--ease), box-shadow 0.35s, border-color 0.35s, background 0.35s;
+.why-item {
+  border-top: 2px solid var(--color-ink);
+  padding-top: 24px;
+  transition: border-color 0.3s;
 }
-.why-card:hover {
-  transform: translateY(-8px);
-  background: var(--color-white);
-  border-color: rgba(190, 45, 47, 0.35);
-  box-shadow: 0 24px 60px rgba(19, 19, 18, 0.1);
-}
-.why-card__ghost {
-  position: absolute;
-  top: 14px;
-  right: 22px;
-  font-size: 5rem;
-  font-weight: 900;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: var(--color-ink);
-  opacity: 0.05;
-  transition: opacity 0.35s, color 0.35s;
-}
-.why-card:hover .why-card__ghost {
-  color: var(--color-accent);
-  opacity: 0.12;
-}
-.why-card__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  background: rgba(190, 45, 47, 0.09);
-  color: var(--color-accent);
-  margin-bottom: 30px;
-  transition: background 0.35s, color 0.35s, transform 0.35s var(--ease);
-}
-.why-card__icon svg { width: 26px; height: 26px; }
-.why-card:hover .why-card__icon {
-  background: var(--color-accent);
-  color: var(--color-white);
-  transform: scale(1.06) rotate(-4deg);
-}
-.why-card h3 {
-  font-size: 1.28rem;
+.why-item:hover { border-top-color: var(--color-accent); }
+.why-item__num {
+  display: block;
+  font-size: 0.95rem;
   font-weight: 800;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-  margin-bottom: 14px;
+  color: var(--color-accent);
+  margin-bottom: 40px;
 }
-.why-card p {
-  font-size: 0.98rem;
+.why-item h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+.why-item p {
+  font-size: 0.97rem;
   color: var(--color-ink-soft);
   line-height: 1.75;
 }
@@ -611,7 +575,11 @@ ul { list-style: none; }
   color: rgba(255, 255, 255, 0.62);
   line-height: 1.75;
 }
-.svc-row__desc strong { color: var(--color-white); font-weight: 700; }
+.svc-row__desc strong {
+  color: var(--color-white);
+  font-weight: 700;
+  white-space: nowrap; /* 강조 문구가 중간에 끊기지 않도록 */
+}
 .svc-row__icon {
   display: inline-flex;
   color: rgba(255, 255, 255, 0.85);
