@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>제이잼스튜디오 — J JAM STUDIO</title>
+  <meta name="description" content="제이잼스튜디오는 브랜드의 본질을 담아내는 크리에이티브 디자인 스튜디오입니다. 브랜딩, 그래픽 디자인, 디지털 디자인, 아트 디렉션 전문." />
+  <meta property="og:title" content="제이잼스튜디오 — J JAM STUDIO" />
+  <meta property="og:description" content="브랜드의 본질을 담아내는 크리에이티브 디자인 스튜디오" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>" />
+</head>
+<body>
+
+  <!-- ===== Header ===== -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+      <a href="#hero" class="header__logo">J JAM<span>®</span></a>
+      <nav class="header__nav" id="nav">
+        <a href="#about" class="nav-link">About</a>
+        <a href="#services" class="nav-link">Services</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
+      <a href="#contact" class="header__cta">프로젝트 문의</a>
+      <button class="header__menu-btn" id="menuBtn" aria-label="메뉴 열기" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== Mobile menu ===== -->
+  <div class="mobile-menu" id="mobileMenu">
+    <nav class="mobile-menu__nav">
+      <a href="#about" class="mobile-link">About</a>
+      <a href="#services" class="mobile-link">Services</a>
+      <a href="#contact" class="mobile-link">Contact</a>
+    </nav>
+  </div>
+
+  <main>
+    <!-- ===== Hero (dark, fullscreen, giant type) ===== -->
+    <section class="hero" id="hero">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <div class="container hero__content">
+        <h1 class="hero__title">
+          <span class="hero__line reveal delay-1">DESIGN <em>w</em></span>
+          <span class="hero__line reveal delay-2">REAL JAM<em>.</em></span>
+        </h1>
+        <p class="hero__desc reveal delay-3">
+          제이잼스튜디오는 브랜드의 본질을 담아<br class="br-desktop" />
+          오래 기억되는 디자인을 만듭니다.
+        </p>
+        <div class="hero__actions reveal delay-4">
+          <a href="#contact" class="btn btn--accent">프로젝트 시작하기</a>
+          <a href="#about" class="btn btn--outline">스튜디오 소개</a>
+        </div>
+      </div>
+      <div class="hero__scroll" aria-hidden="true">
+        <span>SCROLL</span>
+        <i></i>
+      </div>
+    </section>
+
+    <!-- ===== About : WHO WE ARE ===== -->
+    <section class="about section" id="about">
+      <div class="container">
+        <h2 class="giant-title reveal">
+          <span>WHO</span>
+          <span>WE ARE</span>
+        </h2>
+        <div class="about__grid">
+          <div class="about__text reveal">
+            <p>
+              우리는 모든 브랜드에 아직 드러나지 않은 고유한 매력이
+              숨어 있다고 믿습니다. 제이잼스튜디오는 트렌드를 좇기보다
+              브랜드가 가진 진짜 이야기에 집중하고, 그 본질이 가장
+              선명하게 빛나는 형태를 찾아냅니다.
+            </p>
+            <p>
+              기획부터 디자인, 제작까지 — 모든 과정을 대표 디자이너가
+              직접 이끌며 밀도 있는 퀄리티로 완성합니다.
+            </p>
+          </div>
+          <ul class="about__stats reveal">
+            <li>
+              <strong data-count="10">0</strong><span class="stat-suffix">+</span>
+              <p>Years of Experience</p>
+            </li>
+            <li>
+              <strong data-count="120">0</strong><span class="stat-suffix">+</span>
+              <p>Projects Completed</p>
+            </li>
+            <li>
+              <strong data-count="98">0</strong><span class="stat-suffix">%</span>
+              <p>Client Satisfaction</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Services : OUR SERVICES (column lists) ===== -->
+    <section class="services section" id="services">
+      <div class="container">
+        <h2 class="giant-title reveal">
+          <span>OUR</span>
+          <span>SERVICES</span>
+        </h2>
+        <div class="services__grid">
+          <div class="service-col reveal">
+            <h3>BRANDING</h3>
+            <ul>
+              <li>브랜드 가치 정의</li>
+              <li>브랜드 스토리</li>
+              <li>CI / BI</li>
+              <li>브랜드 가이드라인</li>
+              <li>네이밍 / 슬로건</li>
+            </ul>
+          </div>
+          <div class="service-col reveal">
+            <h3>GRAPHIC</h3>
+            <ul>
+              <li>포스터 / 리플렛</li>
+              <li>패키지 디자인</li>
+              <li>인쇄물 콘텐츠</li>
+              <li>카탈로그 / 브로슈어</li>
+              <li>편집 디자인</li>
+            </ul>
+          </div>
+          <div class="service-col reveal">
+            <h3>DIGITAL</h3>
+            <ul>
+              <li>홈페이지 디자인</li>
+              <li>상세페이지</li>
+              <li>SNS 콘텐츠</li>
+              <li>배너 / 광고 소재</li>
+              <li>2D 그래픽 / 모션</li>
+            </ul>
+          </div>
+          <div class="service-col reveal">
+            <h3>DIRECTION</h3>
+            <ul>
+              <li>아트 디렉션</li>
+              <li>촬영 디렉팅</li>
+              <li>전시 / 팝업 비주얼</li>
+              <li>캠페인 기획</li>
+              <li>고객경험 설계</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Contact (dark) ===== -->
+    <section class="contact section" id="contact">
+      <div class="container">
+        <h2 class="giant-title giant-title--light reveal">
+          <span>LET'S</span>
+          <span>CONTACT</span>
+        </h2>
+        <p class="contact__lead reveal">
+          브랜딩, 그래픽, 디지털 디자인 등 프로젝트에 관한<br class="br-desktop" />
+          자세한 상담과 합리적인 견적을 받아보실 수 있습니다.
+        </p>
+        <div class="contact__grid">
+          <div class="contact__info reveal">
+            <dl>
+              <div>
+                <dt>Email</dt>
+                <dd><a href="mailto:hello@jjamstudio.com">hello@jjamstudio.com</a></dd>
+              </div>
+              <div>
+                <dt>Phone</dt>
+                <dd><a href="tel:010-0000-0000">010-0000-0000</a></dd>
+              </div>
+              <div>
+                <dt>Instagram</dt>
+                <dd><a href="https://instagram.com" target="_blank" rel="noopener">@jjam.studio</a></dd>
+              </div>
+              <div>
+                <dt>Studio</dt>
+                <dd>제이잼스튜디오 · 대표 이은정</dd>
+              </div>
+            </dl>
+          </div>
+          <form class="contact__form reveal" id="contactForm">
+            <div class="form-row">
+              <div class="form-field">
+                <label for="name">이름</label>
+                <input type="text" id="name" name="name" placeholder="성함을 입력해주세요" required />
+              </div>
+              <div class="form-field">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="회신받을 이메일" required />
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="message">문의 내용</label>
+              <textarea id="message" name="message" rows="5" placeholder="프로젝트 내용, 일정, 예산 등을 자유롭게 적어주세요" required></textarea>
+            </div>
+            <button type="submit" class="btn btn--accent btn--full">문의 보내기</button>
+            <p class="form-note" id="formNote"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p class="footer__logo">J JAM STUDIO<span>®</span></p>
+      <p class="footer__copy">© 2026 제이잼스튜디오. All rights reserved.<br />대표 이은정</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
