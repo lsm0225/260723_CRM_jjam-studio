@@ -28,7 +28,10 @@
 
   /* 슬라이더 */
   .pf-slider{position:relative;overflow:hidden;padding:20px 0 8px;}
-  .pf-slider .wm{position:absolute;top:8%;left:50%;transform:translateX(-50%);font-size:clamp(4rem,15vw,11rem);font-weight:900;letter-spacing:-.04em;color:var(--ink);opacity:.05;pointer-events:none;white-space:nowrap;z-index:0;}
+  .pf-slider .wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(4rem,15vw,11rem);font-weight:900;letter-spacing:-.04em;color:var(--ink);pointer-events:none;white-space:nowrap;z-index:0;display:flex;line-height:1;}
+  .pf-slider .wm span{opacity:0;transform:translateY(.18em);filter:blur(8px);}
+  .pf-slider .wm.write span{animation:wmWrite .5s cubic-bezier(.22,1,.36,1) forwards;}
+  @keyframes wmWrite{to{opacity:.09;transform:translateY(0);filter:blur(0);}}
   .viewport{position:relative;z-index:1;overflow:visible;}
   .track{display:flex;gap:18px;will-change:transform;transition:transform .6s cubic-bezier(.5,0,.2,1);}
   .track.is-sliding{filter:url(#hblur);}
@@ -114,6 +117,8 @@ function makeSlider(host, items){
       <div class="dots"></div>
     </div>`;
   const track=host.querySelector(".track");
+  const wm=host.querySelector(".wm");
+  wm.innerHTML=[..."PORTFOLIO"].map((ch,i)=>`<span style="animation-delay:${(i*0.07).toFixed(2)}s">${ch}</span>`).join("");
   const dotsEl=host.querySelector(".dots");
   const cur=host.querySelector(".cur"), tot=host.querySelector(".tot"), bar=host.querySelector(".bar span");
   track.innerHTML=items.map(v=>`
@@ -163,10 +168,35 @@ function makeSlider(host, items){
   dots.forEach(d=>d.onclick=()=>go(+d.dataset.i));
   slides.forEach((s,i)=>s.onclick=()=>{ if(i!==idx) go(i); });
   window.addEventListener("resize",center);
-  new IntersectionObserver(es=>{ inView=es[0].isIntersecting; playCenter(); },{threshold:.4})
-    .observe(host);
-  update();                       // 즉시 초기화 (백그라운드 탭에서도 동작)
-  requestAnimationFrame(center);  // 가시화 후 위치 재보정
+
+  // 엔트런스: 영상들이 오른쪽 → 왼쪽으로 밀려 들어오고, PORTFOLIO 글씨가 써짐
+  function runEntrance(){
+    wm.classList.add("write");
+    const sw=slides[0].getBoundingClientRect().width;
+    const vpW=host.querySelector(".viewport").getBoundingClientRect().width;
+    const targetX=vpW/2-(idx*(sw+GAP)+sw/2);
+    track.style.transition="none";
+    track.style.transform=`translateX(${targetX+180}px)`;
+    slides.forEach((s,i)=>{ s.style.opacity="0"; s.style.transitionDelay=(i*0.06)+"s"; });
+    void track.offsetWidth;                 // 리플로우
+    track.style.transition="";
+    track.classList.add("is-sliding");
+    track.style.transform=`translateX(${targetX}px)`;
+    slides.forEach(s=>{ s.style.opacity=""; }); // CSS(active/inactive)로 복귀하며 페이드인
+    setTimeout(()=>{
+      track.classList.remove("is-sliding");
+      slides.forEach(s=>s.style.transitionDelay="");
+    },720);
+  }
+
+  let entered=false;
+  new IntersectionObserver(es=>{
+    inView=es[0].isIntersecting;
+    if(inView && !entered){ entered=true; runEntrance(); }
+    playCenter();
+  },{threshold:.35}).observe(host);
+
+  update();  // 즉시 초기화 (백그라운드 탭에서도 위치 계산)
 }
 
 // A
