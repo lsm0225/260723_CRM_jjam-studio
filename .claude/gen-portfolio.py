@@ -11,7 +11,10 @@ import os, re, sys, json, html, urllib.request
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LIST = os.path.join(ROOT, ".claude", "portfolio-videos.txt")
 HTML = os.path.join(ROOT, "index.html")
-VISIBLE = 9   # 처음 몇 개를 펼쳐서 보여줄지 (나머지는 "더 보기")
+VISIBLE = 12  # 처음 몇 개를 펼쳐서 보여줄지 (나머지는 "더 보기")
+
+# 모자이크 타일 크기 패턴 (index % 9 기준) — 큰/와이드/세로/작은 타일을 리듬감 있게 배치
+SIZE_BY_MOD = {0: " pf-item--big", 3: " pf-item--wide", 6: " pf-item--tall"}
 
 
 def video_id(url):
@@ -63,6 +66,7 @@ def main():
         title = override or clean(fetch_title(vid)) or "제이잼 포트폴리오"
         title = html.escape(title, quote=False)
         cls = " pf-item--more" if i >= VISIBLE else " reveal"
+        cls += SIZE_BY_MOD.get(i % 9, "")
         tiles.append(
             f'          <button class="pf-item{cls}" data-id="{vid}" aria-label="포트폴리오 영상 재생">'
             f'<img src="https://i.ytimg.com/vi/{vid}/maxresdefault.jpg" '
