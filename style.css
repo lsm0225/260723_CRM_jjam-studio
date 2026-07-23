@@ -510,10 +510,11 @@ ul { list-style: none; }
   line-height: 1.75;
 }
 
-/* Why JJAM? — 가운데 정렬 통일 디자인 */
+/* Why JJAM? — OUR SERVICES 스타일 대형 제목 + 가운데 정렬 */
 .why { margin-top: 130px; text-align: center; }
+.why__giant { margin-bottom: 8px; }
 .why__grid {
-  margin: 44px auto 0;
+  margin: 48px auto 0;
   max-width: 960px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
