@@ -172,11 +172,29 @@ ul { list-style: none; }
 .hero__bg {
   position: absolute;
   inset: 0;
+  overflow: hidden;
   background:
     radial-gradient(ellipse 60% 50% at 78% 22%, rgba(232, 54, 43, 0.22), transparent 60%),
     radial-gradient(ellipse 50% 45% at 15% 80%, rgba(70, 70, 90, 0.35), transparent 65%),
     repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.025) 0 2px, transparent 2px 9px),
     var(--color-dark);
+}
+/* 16:9 영상이 화면을 항상 가득 덮도록 cover 계산 */
+.hero__video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, 177.78svh);
+  height: max(100svh, 56.25vw);
+  transform: translate(-50%, -50%);
+  border: 0;
+  pointer-events: none;
+}
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(12, 12, 13, 0.55) 0%, rgba(12, 12, 13, 0.35) 45%, rgba(12, 12, 13, 0.75) 100%);
 }
 .hero__content { position: relative; z-index: 1; }
 .hero__title {
