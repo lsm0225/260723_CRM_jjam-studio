@@ -591,30 +591,27 @@ ul { list-style: none; }
   transform: scale(1.1);
 }
 
-/* ===== Contact (크림 배경 + 화이트 카드, 시안 반영) ===== */
-.contact { background: var(--color-bg); }
+/* ===== Contact (다크, 박스 없는 디자인) ===== */
+.contact {
+  background: var(--color-dark);
+  color: var(--color-white);
+}
 .contact__grid {
   display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: 28px;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 88px;
   align-items: start;
 }
 
-/* 왼쪽: 고민 카드 */
-.concerns {
-  background: var(--color-white);
-  border-radius: 20px;
-  padding: 40px 36px;
-  box-shadow: 0 6px 24px rgba(19, 19, 18, 0.05);
-}
+/* 왼쪽: 고민 영역 */
 .concerns__label {
   font-size: 0.95rem;
   font-weight: 800;
   color: var(--color-accent);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .concerns__title {
-  font-size: 1.45rem;
+  font-size: 1.55rem;
   font-weight: 800;
   line-height: 1.45;
   letter-spacing: -0.02em;
@@ -622,43 +619,39 @@ ul { list-style: none; }
 }
 .concerns__sub {
   font-size: 0.97rem;
-  color: var(--color-ink-soft);
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.75;
-  padding-bottom: 24px;
-  border-bottom: 1px solid var(--color-line);
 }
 .concerns__head {
-  margin-top: 26px;
-  font-size: 0.9rem;
+  margin-top: 40px;
+  font-size: 0.85rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  margin-bottom: 14px;
+  color: rgba(255, 255, 255, 0.85);
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16);
 }
-.concerns__list ul { display: grid; gap: 10px; }
 .concerns__list li {
   position: relative;
-  background: var(--color-bg);
-  border-radius: 8px;
-  padding: 13px 16px 13px 40px;
-  font-size: 0.93rem;
-  color: var(--color-ink);
+  padding: 15px 0 15px 30px;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 .concerns__list li::before {
   content: "✕";
   position: absolute;
-  left: 16px;
+  left: 2px;
   top: 50%;
   transform: translateY(-50%);
   font-weight: 800;
   color: var(--color-accent);
 }
 .concerns__contact {
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid var(--color-line);
+  margin-top: 36px;
   display: grid;
-  gap: 14px;
+  gap: 16px;
 }
 .concerns__contact dt {
   font-size: 0.72rem;
@@ -666,20 +659,16 @@ ul { list-style: none; }
   color: var(--color-accent);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
-.concerns__contact dd { font-size: 0.97rem; font-weight: 600; }
+.concerns__contact dd { font-size: 1rem; font-weight: 600; }
 .concerns__contact dd a:hover { color: var(--color-accent); }
 
 /* 오른쪽: 문의 폼 */
 .contact__form {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  background: var(--color-white);
-  border-radius: 20px;
-  padding: 44px 40px;
-  box-shadow: 0 6px 24px rgba(19, 19, 18, 0.05);
+  gap: 24px;
 }
 .form-row {
   display: grid;
@@ -689,7 +678,7 @@ ul { list-style: none; }
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
   border: 0;
   padding: 0;
   margin: 0;
@@ -699,9 +688,9 @@ ul { list-style: none; }
 .form-field legend {
   font-size: 0.92rem;
   font-weight: 700;
-  color: var(--color-ink);
+  color: rgba(255, 255, 255, 0.9);
 }
-.form-field legend { margin-bottom: 9px; }
+.form-field legend { margin-bottom: 10px; }
 .form-field em {
   font-style: normal;
   color: var(--color-accent);
@@ -714,9 +703,9 @@ ul { list-style: none; }
 .form-field textarea {
   font-family: inherit;
   font-size: 0.98rem;
-  color: var(--color-ink);
-  background: var(--color-white);
-  border: 1px solid #ddd9cc;
+  color: var(--color-white);
+  background: var(--color-dark-soft);
+  border: 1px solid var(--color-line-dark);
   border-radius: 10px;
   padding: 14px 16px;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -724,12 +713,12 @@ ul { list-style: none; }
   width: 100%;
 }
 .form-field input::placeholder,
-.form-field textarea::placeholder { color: #b6b2a4; }
+.form-field textarea::placeholder { color: rgba(255, 255, 255, 0.32); }
 .form-field input:focus,
 .form-field textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(190, 45, 47, 0.14);
+  box-shadow: 0 0 0 3px rgba(190, 45, 47, 0.2);
 }
 
 /* 문의 유형 칩 */
@@ -738,15 +727,15 @@ ul { list-style: none; }
 .chip span {
   display: inline-block;
   padding: 11px 18px;
-  border: 1px solid #ddd9cc;
-  border-radius: 10px;
+  border: 1px solid var(--color-line-dark);
+  border-radius: 100px;
   font-size: 0.92rem;
   font-weight: 600;
-  color: var(--color-ink-soft);
+  color: rgba(255, 255, 255, 0.65);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, color 0.2s;
 }
-.chip:hover span { border-color: var(--color-accent); color: var(--color-ink); }
+.chip:hover span { border-color: var(--color-accent); color: var(--color-white); }
 .chip input:checked + span {
   background: var(--color-accent);
   border-color: var(--color-accent);
@@ -760,13 +749,13 @@ ul { list-style: none; }
   gap: 8px;
   align-self: flex-start;
   padding: 12px 20px;
-  border: 1px solid #ddd9cc;
-  border-radius: 10px;
+  border: 1px solid var(--color-line-dark);
+  border-radius: 100px;
   font-size: 0.92rem;
   font-weight: 600;
-  color: var(--color-ink);
+  color: rgba(255, 255, 255, 0.85);
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 0.2s;
 }
 .file-btn:hover { border-color: var(--color-accent); }
 .file-btn svg { width: 16px; height: 16px; }
@@ -777,28 +766,29 @@ ul { list-style: none; }
 }
 .file-note {
   font-size: 0.85rem;
-  color: var(--color-ink-soft);
+  color: rgba(255, 255, 255, 0.45);
   line-height: 1.65;
 }
-.file-note strong { color: var(--color-ink); }
+.file-note strong { color: rgba(255, 255, 255, 0.85); }
 
 /* 개인정보 동의 */
 .privacy-box {
-  background: #faf9f2;
-  border: 1px solid var(--color-line);
+  background: var(--color-dark-soft);
+  border: 1px solid var(--color-line-dark);
   border-radius: 10px;
   padding: 18px 20px;
   font-size: 0.87rem;
-  color: var(--color-ink-soft);
+  color: rgba(255, 255, 255, 0.55);
   line-height: 1.7;
 }
-.privacy-box strong { color: var(--color-ink); }
+.privacy-box strong { color: rgba(255, 255, 255, 0.85); }
 .agree-check {
   display: flex;
   align-items: center;
   gap: 9px;
   font-size: 0.92rem;
   font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
   cursor: pointer;
 }
 .agree-check input {
