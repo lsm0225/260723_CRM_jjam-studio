@@ -39,9 +39,8 @@
   /* ---------- 로그인 ---------- */
   #loginView{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:linear-gradient(180deg,#fafafb,#f0f1f4)}
   .login-card{background:#fff;border:1px solid var(--line);border-radius:20px;padding:44px 40px;width:100%;max-width:400px;box-shadow:var(--sh);text-align:center}
-  .login-card .star{width:44px;height:44px;margin:0 auto 16px}
-  .login-card h1{font-size:21px;letter-spacing:.02em}
-  .login-card h1 span{color:var(--red)}
+  .login-card .logo{height:34px;width:auto;margin:0 auto 20px;display:block}
+  .login-card h1{font-size:19px;letter-spacing:.01em}
   .login-card p{font-size:13px;color:var(--sub);margin:6px 0 26px}
   .login-card input{text-align:center}
   .login-card .btn{width:100%;justify-content:center;margin-top:14px}
@@ -50,11 +49,9 @@
   /* ---------- 앱 레이아웃 ---------- */
   #app{display:none;min-height:100vh}
   .sb{position:fixed;left:0;top:0;bottom:0;width:236px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 14px;z-index:20}
-  .sb__logo{display:flex;align-items:center;gap:10px;padding:2px 10px 20px;border-bottom:1px solid var(--line2);margin-bottom:14px}
-  .sb__logo svg{width:26px;height:26px;flex:none}
-  .sb__logo b{font-size:15.5px;letter-spacing:.05em}
-  .sb__logo b span{color:var(--red)}
-  .sb__logo small{display:block;font-size:10.5px;color:var(--sub);font-weight:600;letter-spacing:.12em}
+  .sb__logo{display:flex;align-items:center;gap:9px;padding:4px 10px 20px;border-bottom:1px solid var(--line2);margin-bottom:14px}
+  .sb__logo img{height:21px;width:auto;flex:none}
+  .sb__logo .adm{font-size:10px;font-weight:800;color:#fff;background:var(--red);border-radius:5px;padding:3px 6px;letter-spacing:.08em;flex:none}
   .sb nav{flex:1;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
   .sb nav button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;border-radius:10px;font-size:14px;font-weight:600;color:#5d626b;text-align:left;transition:.13s}
   .sb nav button svg{width:18px;height:18px;flex:none;stroke:currentColor}
@@ -160,7 +157,8 @@
   @media(max-width:900px){
     .sb{position:static;width:100%;flex-direction:row;align-items:center;padding:10px 14px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
     .sb__logo{border:0;margin:0;padding:0 10px 0 0}
-    .sb__logo b,.sb__logo small{display:none}
+    .sb__logo img{height:17px}
+    .sb__logo .adm{display:none}
     .sb nav{flex-direction:row;gap:2px}
     .sb nav button{padding:9px 11px;white-space:nowrap;font-size:13px}
     .sb nav button svg{display:none}
@@ -179,8 +177,8 @@
 <!-- ===== 로그인 ===== -->
 <div id="loginView">
   <form class="login-card" id="loginForm">
-    <svg class="star" viewBox="0 0 100 100"><path fill="#be2d2f" d="M50 5l11 30 34 1-27 21 10 33-28-20-28 20 10-33-27-21 34-1z"/></svg>
-    <h1>JJAM <span>ADMIN</span></h1>
+    <img class="logo" src="assets/logo.png" alt="jjam agency">
+    <h1>관리자 로그인</h1>
     <p>관리자 비밀번호를 입력하세요</p>
     <input type="password" id="pw" placeholder="비밀번호" autocomplete="current-password" required>
     <div class="err" id="loginErr"></div>
@@ -192,8 +190,8 @@
 <div id="app">
   <aside class="sb">
     <div class="sb__logo">
-      <svg viewBox="0 0 100 100"><path fill="#be2d2f" d="M50 5l11 30 34 1-27 21 10 33-28-20-28 20 10-33-27-21 34-1z"/></svg>
-      <div><b>JJAM <span>ADMIN</span></b><small>AGENCY CMS</small></div>
+      <img src="assets/logo.png" alt="jjam agency">
+      <span class="adm">ADMIN</span>
     </div>
     <nav id="nav">
       <button data-v="dash" class="on"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>대시보드</button>
