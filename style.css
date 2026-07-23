@@ -576,7 +576,7 @@ ul { list-style: none; }
   gap: 64px;
   align-items: start;
 }
-.services__head { position: sticky; top: 120px; }
+.services__head { position: static; }
 .services__head .giant-title { margin-bottom: 28px; }
 .services__sub {
   font-size: 1.05rem;
