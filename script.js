@@ -211,10 +211,35 @@ const PF_VIDEOS = [
   const cats = ["전체", ...new Set(PF_VIDEOS.map((v) => v.c))];
   tabsEl.innerHTML = cats.map((c, i) => `<button class="pf-tab${i === 0 ? " on" : ""}" data-c="${c}">${c}</button>`).join("");
   const listFor = (c) => (c === "전체" ? PF_VIDEOS : PF_VIDEOS.filter((v) => v.c === c));
+
+  // 더보기 → 그리드 토글
+  const section = document.getElementById("portfolio");
+  const grid = document.getElementById("pfGrid");
+  const moreBtn = document.getElementById("pfMore");
+  let currentList = PF_VIDEOS, gridMode = false;
+  function renderGrid(list) {
+    grid.innerHTML = list.map((v, i) =>
+      `<button class="pf-gtile" data-id="${v.id}" style="animation-delay:${(i * 0.05).toFixed(2)}s"><img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt=""><span class="pf-gplay"></span><span class="pf-gtit">${v.t}</span></button>`
+    ).join("");
+    grid.querySelectorAll(".pf-gtile").forEach((t) => t.addEventListener("click", () => {
+      if (t.querySelector("iframe")) return;
+      const f = document.createElement("iframe");
+      f.src = `https://www.youtube-nocookie.com/embed/${t.dataset.id}?autoplay=1&rel=0&playsinline=1`;
+      f.allow = "autoplay; fullscreen; picture-in-picture"; f.allowFullscreen = true;
+      t.appendChild(f); t.classList.add("playing");
+    }));
+  }
+  if (moreBtn) moreBtn.addEventListener("click", () => {
+    gridMode = !gridMode;
+    if (gridMode) { stopAll(); renderGrid(currentList); section.classList.add("is-grid"); moreBtn.innerHTML = '접기 <span>▴</span>'; }
+    else { section.classList.remove("is-grid"); moreBtn.innerHTML = '더보기 <span>▾</span>'; }
+  });
+
   tabsEl.addEventListener("click", (e) => {
     const b = e.target.closest(".pf-tab"); if (!b) return;
     tabsEl.querySelectorAll(".pf-tab").forEach((t) => t.classList.remove("on")); b.classList.add("on");
-    switchTo(listFor(b.dataset.c));
+    currentList = listFor(b.dataset.c);
+    if (gridMode) renderGrid(currentList); else switchTo(currentList);
   });
 
   // 초기: 전체 목록 빌드 + 활성 세팅, 슬라이드는 화면 오른쪽 밖에서 투명 대기

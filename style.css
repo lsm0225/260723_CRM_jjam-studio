@@ -85,14 +85,15 @@ ul { list-style: none; }
 }
 .header__inner {
   height: var(--header-h);
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr; /* 로고 | 내비(가운데 고정) | 버튼 */
   align-items: center;
-  justify-content: space-between;
   gap: 32px;
 }
-.header__logo { display: flex; align-items: center; }
+.header__logo { display: flex; align-items: center; justify-self: start; }
 .header__logo img { height: 44px; width: auto; display: block; }
-.header__nav { display: flex; gap: 36px; }
+.header__nav { display: flex; gap: 36px; justify-self: center; }
+.header__actions { justify-self: end; }
 .nav-link {
   font-size: 0.95rem;
   font-weight: 600;
@@ -615,6 +616,41 @@ ul { list-style: none; }
 
 @media (max-width: 640px) { .pf-slide { width: 84%; } .pf-nav { display: none; } }
 
+/* 포트폴리오 제목(위 섹션과 동일 크기) */
+.portfolio .giant-title { margin-bottom: 26px; }
+
+/* 더보기 → 그리드 토글 */
+.pf-more-wrap { margin-top: 40px; text-align: center; }
+#pfMore span { font-size: 0.85em; }
+.pf-grid { display: none; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.portfolio.is-grid .pf-slider { display: none; }
+.portfolio.is-grid .pf-grid { display: grid; }
+.pf-gtile {
+  position: relative; aspect-ratio: 16/9; border: 0; padding: 0;
+  background: #111; border-radius: 12px; overflow: hidden; cursor: pointer;
+}
+.pf-gtile img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--ease); }
+.pf-gtile:hover img { transform: scale(1.06); }
+.pf-gtile iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.pf-gplay {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0.85);
+  width: 50px; height: 50px; border-radius: 50%; background: rgba(190,45,47,0.92);
+  display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s;
+}
+.pf-gtile:hover .pf-gplay { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+.pf-gplay::before { content: ""; margin-left: 3px; border-left: 13px solid #fff; border-top: 8px solid transparent; border-bottom: 8px solid transparent; }
+.pf-gtit {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 14px 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: #fff;
+  font-size: 0.88rem; font-weight: 600; text-align: left;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pf-gtile.playing .pf-gtit, .pf-gtile.playing .pf-gplay { opacity: 0; }
+.portfolio.is-grid .pf-gtile { animation: gridIn 0.5s var(--ease) backwards; }
+@keyframes gridIn { from { opacity: 0; transform: translateY(18px) scale(0.97); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) { .pf-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .pf-grid { grid-template-columns: 1fr; } }
+
 /* ===== Services (dark, row list) ===== */
 .services {
   background: var(--color-dark);
@@ -1001,6 +1037,7 @@ ul { list-style: none; }
 }
 
 @media (max-width: 640px) {
+  .header__inner { display: flex; justify-content: space-between; }
   .header__nav, .header__actions { display: none; }
   .header__menu-btn { display: flex; }
   .br-desktop { display: none; }

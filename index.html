@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="style.css?v=17" />
+  <link rel="stylesheet" href="style.css?v=18" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%23be2d2f' d='M50 5l11 30 34 1-27 21 10 33-28-20-28 20 10-33-27-21 34-1z'/></svg>" />
 </head>
 <body>
@@ -227,13 +227,19 @@
       </div>
     </section>
 
-    <!-- ===== Portfolio (카테고리 슬라이더 + 모션 블러) ===== -->
+    <!-- ===== Portfolio (카테고리 슬라이더 + 그리드 토글) ===== -->
     <section class="portfolio section" id="portfolio">
       <div class="container">
-        <p class="eyebrow reveal">— Our Portfolio</p>
+        <h2 class="giant-title reveal"><span>OUR</span><span>PORTFOLIO</span></h2>
         <div class="pf-tabs reveal" id="pfTabs"></div>
       </div>
       <div class="pf-slider" id="pfSlider"></div>
+      <div class="container">
+        <div class="pf-grid" id="pfGrid" aria-hidden="true"></div>
+        <div class="pf-more-wrap reveal">
+          <button type="button" class="btn btn--line" id="pfMore">더보기 <span>▾</span></button>
+        </div>
+      </div>
     </section>
 
     <!-- ===== Client (logo strip, placeholder) ===== -->
@@ -403,6 +409,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=17"></script>
+  <script src="script.js?v=18"></script>
 </body>
 </html>
