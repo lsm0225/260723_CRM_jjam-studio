@@ -166,7 +166,7 @@ const PF_VIDEOS = [
   function playActive() {
     const s = slides()[idx]; if (!s || s.querySelector("iframe")) return;
     const f = document.createElement("iframe");
-    f.src = `https://www.youtube-nocookie.com/embed/${s.dataset.id}?autoplay=1&rel=0&playsinline=1`;
+    f.src = `https://www.youtube-nocookie.com/embed/${s.dataset.id}?autoplay=1&mute=1&rel=0&playsinline=1`;
     f.allow = "autoplay; fullscreen; picture-in-picture"; f.allowFullscreen = true;
     s.appendChild(f); s.classList.add("playing");
     const pl = s.querySelector(".pf-play"); if (pl) pl.style.opacity = "";
@@ -198,6 +198,7 @@ const PF_VIDEOS = [
     wm.classList.add("write");
     setTimeout(() => {
       wm.classList.add("fade");
+      host.classList.add("show-nav"); // 글씨 사라짐과 동시에 화살표 천천히 등장
       track.style.transition = "transform .95s cubic-bezier(.5,0,.2,1)";
       center(); flashBlur();
       slides().forEach((s, i) => { s.style.transition = `opacity .6s ease ${i * 0.05}s, transform .5s cubic-bezier(.22,1,.36,1)`; s.style.opacity = ""; });
@@ -235,7 +236,7 @@ const PF_VIDEOS = [
     grid.querySelectorAll(".pf-gtile").forEach((t) => t.addEventListener("click", () => {
       if (t.querySelector("iframe")) return;
       const f = document.createElement("iframe");
-      f.src = `https://www.youtube-nocookie.com/embed/${t.dataset.id}?autoplay=1&rel=0&playsinline=1`;
+      f.src = `https://www.youtube-nocookie.com/embed/${t.dataset.id}?autoplay=1&mute=1&rel=0&playsinline=1`;
       f.allow = "autoplay; fullscreen; picture-in-picture"; f.allowFullscreen = true;
       t.appendChild(f); t.classList.add("playing");
     }));

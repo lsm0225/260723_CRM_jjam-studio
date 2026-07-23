@@ -601,8 +601,11 @@ ul { list-style: none; }
 .pf-nav {
   position: absolute; top: calc(50% - 6px); z-index: 3; width: 46px; height: 46px;
   border-radius: 50%; border: 0; background: var(--color-white); box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-  color: var(--color-ink); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
+  color: var(--color-ink); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; /* 진입 시 천천히 나타남 (PORTFOLIO 글씨 사라짐과 반대) */
+  transition: opacity 0.8s ease, background 0.2s, color 0.2s;
 }
+.pf-slider.show-nav .pf-nav { opacity: 1; }
 .pf-nav:hover { background: var(--color-accent); color: #fff; }
 .pf-nav.prev { left: 13%; } .pf-nav.next { right: 13%; }
 
@@ -618,7 +621,8 @@ ul { list-style: none; }
 @media (max-width: 640px) { .pf-slide { width: 84%; } .pf-nav { display: none; } }
 
 /* 포트폴리오 제목(위 섹션과 동일 크기) */
-.portfolio .giant-title { margin-bottom: 26px; }
+.portfolio .giant-title { margin-bottom: 14px; }
+.pf-sub { font-size: 1.05rem; color: var(--color-ink-soft); line-height: 1.7; margin-bottom: 30px; }
 
 /* 더보기 → 그리드 토글 */
 .pf-more-wrap { margin-top: 40px; text-align: center; }
