@@ -542,154 +542,78 @@ ul { list-style: none; }
   line-height: 1.75;
 }
 
-/* ===== Portfolio (크기 다양한 모자이크 + 제목 오버레이 + 라이트박스) ===== */
-.portfolio { background: var(--color-bg); }
-.portfolio .giant-title { margin-bottom: 18px; }
-.portfolio__sub {
-  font-size: 1.05rem;
-  color: var(--color-ink-soft);
-  line-height: 1.7;
-  margin-bottom: 44px;
+/* ===== Portfolio (카테고리 슬라이더 + 모션 블러) ===== */
+.portfolio { background: var(--color-bg); overflow: hidden; }
+.portfolio .eyebrow { margin-bottom: 22px; }
+.pf-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
+.pf-tab {
+  padding: 9px 18px; border: 1px solid var(--color-line); border-radius: 100px;
+  background: var(--color-white); font-size: 0.9rem; font-weight: 600; color: var(--color-ink-soft);
+  cursor: pointer; transition: 0.2s;
 }
-.portfolio__grid {
-  /* 좌우 여백 없이 화면 끝까지 (풀블리드) */
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: calc((100vw - 18px) / 4 * 9 / 16); /* 4열 16:9 정확히 */
-  grid-auto-flow: dense;
-  gap: 6px;
-}
-.pf-item {
-  position: relative;
-  display: block;
-  padding: 0;
-  border: 0;
-  cursor: pointer;
-  overflow: hidden;
-  border-radius: 0;
-  background: #111;
-}
-/* 크기 변형 (모자이크) */
-.pf-item--big  { grid-column: span 2; grid-row: span 2; }
-.pf-item--wide { grid-column: span 2; }
-.pf-item--tall { grid-row: span 2; }
-.pf-item--full { grid-column: 1 / -1; }
+.pf-tab:hover { border-color: var(--color-accent); color: var(--color-ink); }
+.pf-tab.on { background: var(--color-accent); border-color: var(--color-accent); color: #fff; }
 
-.pf-item img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: filter 0.45s var(--ease), transform 0.6s var(--ease);
+.pf-slider { position: relative; overflow: hidden; margin-top: 40px; padding: 24px 0 4px; }
+.pf-slider .wm {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  font-size: clamp(4rem, 15vw, 11rem); font-weight: 900; letter-spacing: -0.04em;
+  color: var(--color-ink); pointer-events: none; white-space: nowrap; z-index: 0;
+  display: flex; line-height: 1; transition: opacity 0.55s ease;
 }
-/* 마우스 오버 → 썸네일 블러 + 어둡게 (텍스트 가독성) */
-.pf-item:hover img { filter: blur(7px) brightness(0.5); transform: scale(1.1); }
-.pf-item__overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  padding: 20px;
-  text-align: center;
-  opacity: 0;
-  transition: opacity 0.4s var(--ease);
-}
-.pf-item:hover .pf-item__overlay { opacity: 1; }
-.pf-item__play {
-  flex: 0 0 auto;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(190, 45, 47, 0.95);
-}
-.pf-item__play::before {
-  content: "";
-  margin-left: 3px;
-  border-left: 13px solid #fff;
-  border-top: 8px solid transparent;
-  border-bottom: 8px solid transparent;
-}
-.pf-item__title {
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.92rem;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.6);
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-.pf-item--big .pf-item__title { font-size: 1.25rem; font-weight: 800; }
-.pf-item--wide .pf-item__title { font-size: 1.05rem; }
-.pf-item--more { display: none; }
-.portfolio__grid.is-expanded .pf-item--more { display: block; }
-.portfolio__more { margin-top: 32px; text-align: center; }
-.btn--line { border-color: var(--color-ink); color: var(--color-ink); }
-.btn--line:hover { background: var(--color-ink); color: var(--color-bg); }
-.btn--line span { color: var(--color-accent); font-weight: 800; }
+.pf-slider .wm.fade { opacity: 0; }
+.pf-slider .wm span { opacity: 0; transform: translateY(0.18em); filter: blur(8px); }
+.pf-slider .wm.write span { animation: wmWrite 0.28s cubic-bezier(0.22,1,0.36,1) forwards; }
+@keyframes wmWrite { to { opacity: 0.08; transform: translateY(0); filter: blur(0); } }
 
-/* 영상 라이트박스 */
-.video-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
+.pf-viewport { position: relative; z-index: 1; }
+.pf-track { display: flex; gap: 18px; will-change: transform; transition: transform 0.6s cubic-bezier(0.5,0,0.2,1); }
+.pf-track.is-sliding { animation: slideBlur 0.55s cubic-bezier(0.4,0,0.25,1); }
+@keyframes slideBlur { 0%{filter:blur(0)} 20%{filter:blur(11px)} 100%{filter:blur(0)} }
+
+.pf-slide {
+  position: relative; flex: 0 0 auto; width: 58%; aspect-ratio: 16/9;
+  border: 0; padding: 0; background: #111; border-radius: 12px; overflow: hidden;
+  cursor: pointer; opacity: 0.4; transform: scale(0.88);
+  transition: opacity 0.5s, transform 0.5s cubic-bezier(0.22,1,0.36,1);
 }
-.video-modal[hidden] { display: none; }
-.video-modal__backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(8, 8, 9, 0.86);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+.pf-slide.active { opacity: 1; transform: scale(1); box-shadow: 0 30px 70px rgba(0,0,0,0.22); }
+.pf-slide img { width: 100%; height: 100%; object-fit: cover; }
+.pf-slide iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.pf-slide .pf-play {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 56px; height: 56px; border-radius: 50%; background: rgba(190,45,47,0.95);
+  display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s;
 }
-.video-modal__panel {
-  position: relative;
-  width: min(1000px, 100%);
-  animation: modalIn 0.4s var(--ease);
+.pf-slide.active .pf-play { width: 64px; height: 64px; }
+.pf-slide:not(.active):hover .pf-play { opacity: 1; }
+.pf-slide .pf-play::before { content:""; margin-left: 3px; border-left: 15px solid #fff; border-top: 9px solid transparent; border-bottom: 9px solid transparent; }
+.pf-slide .pf-stit {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 16px 14px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: #fff;
+  font-size: 0.92rem; font-weight: 600; text-align: left;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.video-modal__frame {
-  position: relative;
-  aspect-ratio: 16 / 9;
-  background: #000;
-  border-radius: 12px;
-  overflow: hidden;
+.pf-slide.playing .pf-stit { opacity: 0; }
+
+.pf-nav {
+  position: absolute; top: calc(50% - 6px); z-index: 3; width: 46px; height: 46px;
+  border-radius: 50%; border: 0; background: var(--color-white); box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  color: var(--color-ink); font-size: 1.4rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;
 }
-.video-modal__frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-.video-modal__close {
-  position: absolute;
-  top: -46px;
-  right: 0;
-  font-size: 2rem;
-  line-height: 1;
-  color: #fff;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  transition: transform 0.25s var(--ease);
-}
-.video-modal__close:hover { transform: rotate(90deg); }
+.pf-nav:hover { background: var(--color-accent); color: #fff; }
+.pf-nav.prev { left: 14px; } .pf-nav.next { right: 14px; }
+
+.pf-foot { position: relative; z-index: 2; display: flex; align-items: center; gap: 20px; max-width: var(--container); margin: 26px auto 0; padding: 0 28px; }
+.pf-count { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; color: var(--color-ink-soft); font-variant-numeric: tabular-nums; }
+.pf-count .cur { color: var(--color-accent); font-weight: 700; }
+.pf-bar { flex: 1; height: 2px; background: var(--color-line); position: relative; overflow: hidden; border-radius: 2px; }
+.pf-bar span { position: absolute; left: 0; top: 0; height: 100%; background: var(--color-accent); width: 10%; transition: width 0.5s cubic-bezier(0.5,0,0.2,1); }
+.pf-dots { display: flex; gap: 7px; }
+.pf-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-line); border: 0; padding: 0; cursor: pointer; transition: 0.2s; }
+.pf-dot.on { background: var(--color-accent); width: 20px; border-radius: 5px; }
+
+@media (max-width: 640px) { .pf-slide { width: 84%; } .pf-nav { display: none; } }
 
 /* ===== Services (dark, row list) ===== */
 .services {

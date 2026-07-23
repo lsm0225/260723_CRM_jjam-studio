@@ -21,7 +21,8 @@
 - 섹션 헤드라인: 두 줄 대문자 대형 타이포 (WHO WE ARE / OUR SERVICES / LET'S CONTACT)
 - 포인트 컬러: 크림슨 레드 (#be2d2f, 로고 별 색), 폰트: Pretendard
 - **크림(#fffdea) 키 컬러는 폐기됨 — 절대 재사용 금지. 라이트 배경은 중립 오프화이트(#f5f4f1).** (2026-07-23 클라이언트 지시)
-- 구성: 히어로 → About(WHO WE ARE) → Services(4컬럼 리스트) → Contact(다크, 문의폼)
+- 구성(현재): 히어로 → About → Service(다크 행리스트) → Portfolio(카테고리 슬라이더) → Client(로고 스트립) → Contact(다크 폼)
+- **포트폴리오 = 카테고리 필터 + 가로 블러 슬라이더.** 데이터는 script.js의 `PF_VIDEOS` 배열(id/제목/분야) — **영상 추가 = 이 배열에 한 줄**. (구 mosaic용 gen-portfolio.py/portfolio-videos.txt는 폐기.) 스크롤 진입 시 최초 1회 PORTFOLIO 글씨 써짐→0.5초 뒤 우→가운데 진입(글씨 페이드아웃), 탭 클릭은 슬라이드만 교체, 가운데 슬라이드 재생버튼 클릭 시 인라인 재생. slider.html은 프로토타입(참고용).
 
 ## 미확정 정보 (클라이언트 확인 필요)
 

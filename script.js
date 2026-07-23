@@ -109,41 +109,121 @@ const sectionObserver = new IntersectionObserver(
 );
 sections.forEach((s) => s && sectionObserver.observe(s));
 
-// ----- 포트폴리오 영상 라이트박스 + 더보기 -----
-const pfGrid = document.getElementById("portfolioGrid");
-const pfMoreBtn = document.getElementById("pfMoreBtn");
-const pfMoreWrap = document.getElementById("portfolioMore");
-const videoModal = document.getElementById("videoModal");
-const videoFrame = document.getElementById("videoFrame");
+// ----- 포트폴리오 카테고리 슬라이더 -----
+const PF_VIDEOS = [
+  { id: "YMkMfrhTy1U", t: "고지혈증 치료, 획기적인 신약등장!! 스타틴 부작용 있다면?", c: "의료·제약" },
+  { id: "WV8x4BC2Iwk", t: "배로 하는 척추수술(ALIF/OLIF) — 부산 우리들병원", c: "의료·제약" },
+  { id: "d9KyiFb_DMU", t: "위고비 Vs 마운자로, 나에게 맞는 비만 치료제는?", c: "의료·제약" },
+  { id: "vAAuU_1JWsg", t: "[엄마약방] 처방없이 약국에서 구매하는 다이어트 약!!", c: "의료·제약" },
+  { id: "2doDVaOWvvs", t: "MEET THE EXPERT #10 분당서울대병원 신경과 한문구 교수", c: "의료·제약" },
+  { id: "9Ujoxe-MFkI", t: "가성비 콜라겐의 끝판왕 앱솔루트콜라겐 3.5!!", c: "의료·제약" },
+  { id: "NFTjLFFpz_4", t: "당뇨병에 좋은 영양제! 현직 약사가 다 알려줌", c: "의료·제약" },
+  { id: "G2sN4OBMUpY", t: "당뇨를 100% 막을 수 있는 마지막 골든타임!", c: "의료·제약" },
+  { id: "NDu6rGoEtZg", t: "부산우리들병원", c: "의료·제약" },
+  { id: "nKmjEDQCP5I", t: "엔지니어드 스톤 주방상판으로 괜찮을까요?", c: "기업·제품" },
+  { id: "mQW6chRAKQ0", t: "한풍제약 공장 소개", c: "기업·제품" },
+  { id: "5CLC1gvD4zQ", t: "한풍제약 경기약사학술대회 브이로그", c: "기업·제품" },
+  { id: "MGl2tn_x5m0", t: "Soflisse Before&After", c: "기업·제품" },
+  { id: "E_LuGEFSW-s", t: "Seojinsystem 홍보영상 2022", c: "기업·제품" },
+  { id: "y45bK2Lldf0", t: "밀로 만든 안동소주 / 맹개술도가", c: "문화·라이프" },
+  { id: "hmSi3PG1_V0", t: "정원이 아름다운 양조장 / 해창주조장", c: "문화·라이프" },
+  { id: "qQcgkA9MUoA", t: "서울국제도서전에 갔다 왔어요", c: "문화·라이프" },
+  { id: "L-vzl1EGMTw", t: "인페인터글로벌 아트투어 7기", c: "문화·라이프" },
+  { id: "7oa3hJS4bTY", t: "대통령배 현장취재", c: "문화·라이프" },
+  { id: "rSWXxcZr-kQ", t: "코딩랜드 보물을 함께 찾아요 · 시즌2 11화", c: "문화·라이프" },
+  { id: "miUYlT1kOpA", t: "제이잼 포트폴리오", c: "문화·라이프" },
+  { id: "S4AM6T1zqoc", t: "제이잼 포트폴리오", c: "문화·라이프" },
+];
 
-if (pfMoreBtn && pfGrid) {
-  pfMoreBtn.addEventListener("click", () => {
-    pfGrid.classList.add("is-expanded");
-    if (pfMoreWrap) pfMoreWrap.style.display = "none";
-  });
-}
+(function initPortfolioSlider() {
+  const host = document.getElementById("pfSlider");
+  const tabsEl = document.getElementById("pfTabs");
+  if (!host || !tabsEl) return;
 
-if (pfGrid && videoModal && videoFrame) {
-  const openVideo = (id) => {
-    videoFrame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
-    videoModal.hidden = false;
-    document.body.style.overflow = "hidden";
-  };
-  const closeVideo = () => {
-    videoModal.hidden = true;
-    videoFrame.src = "about:blank";
-    document.body.style.overflow = "";
-  };
-  pfGrid.querySelectorAll(".pf-item").forEach((btn) =>
-    btn.addEventListener("click", () => openVideo(btn.dataset.id))
-  );
-  videoModal.querySelectorAll("[data-vclose]").forEach((el) =>
-    el.addEventListener("click", closeVideo)
-  );
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !videoModal.hidden) closeVideo();
+  host.innerHTML =
+    '<div class="wm"></div>' +
+    '<div class="pf-viewport"><div class="pf-track"></div></div>' +
+    '<button class="pf-nav prev" aria-label="이전">‹</button>' +
+    '<button class="pf-nav next" aria-label="다음">›</button>' +
+    '<div class="pf-foot"><div class="pf-count"><span class="cur">01</span> / <span class="tot"></span></div>' +
+    '<div class="pf-bar"><span></span></div><div class="pf-dots"></div></div>';
+
+  const track = host.querySelector(".pf-track");
+  const wm = host.querySelector(".wm");
+  wm.innerHTML = [..."PORTFOLIO"].map((ch, i) => `<span style="animation-delay:${(i * 0.025).toFixed(3)}s">${ch}</span>`).join("");
+  const dotsEl = host.querySelector(".pf-dots");
+  const cur = host.querySelector(".cur"), tot = host.querySelector(".tot"), bar = host.querySelector(".pf-bar span");
+  const GAP = 18;
+  let items = [], idx = 0, entered = false;
+
+  const slides = () => [...track.children];
+  const vpW = () => host.querySelector(".pf-viewport").getBoundingClientRect().width;
+  function layout() { const w = vpW(); const sw = Math.round(w * (w < 640 ? 0.84 : 0.58)); slides().forEach((s) => (s.style.width = sw + "px")); return { w, sw }; }
+  function targetX() { const { w, sw } = layout(); return w / 2 - (idx * (sw + GAP) + sw / 2); }
+  function center() { track.style.transform = `translateX(${targetX()}px)`; }
+  function flashBlur() { track.classList.remove("is-sliding"); void track.offsetWidth; track.classList.add("is-sliding"); }
+  function stopAll() { slides().forEach((s) => { const f = s.querySelector("iframe"); if (f) f.remove(); s.classList.remove("playing"); }); }
+  function playActive() {
+    const s = slides()[idx]; if (!s || s.querySelector("iframe")) return;
+    const f = document.createElement("iframe");
+    f.src = `https://www.youtube-nocookie.com/embed/${s.dataset.id}?autoplay=1&rel=0&playsinline=1`;
+    f.allow = "autoplay; fullscreen; picture-in-picture"; f.allowFullscreen = true;
+    s.appendChild(f); s.classList.add("playing");
+    const pl = s.querySelector(".pf-play"); if (pl) pl.style.opacity = "";
+  }
+  function setActive() {
+    slides().forEach((s, i) => { s.classList.toggle("active", i === idx); const pl = s.querySelector(".pf-play"); if (pl) pl.style.opacity = i === idx ? "1" : ""; });
+    [...dotsEl.children].forEach((d, i) => d.classList.toggle("on", i === idx));
+    cur.textContent = String(idx + 1).padStart(2, "0");
+    bar.style.width = ((idx + 1) / items.length) * 100 + "%";
+  }
+  function paint() { stopAll(); setActive(); center(); flashBlur(); }
+  function go(i) { const n = Math.max(0, Math.min(items.length - 1, i)); if (n === idx) return; idx = n; paint(); }
+  host.querySelector(".prev").onclick = () => go(idx - 1);
+  host.querySelector(".next").onclick = () => go(idx + 1);
+
+  function buildTrack(list) {
+    items = list; idx = 0;
+    track.innerHTML = list.map((v) =>
+      `<button class="pf-slide" data-id="${v.id}"><img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt=""><span class="pf-play"></span><span class="pf-stit">${v.t}</span></button>`
+    ).join("");
+    dotsEl.innerHTML = list.map((_, i) => `<button class="pf-dot" data-i="${i}"></button>`).join("");
+    tot.textContent = String(list.length).padStart(2, "0");
+    slides().forEach((s, i) => (s.onclick = () => { if (i !== idx) go(i); else if (!s.classList.contains("playing")) playActive(); }));
+    [...dotsEl.children].forEach((d) => (d.onclick = () => go(+d.dataset.i)));
+  }
+
+  // 최초 1회: 글씨 써짐 → 0.5초 후 오른쪽 → 가운데 진입 (스크롤로 뷰 진입 시)
+  function firstEntrance() {
+    wm.classList.add("write");
+    setTimeout(() => {
+      wm.classList.add("fade");
+      track.style.transition = "transform .95s cubic-bezier(.5,0,.2,1)";
+      center(); flashBlur();
+      slides().forEach((s, i) => { s.style.transition = `opacity .6s ease ${i * 0.05}s, transform .5s cubic-bezier(.22,1,.36,1)`; s.style.opacity = ""; });
+      setTimeout(() => { track.style.transition = ""; slides().forEach((s) => (s.style.transition = "")); }, 1050);
+    }, 500);
+  }
+  // 탭 변경: 글씨/딜레이 없이 슬라이드만 교체 (블러 전환)
+  function switchTo(list) { buildTrack(list); setActive(); slides().forEach((s) => (s.style.opacity = "")); center(); flashBlur(); }
+
+  // 탭 구성
+  const cats = ["전체", ...new Set(PF_VIDEOS.map((v) => v.c))];
+  tabsEl.innerHTML = cats.map((c, i) => `<button class="pf-tab${i === 0 ? " on" : ""}" data-c="${c}">${c}</button>`).join("");
+  const listFor = (c) => (c === "전체" ? PF_VIDEOS : PF_VIDEOS.filter((v) => v.c === c));
+  tabsEl.addEventListener("click", (e) => {
+    const b = e.target.closest(".pf-tab"); if (!b) return;
+    tabsEl.querySelectorAll(".pf-tab").forEach((t) => t.classList.remove("on")); b.classList.add("on");
+    switchTo(listFor(b.dataset.c));
   });
-}
+
+  // 초기: 전체 목록 빌드 + 활성 세팅, 슬라이드는 화면 오른쪽 밖에서 투명 대기
+  buildTrack(PF_VIDEOS);
+  setActive(); center(); track.classList.remove("is-sliding");
+  (function preHide() { track.style.transition = "none"; track.style.transform = `translateX(${targetX() + vpW()}px)`; slides().forEach((s) => (s.style.opacity = "0")); void track.offsetWidth; track.style.transition = ""; })();
+  window.addEventListener("resize", center);
+  new IntersectionObserver((es) => { if (es[0].isIntersecting && !entered) { entered = true; firstEntrance(); } }, { threshold: 0.3 }).observe(host);
+})();
 
 // ----- 대표 약력 모달 -----
 const profileBtn = document.getElementById("profileBtn");
