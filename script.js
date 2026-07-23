@@ -290,6 +290,18 @@ if (profileBtn && profileModal) {
 const form = document.getElementById("contactForm");
 const formNote = document.getElementById("formNote");
 
+// 연락처 자동 하이픈 (010-XXXX-XXXX)
+const phoneInput = document.getElementById("phone");
+if (phoneInput) {
+  phoneInput.addEventListener("input", () => {
+    const v = phoneInput.value.replace(/\D/g, "").slice(0, 11);
+    phoneInput.value =
+      v.length < 4 ? v :
+      v.length < 8 ? `${v.slice(0, 3)}-${v.slice(3)}` :
+      `${v.slice(0, 3)}-${v.slice(3, 7)}-${v.slice(7)}`;
+  });
+}
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
