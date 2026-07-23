@@ -229,10 +229,14 @@ const PF_VIDEOS = [
       t.appendChild(f); t.classList.add("playing");
     }));
   }
+  function stopGrid() { grid.querySelectorAll("iframe").forEach((f) => f.remove()); grid.querySelectorAll(".pf-gtile").forEach((t) => t.classList.remove("playing")); }
   if (moreBtn) moreBtn.addEventListener("click", () => {
     gridMode = !gridMode;
     if (gridMode) { stopAll(); renderGrid(currentList); section.classList.add("is-grid"); moreBtn.innerHTML = '접기 <span>▴</span>'; }
-    else { section.classList.remove("is-grid"); moreBtn.innerHTML = '더보기 <span>▾</span>'; }
+    else { stopGrid(); section.classList.remove("is-grid"); moreBtn.innerHTML = '더보기 <span>▾</span>'; }
+    // 토글 후 포트폴리오 섹션으로 스크롤 복귀(높이 변화로 페이지가 튀는 것 방지)
+    const y = section.getBoundingClientRect().top + window.scrollY - 70;
+    window.scrollTo({ top: y, behavior: "smooth" });
   });
 
   tabsEl.addEventListener("click", (e) => {
