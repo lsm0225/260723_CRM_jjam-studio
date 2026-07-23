@@ -168,7 +168,7 @@ function initPortfolioSlider(videos, catNames) {
     const f = document.createElement("iframe");
     f.src = `https://www.youtube-nocookie.com/embed/${s.dataset.id}?autoplay=1&mute=1&rel=0&playsinline=1`;
     f.allow = "autoplay; fullscreen; picture-in-picture"; f.allowFullscreen = true;
-    s.appendChild(f); s.classList.add("playing");
+    s.querySelector(".pf-smedia").appendChild(f); s.classList.add("playing");
     const pl = s.querySelector(".pf-play"); if (pl) pl.style.opacity = "";
   }
   function setActive() {
@@ -185,7 +185,7 @@ function initPortfolioSlider(videos, catNames) {
   function buildTrack(list) {
     items = list; idx = 0;
     track.innerHTML = list.map((v) =>
-      `<button class="pf-slide" data-id="${v.id}"><img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt=""><span class="pf-play"></span><span class="pf-stit">${v.t}</span></button>`
+      `<button class="pf-slide" data-id="${v.id}"><span class="pf-smedia"><img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt=""><span class="pf-play"></span></span><span class="pf-stit">${v.t}</span></button>`
     ).join("");
     dotsEl.innerHTML = list.map((_, i) => `<button class="pf-dot" data-i="${i}"></button>`).join("");
     tot.textContent = String(list.length).padStart(2, "0");
@@ -231,14 +231,14 @@ function initPortfolioSlider(videos, catNames) {
   let currentList = videos, gridMode = false;
   function renderGrid(list) {
     grid.innerHTML = list.map((v, i) =>
-      `<button class="pf-gtile" data-id="${v.id}" style="animation-delay:${(i * 0.05).toFixed(2)}s"><img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt=""><span class="pf-gplay"></span><span class="pf-gtit">${v.t}</span></button>`
+      `<button class="pf-gtile" data-id="${v.id}" style="animation-delay:${(i * 0.05).toFixed(2)}s"><span class="pf-gthumb"><img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt=""><span class="pf-gplay"></span></span><span class="pf-gtit">${v.t}</span></button>`
     ).join("");
     grid.querySelectorAll(".pf-gtile").forEach((t) => t.addEventListener("click", () => {
       if (t.querySelector("iframe")) return;
       const f = document.createElement("iframe");
       f.src = `https://www.youtube-nocookie.com/embed/${t.dataset.id}?autoplay=1&mute=1&rel=0&playsinline=1`;
       f.allow = "autoplay; fullscreen; picture-in-picture"; f.allowFullscreen = true;
-      t.appendChild(f); t.classList.add("playing");
+      t.querySelector(".pf-gthumb").appendChild(f); t.classList.add("playing");
     }));
   }
   function stopGrid() { grid.querySelectorAll("iframe").forEach((f) => f.remove()); grid.querySelectorAll(".pf-gtile").forEach((t) => t.classList.remove("playing")); }

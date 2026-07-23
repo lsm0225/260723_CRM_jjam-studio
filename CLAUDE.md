@@ -67,3 +67,4 @@
   - `ADMIN_SETUP.md`: Cloudflare 1회 설정 가이드(Pages Git 연결·빌드설정 없음/비움, D1 `jjam-db` 생성+schema 실행, 바인딩 변수명 `DB`, ADMIN_PASSWORD/SESSION_SECRET 시크릿, 재배포). **주의: Workers("npx wrangler deploy" 화면)가 아니라 Pages로 연결해야 함** — 사용자가 Workers 흐름에 들어갔다가 뒤로 나옴.
   - style.css: why__grid n4/nmany 규칙, client__logo img/client__name 규칙 추가. 캐시 v34.
   - 관리자 주소: `https://프로젝트명.pages.dev/admin.html` (GitHub Pages에서는 API가 없어 admin 동작 안 함 — Cloudflare 전용).
+- 2026-07-23: 포트폴리오 제목 표시를 썸네일 오버레이 → **썸네일 아래 가운데 캡션(유튜브 스타일)**으로 변경 — 슬라이더(.pf-smedia 미디어 박스 + .pf-stit 캡션)와 그리드(.pf-gthumb + .pf-gtit) 모두. 재생 iframe은 미디어 박스 안에만 삽입되어 재생 중에도 제목 유지. 제목 없으면 :empty로 숨김. 화살표 위치 캡션만큼 보정(top calc(50% - 32px)), 그리드 세로 간격 30px. 제목 내용은 관리자 포트폴리오 탭 "제목" 칸에서 수정. 캐시 v35. (Cloudflare 연동 완료: jjamagency.pages.dev, D1 jjam_db + ADMIN_PASSWORD/SESSION_SECRET 설정됨, 관리자 /admin)
