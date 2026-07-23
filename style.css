@@ -4,12 +4,12 @@
    ============================================ */
 
 :root {
-  --color-bg: #fffdea; /* 키 컬러: 크림 (클라이언트 지정) */
+  --color-bg: #f5f4f1; /* 중립 오프화이트 (크림 키컬러 제거됨) */
   --color-dark: #0c0c0d;
   --color-dark-soft: #17171a;
   --color-ink: #131312;
   --color-ink-soft: #5b5954;
-  --color-line: #ece8d2;
+  --color-line: #e4e2dc;
   --color-line-dark: #2a2a2e;
   --color-accent: #be2d2f; /* 로고 별 컬러와 동일한 크림슨 레드 */
   --color-kakao: #fee500;
@@ -370,19 +370,48 @@ ul { list-style: none; }
   color: var(--color-ink-soft);
 }
 .ceo-more {
-  margin-top: 14px;
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 16px;
+  padding: 10px 20px;
   font-family: inherit;
   font-size: 0.85rem;
   font-weight: 700;
-  color: var(--color-accent);
-  background: none;
+  color: #fff;
+  background: var(--color-accent);
   border: none;
-  padding: 0;
+  border-radius: 100px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  box-shadow: 0 6px 18px rgba(190, 45, 47, 0.28);
+  transition: transform 0.2s var(--ease), box-shadow 0.2s;
 }
-.ceo-more:hover { opacity: 0.7; }
-.ceo-more span { font-size: 1em; }
+.ceo-more:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(190, 45, 47, 0.36);
+}
+.ceo-more span { font-size: 1.05em; line-height: 1; }
+/* 라이트 스윕 (주기적으로 빛이 훑고 지나감) */
+.ceo-more::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.55), transparent);
+  transform: skewX(-22deg);
+  animation: ceoSweep 3s ease-in-out infinite;
+}
+@keyframes ceoSweep {
+  0% { left: -75%; }
+  55%, 100% { left: 130%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ceo-more::after { animation: none; }
+}
 
 /* ===== Modal (대표 약력) ===== */
 .modal {
@@ -523,9 +552,13 @@ ul { list-style: none; }
   margin-bottom: 44px;
 }
 .portfolio__grid {
+  /* 좌우 여백 없이 화면 끝까지 (풀블리드) */
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-auto-rows: 170px;
+  grid-auto-rows: calc((100vw - 18px) / 4 * 9 / 16); /* 4열 16:9 정확히 */
   grid-auto-flow: dense;
   gap: 6px;
 }
@@ -536,13 +569,14 @@ ul { list-style: none; }
   border: 0;
   cursor: pointer;
   overflow: hidden;
-  border-radius: 8px;
+  border-radius: 0;
   background: #111;
 }
 /* 크기 변형 (모자이크) */
 .pf-item--big  { grid-column: span 2; grid-row: span 2; }
 .pf-item--wide { grid-column: span 2; }
 .pf-item--tall { grid-row: span 2; }
+.pf-item--full { grid-column: 1 / -1; }
 
 .pf-item img {
   position: absolute;
@@ -721,12 +755,13 @@ ul { list-style: none; }
 
 /* ===== Client (로고 스트립, 플레이스홀더) ===== */
 .client { background: var(--color-white); }
-.client__head { text-align: center; margin-bottom: 56px; }
+.client__head { margin-bottom: 48px; }
 .client__title {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-size: clamp(1.9rem, 4.4vw, 3.1rem);
   font-weight: 800;
+  line-height: 1.3;
   letter-spacing: -0.03em;
-  margin: 18px 0 14px;
+  margin: 22px 0 14px;
 }
 .client__sub {
   font-size: 1.02rem;
@@ -743,7 +778,7 @@ ul { list-style: none; }
   align-items: center;
   justify-content: center;
   aspect-ratio: 16 / 7;
-  background: #faf8ee;
+  background: #f2f1ed;
   border: 1px solid var(--color-line);
   border-radius: 14px;
   transition: transform 0.3s var(--ease), border-color 0.3s, background 0.3s;
@@ -1019,7 +1054,6 @@ ul { list-style: none; }
 @media (max-width: 980px) {
   .why__grid { grid-template-columns: 1fr; }
   .client__grid { grid-template-columns: repeat(3, 1fr); }
-  .portfolio__grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 150px; }
 }
 
 @media (max-width: 760px) {
@@ -1055,7 +1089,7 @@ ul { list-style: none; }
     grid-auto-flow: row;
   }
   .pf-item { aspect-ratio: 16 / 9; }
-  .pf-item--big, .pf-item--wide, .pf-item--tall {
+  .pf-item--big, .pf-item--wide, .pf-item--tall, .pf-item--full {
     grid-column: auto;
     grid-row: auto;
   }

@@ -2,6 +2,25 @@
    J JAM STUDIO — Interactions
    ============================================ */
 
+// ----- 새로고침 시 항상 히어로(최상단)에서 시작 -----
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+const scrollToHero = () => window.scrollTo(0, 0);
+window.addEventListener("load", () => {
+  // 해시로 인한 자동 점프까지 덮어써서 최상단으로
+  scrollToHero();
+  requestAnimationFrame(scrollToHero);
+});
+
+// ----- 로고 클릭 시 새로고침 -----
+const headerLogo = document.querySelector(".header__logo");
+if (headerLogo) {
+  headerLogo.addEventListener("click", (e) => {
+    e.preventDefault();
+    history.replaceState(null, "", location.pathname + location.search);
+    location.reload();
+  });
+}
+
 // ----- Hero video fade-in (블랙 화면 대신 재생 시작 시 페이드인) -----
 const heroVideo = document.querySelector(".hero__video");
 if (heroVideo) {

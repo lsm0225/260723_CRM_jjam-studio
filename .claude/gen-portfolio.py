@@ -11,10 +11,28 @@ import os, re, sys, json, html, urllib.request
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LIST = os.path.join(ROOT, ".claude", "portfolio-videos.txt")
 HTML = os.path.join(ROOT, "index.html")
-VISIBLE = 12  # 처음 몇 개를 펼쳐서 보여줄지 (나머지는 "더 보기")
+VISIBLE = 12  # 처음 몇 개를 펼쳐서 보여줄지 (4의 배수 유지 → 빈틈없이 떨어짐)
 
-# 모자이크 타일 크기 패턴 (index % 9 기준) — 큰/와이드/세로/작은 타일을 리듬감 있게 배치
-SIZE_BY_MOD = {0: " pf-item--big", 3: " pf-item--wide", 6: " pf-item--tall"}
+# 4칸 유닛 [큰(2x2), 작은, 작은, 와이드(2x1)] = 4열 2행을 정확히 채움 → 하단 빈공간 없음
+_UNIT = ["big", "", "", "wide"]
+_CLS = {"big": " pf-item--big", "wide": " pf-item--wide", "full": " pf-item--full", "": ""}
+
+
+def sizes_for(n):
+    full = (n // 4) * 4
+    out = []
+    for i in range(n):
+        if i < full:
+            out.append(_UNIT[i % 4])
+        else:
+            rem, j = n - full, i - full
+            if rem == 3:
+                out.append(["wide", "", ""][j])   # 와이드 + 작은 + 작은 = 4열 1행
+            elif rem == 2:
+                out.append("wide")                # 와이드 + 와이드 = 4열 1행
+            else:                                  # rem == 1
+                out.append("full")                # 4열 전체 배너
+    return out
 
 
 def video_id(url):
@@ -61,12 +79,13 @@ def parse_list():
 
 def main():
     items = parse_list()
+    sizes = sizes_for(len(items))
     tiles = []
     for i, (vid, override) in enumerate(items):
         title = override or clean(fetch_title(vid)) or "제이잼 포트폴리오"
         title = html.escape(title, quote=False)
         cls = " pf-item--more" if i >= VISIBLE else " reveal"
-        cls += SIZE_BY_MOD.get(i % 9, "")
+        cls += _CLS[sizes[i]]
         tiles.append(
             f'          <button class="pf-item{cls}" data-id="{vid}" aria-label="포트폴리오 영상 재생">'
             f'<img src="https://i.ytimg.com/vi/{vid}/maxresdefault.jpg" '
