@@ -4,14 +4,16 @@
    ============================================ */
 
 :root {
-  --color-bg: #f5f4f1;
+  --color-bg: #fffdea; /* 키 컬러: 크림 (클라이언트 지정) */
   --color-dark: #0c0c0d;
   --color-dark-soft: #17171a;
   --color-ink: #131312;
   --color-ink-soft: #5b5954;
-  --color-line: #dedcd5;
+  --color-line: #ece8d2;
   --color-line-dark: #2a2a2e;
   --color-accent: #e8362b;
+  --color-kakao: #fee500;
+  --color-kakao-ink: #191919;
   --color-white: #ffffff;
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --container: 1180px;
@@ -104,16 +106,23 @@ ul { list-style: none; }
   transition: color 0.2s;
 }
 .nav-link:hover, .nav-link.is-active { color: var(--color-white); }
+.header__actions { display: flex; align-items: center; gap: 10px; }
 .header__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   font-size: 0.9rem;
   font-weight: 700;
-  padding: 11px 22px;
+  padding: 11px 20px;
   border-radius: 100px;
-  background: var(--color-accent);
-  color: var(--color-white);
-  transition: transform 0.25s var(--ease), background 0.25s;
+  transition: transform 0.25s var(--ease), background 0.25s, filter 0.25s;
 }
-.header__cta:hover { transform: translateY(-2px); background: #ff4437; }
+.header__cta:hover { transform: translateY(-2px); }
+.header__cta--consult { background: var(--color-accent); color: var(--color-white); }
+.header__cta--consult:hover { background: #ff4437; }
+.header__cta--kakao { background: var(--color-kakao); color: var(--color-kakao-ink); }
+.header__cta--kakao:hover { filter: brightness(1.05); }
+.header__cta--kakao svg { width: 17px; height: 17px; }
 
 .header__menu-btn {
   display: none;
@@ -157,6 +166,13 @@ ul { list-style: none; }
   color: var(--color-white);
 }
 .mobile-link:active { color: var(--color-accent); }
+.mobile-menu__actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+.mobile-menu__actions .header__cta { font-size: 1rem; padding: 14px 24px; }
 
 /* ===== Hero (dark fullscreen) ===== */
 .hero {
@@ -189,7 +205,10 @@ ul { list-style: none; }
   transform: translate(-50%, -50%);
   border: 0;
   pointer-events: none;
+  opacity: 0; /* 재생 시작 전엔 다크 그라디언트만 보이도록 */
+  transition: opacity 1.4s ease;
 }
+.hero__video.is-playing { opacity: 1; }
 .hero__overlay {
   position: absolute;
   inset: 0;
@@ -578,7 +597,7 @@ ul { list-style: none; }
 }
 
 @media (max-width: 640px) {
-  .header__nav, .header__cta { display: none; }
+  .header__nav, .header__actions { display: none; }
   .header__menu-btn { display: flex; }
   .br-desktop { display: none; }
   .section { padding: 84px 0; }

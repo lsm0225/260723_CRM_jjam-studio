@@ -2,6 +2,33 @@
    J JAM STUDIO — Interactions
    ============================================ */
 
+// ----- Hero video fade-in (블랙 화면 대신 재생 시작 시 페이드인) -----
+const heroVideo = document.querySelector(".hero__video");
+if (heroVideo) {
+  const showVideo = () => heroVideo.classList.add("is-playing");
+
+  // Vimeo 플레이어 postMessage 이벤트로 실제 재생 시점 감지
+  window.addEventListener("message", (e) => {
+    if (!/vimeo\.com$/.test(new URL(e.origin).hostname)) return;
+    let data;
+    try {
+      data = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+    } catch {
+      return;
+    }
+    if (data.event === "ready") {
+      heroVideo.contentWindow.postMessage(
+        JSON.stringify({ method: "addEventListener", value: "play" }),
+        "https://player.vimeo.com"
+      );
+    }
+    if (data.event === "play") showVideo();
+  });
+
+  // 이벤트를 못 받는 경우를 대비한 폴백: iframe 로드 후 2초 뒤 표시
+  heroVideo.addEventListener("load", () => setTimeout(showVideo, 2000));
+}
+
 // ----- Header scroll state -----
 const header = document.getElementById("header");
 const onScroll = () => {
