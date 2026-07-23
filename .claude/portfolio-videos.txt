@@ -1,0 +1,28 @@
+# 포트폴리오 영상 목록 (한 줄에 하나)
+# 형식:  <유튜브 URL>            → 제목 자동 조회
+#        <유튜브 URL> | 직접 제목  → 제목 직접 지정(비공개/조회불가 영상용)
+# 위에서부터 순서대로 노출되며, 10번째부터는 "더 보기"로 접힙니다.
+# 수정 후:  python3 .claude/gen-portfolio.py  실행 → 그리드 자동 갱신
+
+https://youtu.be/YMkMfrhTy1U
+https://youtu.be/WV8x4BC2Iwk
+https://youtu.be/d9KyiFb_DMU
+https://youtu.be/vAAuU_1JWsg
+https://youtu.be/2doDVaOWvvs
+https://youtu.be/9Ujoxe-MFkI
+https://youtu.be/nKmjEDQCP5I
+https://youtu.be/rSWXxcZr-kQ
+https://youtu.be/miUYlT1kOpA | 제이잼 포트폴리오
+https://youtu.be/5CLC1gvD4zQ
+https://youtu.be/mQW6chRAKQ0
+https://youtu.be/NFTjLFFpz_4
+https://youtu.be/MGl2tn_x5m0
+https://youtu.be/y45bK2Lldf0
+https://youtu.be/hmSi3PG1_V0
+https://youtu.be/L-vzl1EGMTw
+https://youtu.be/qQcgkA9MUoA
+https://youtu.be/G2sN4OBMUpY
+https://youtu.be/7oa3hJS4bTY
+https://youtu.be/S4AM6T1zqoc | 제이잼 포트폴리오
+https://youtu.be/E_LuGEFSW-s
+https://youtu.be/NDu6rGoEtZg

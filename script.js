@@ -90,6 +90,42 @@ const sectionObserver = new IntersectionObserver(
 );
 sections.forEach((s) => s && sectionObserver.observe(s));
 
+// ----- 포트폴리오 영상 라이트박스 + 더보기 -----
+const pfGrid = document.getElementById("portfolioGrid");
+const pfMoreBtn = document.getElementById("pfMoreBtn");
+const pfMoreWrap = document.getElementById("portfolioMore");
+const videoModal = document.getElementById("videoModal");
+const videoFrame = document.getElementById("videoFrame");
+
+if (pfMoreBtn && pfGrid) {
+  pfMoreBtn.addEventListener("click", () => {
+    pfGrid.classList.add("is-expanded");
+    if (pfMoreWrap) pfMoreWrap.style.display = "none";
+  });
+}
+
+if (pfGrid && videoModal && videoFrame) {
+  const openVideo = (id) => {
+    videoFrame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    videoModal.hidden = false;
+    document.body.style.overflow = "hidden";
+  };
+  const closeVideo = () => {
+    videoModal.hidden = true;
+    videoFrame.src = "about:blank";
+    document.body.style.overflow = "";
+  };
+  pfGrid.querySelectorAll(".pf-item").forEach((btn) =>
+    btn.addEventListener("click", () => openVideo(btn.dataset.id))
+  );
+  videoModal.querySelectorAll("[data-vclose]").forEach((el) =>
+    el.addEventListener("click", closeVideo)
+  );
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !videoModal.hidden) closeVideo();
+  });
+}
+
 // ----- 대표 약력 모달 -----
 const profileBtn = document.getElementById("profileBtn");
 const profileModal = document.getElementById("profileModal");
