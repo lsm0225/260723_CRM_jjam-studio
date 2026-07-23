@@ -92,7 +92,7 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 // ----- Active nav highlight -----
-const sections = ["about", "services", "portfolio", "client", "contact"].map((id) => document.getElementById(id));
+const sections = ["hero", "about", "services", "portfolio", "client", "contact"].map((id) => document.getElementById(id));
 const navLinks = document.querySelectorAll(".nav-link");
 
 const sectionObserver = new IntersectionObserver(
@@ -204,8 +204,19 @@ const PF_VIDEOS = [
       setTimeout(() => { track.style.transition = ""; slides().forEach((s) => (s.style.transition = "")); }, 1050);
     }, 500);
   }
-  // 탭 변경: 글씨/딜레이 없이 슬라이드만 교체 (블러 전환)
-  function switchTo(list) { buildTrack(list); setActive(); slides().forEach((s) => (s.style.opacity = "")); center(); flashBlur(); }
+  // 탭 변경: 글씨/딜레이 없이, 새 영상들이 오른쪽 → 가운데로 다시 슬라이드 인
+  function switchTo(list) {
+    buildTrack(list);
+    setActive();
+    track.style.transition = "none";
+    track.style.transform = `translateX(${targetX() + vpW() * 0.6}px)`; // 오른쪽 대기
+    slides().forEach((s) => (s.style.opacity = "0"));
+    void track.offsetWidth;                                            // 리플로우
+    track.style.transition = "transform .7s cubic-bezier(.5,0,.2,1)";
+    center(); flashBlur();                                             // 가운데로 진입 + 모션 블러
+    slides().forEach((s, i) => { s.style.transition = `opacity .5s ease ${i * 0.04}s`; s.style.opacity = ""; });
+    setTimeout(() => { track.style.transition = ""; slides().forEach((s) => (s.style.transition = "")); }, 760);
+  }
 
   // 탭 구성
   const cats = ["전체", ...new Set(PF_VIDEOS.map((v) => v.c))];
@@ -278,26 +289,6 @@ if (profileBtn && profileModal) {
 // ----- Contact form (mailto fallback) -----
 const form = document.getElementById("contactForm");
 const formNote = document.getElementById("formNote");
-const fileInput = document.getElementById("file");
-const fileName = document.getElementById("fileName");
-
-if (fileInput && fileName) {
-  fileInput.addEventListener("change", () => {
-    const f = fileInput.files[0];
-    if (!f) {
-      fileName.hidden = true;
-      return;
-    }
-    if (f.size > 50 * 1024 * 1024) {
-      fileInput.value = "";
-      fileName.hidden = false;
-      fileName.textContent = "50MB를 초과하는 파일은 이메일/카카오톡으로 별도 전달해주세요.";
-      return;
-    }
-    fileName.hidden = false;
-    fileName.textContent = `첨부: ${f.name}`;
-  });
-}
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -307,9 +298,9 @@ form.addEventListener("submit", (e) => {
   const phone = form.phone.value.trim();
   const email = form.email.value.trim();
   const type = form.querySelector('input[name="type"]:checked');
+  const refUrl = form.refUrl.value.trim();
   const message = form.message.value.trim();
   const agree = form.agree.checked;
-  const attached = fileInput && fileInput.files[0] ? fileInput.files[0].name : "";
 
   if (!name || !phone || !email) {
     formNote.textContent = "이름, 연락처, 이메일은 필수 입력 항목입니다.";
@@ -324,21 +315,19 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  const subject = encodeURIComponent(`[무료 상담신청] ${name}님 — ${type.value}`);
+  const subject = encodeURIComponent(`[문의] ${name}님 — ${type.value}`);
   const lines = [
     `업체명: ${company || "-"}`,
     `이름: ${name}`,
     `연락처: ${phone}`,
     `이메일: ${email}`,
     `문의 유형: ${type.value}`,
-    attached ? `첨부 예정 파일: ${attached} (메일에 직접 첨부해주세요)` : "",
+    refUrl ? `레퍼런스 링크: ${refUrl}` : "",
     "",
     message,
   ].filter(Boolean);
   const body = encodeURIComponent(lines.join("\n"));
-  window.location.href = `mailto:hello@jjamstudio.com?subject=${subject}&body=${body}`;
+  window.location.href = `mailto:ej74321@hanmail.net?subject=${subject}&body=${body}`;
 
-  formNote.textContent = attached
-    ? "메일 앱이 열립니다. 선택하신 파일을 메일에 첨부한 뒤 전송해주세요."
-    : "메일 앱이 열립니다. 전송 버튼을 눌러 문의를 완료해주세요.";
+  formNote.textContent = "메일 앱이 열립니다. 전송 버튼을 눌러 문의를 완료해주세요.";
 });

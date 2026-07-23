@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="style.css?v=23" />
+  <link rel="stylesheet" href="style.css?v=26" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%23be2d2f' d='M50 5l11 30 34 1-27 21 10 33-28-20-28 20 10-33-27-21 34-1z'/></svg>" />
 </head>
 <body>
@@ -286,20 +286,6 @@
                 <li>유튜브 채널로 마케팅을 하고 싶어요.</li>
               </ul>
             </div>
-            <dl class="concerns__contact">
-              <div>
-                <dt>Email</dt>
-                <dd><a href="mailto:hello@jjamstudio.com">hello@jjamstudio.com</a></dd>
-              </div>
-              <div>
-                <dt>Phone</dt>
-                <dd><a href="tel:010-0000-0000">010-0000-0000</a></dd>
-              </div>
-              <div>
-                <dt>Instagram</dt>
-                <dd><a href="https://instagram.com" target="_blank" rel="noopener">@jjam.studio</a></dd>
-              </div>
-            </dl>
           </aside>
           <form class="contact__form reveal" id="contactForm" novalidate>
             <div class="form-row">
@@ -333,17 +319,9 @@
               </div>
             </fieldset>
             <div class="form-field">
-              <label for="file">파일첨부</label>
-              <label class="file-btn" for="file">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17V4M6 10l6-6 6 6"/><path d="M4 20h16"/></svg>
-                파일 올리기
-              </label>
-              <input type="file" id="file" name="file" hidden />
-              <p class="file-name" id="fileName" hidden></p>
-              <p class="file-note">
-                파일은 <strong>최대 50MB</strong>까지 첨부 가능합니다.<br />
-                용량이 큰 파일은 이메일 또는 카카오톡 채널로 별도 전달해 주세요.
-              </p>
+              <label for="refUrl">레퍼런스 사이트</label>
+              <input type="url" id="refUrl" name="refUrl" placeholder="참고할 사이트·영상 링크가 있다면 붙여주세요 (예: https://...)" />
+              <p class="file-note">유사한 느낌의 사이트나 영상 링크를 남겨주시면 상담에 큰 도움이 됩니다.</p>
             </div>
             <div class="form-field">
               <label for="message">문의 내용</label>
@@ -352,10 +330,19 @@
             <div class="form-field">
               <label for="agree">개인정보 수집 및 이용 동의 <em>●</em></label>
               <div class="privacy-box">
-                회사는 문의 접수 및 상담 진행을 위해 아래와 같이 개인정보를 수집·이용합니다.
+                제이잼 에이전시(JJAM AGENCY)는 문의 접수 및 상담 진행을 위해 아래와 같이 개인정보를 수집·이용합니다.
                 <br /><br />
                 <strong>1. 수집 항목</strong><br />
-                업체명, 이름, 연락처, 이메일, 문의 내용, 첨부파일
+                업체명, 이름, 연락처, 이메일, 문의 내용, 레퍼런스 링크
+                <br /><br />
+                <strong>2. 수집·이용 목적</strong><br />
+                문의 사항 확인 및 답변, 상담·견적 진행 등 고객 응대
+                <br /><br />
+                <strong>3. 보유 및 이용 기간</strong><br />
+                수집일로부터 3년간 보관 후 지체 없이 파기합니다. 단, 관계 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관합니다.
+                <br /><br />
+                <strong>4. 동의 거부 권리 및 불이익</strong><br />
+                귀하는 개인정보 수집·이용에 대한 동의를 거부할 권리가 있습니다. 다만 동의를 거부하실 경우 문의 접수 및 상담 진행이 제한될 수 있습니다.
               </div>
               <label class="agree-check">
                 <input type="checkbox" id="agree" name="agree" />
@@ -430,6 +417,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=23"></script>
+  <script src="script.js?v=26"></script>
 </body>
 </html>
