@@ -31,7 +31,7 @@
   .pf-slider .wm{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(4rem,15vw,11rem);font-weight:900;letter-spacing:-.04em;color:var(--ink);pointer-events:none;white-space:nowrap;z-index:0;display:flex;line-height:1;transition:opacity .55s ease;}
   .pf-slider .wm.fade{opacity:0;}
   .pf-slider .wm span{opacity:0;transform:translateY(.18em);filter:blur(8px);}
-  .pf-slider .wm.write span{animation:wmWrite .35s cubic-bezier(.22,1,.36,1) forwards;}
+  .pf-slider .wm.write span{animation:wmWrite .28s cubic-bezier(.22,1,.36,1) forwards;}
   @keyframes wmWrite{to{opacity:.09;transform:translateY(0);filter:blur(0);}}
   .viewport{position:relative;z-index:1;overflow:visible;}
   .track{display:flex;gap:18px;will-change:transform;transition:transform .6s cubic-bezier(.5,0,.2,1);}
@@ -120,7 +120,7 @@ function makeSlider(host, items){
     </div>`;
   const track=host.querySelector(".track");
   const wm=host.querySelector(".wm");
-  wm.innerHTML=[..."PORTFOLIO"].map((ch,i)=>`<span style="animation-delay:${(i*0.04).toFixed(2)}s">${ch}</span>`).join("");
+  wm.innerHTML=[..."PORTFOLIO"].map((ch,i)=>`<span style="animation-delay:${(i*0.025).toFixed(3)}s">${ch}</span>`).join("");
   const dotsEl=host.querySelector(".dots");
   const cur=host.querySelector(".cur"), tot=host.querySelector(".tot"), bar=host.querySelector(".bar span");
   track.innerHTML=items.map(v=>`
@@ -191,7 +191,7 @@ function makeSlider(host, items){
       center();                            //    오른쪽 → 가운데로 진입
       slides.forEach((s,i)=>{ s.style.transition=`opacity .6s ease ${i*0.05}s, transform .5s cubic-bezier(.22,1,.36,1)`; s.style.opacity=""; });
       setTimeout(()=>{ track.classList.remove("is-sliding"); track.style.transition=""; slides.forEach(s=>s.style.transition=""); },1050);
-    },800);
+    },500);
   }
   new IntersectionObserver(es=>{ if(es[0].isIntersecting && !entered){ entered=true; runEntrance(); } },{threshold:.3}).observe(host);
 }
