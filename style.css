@@ -521,6 +521,9 @@ ul { list-style: none; }
   grid-template-columns: repeat(3, 1fr);
   gap: 52px 40px;
 }
+/* 관리자에서 항목 수가 바뀌면 자동 조정 (4개 → 2×2, 그 이상 → 균등 채움) */
+.why__grid.n4 { max-width: 860px; grid-template-columns: repeat(2, 1fr); }
+.why__grid.nmany { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .why-item { padding-top: 26px; border-top: 2px solid var(--color-line); transition: border-color 0.3s; }
 .why-item:hover { border-top-color: var(--color-accent); }
 .why-item__num {
@@ -755,6 +758,15 @@ ul { list-style: none; }
   font-weight: 800;
   letter-spacing: 0.18em;
   color: #cbc7b7;
+}
+.client__logo img { max-width: 78%; max-height: 62%; object-fit: contain; }
+.client__logo .client__name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--color-ink-soft);
+  padding: 0 10px;
+  text-align: center;
 }
 .client__note {
   margin-top: 30px;

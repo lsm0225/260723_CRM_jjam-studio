@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>JJAM AGENCY — 관리자</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{ --accent:#be2d2f; --dark:#0c0c0d; --bg:#f5f4f1; --line:#e2e0db; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Pretendard Variable",Pretendard,sans-serif;background:var(--bg);color:var(--dark);min-height:100vh}
+  button{font-family:inherit;cursor:pointer}
+  input,textarea,select{font-family:inherit;font-size:14px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;width:100%;color:var(--dark)}
+  input:focus,textarea:focus{outline:none;border-color:var(--accent)}
+  textarea{resize:vertical;min-height:80px;line-height:1.6}
+  label{display:block;font-size:12px;font-weight:700;color:#888;margin:14px 0 6px;letter-spacing:.04em}
+
+  /* 로그인 */
+  #loginView{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+  .login-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:40px;width:100%;max-width:380px}
+  .login-card h1{font-size:20px;margin-bottom:4px}
+  .login-card p{font-size:13px;color:#999;margin-bottom:24px}
+  .btn{display:inline-block;background:var(--dark);color:#fff;border:none;border-radius:8px;padding:12px 20px;font-size:14px;font-weight:600}
+  .btn:hover{background:var(--accent)}
+  .btn.small{padding:7px 12px;font-size:12.5px;border-radius:6px}
+  .btn.ghost{background:#fff;color:var(--dark);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent);background:#fff}
+  .btn.danger{background:#fff;color:#c33;border:1px solid #e5c9c9}
+  .btn.danger:hover{background:#c33;color:#fff;border-color:#c33}
+  .btn.full{width:100%;margin-top:20px}
+  .err{color:#c33;font-size:13px;margin-top:12px;display:none}
+
+  /* 레이아웃 */
+  #adminView{display:none}
+  .topbar{position:sticky;top:0;z-index:10;background:var(--dark);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px}
+  .topbar b{font-size:15px;letter-spacing:.06em}
+  .topbar b span{color:var(--accent)}
+  .topbar .actions{display:flex;gap:10px;align-items:center}
+  .topbar a{color:#bbb;font-size:13px;text-decoration:none}
+  .topbar a:hover{color:#fff}
+  .topbar button{background:none;border:1px solid #444;color:#bbb;border-radius:6px;padding:6px 12px;font-size:12.5px}
+  .topbar button:hover{color:#fff;border-color:#888}
+  .wrap{max-width:900px;margin:0 auto;padding:24px 20px 80px}
+
+  /* 탭 */
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px}
+  .tabs button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 16px;font-size:13.5px;font-weight:600;color:#777}
+  .tabs button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+  .panel{display:none;background:#fff;border:1px solid var(--line);border-radius:16px;padding:28px}
+  .panel.on{display:block}
+  .panel h2{font-size:17px;margin-bottom:4px}
+  .panel .hint{font-size:12.5px;color:#999;margin-bottom:10px}
+  .savebar{margin-top:22px;padding-top:18px;border-top:1px solid var(--line);display:flex;gap:10px;align-items:center}
+  .saved{font-size:13px;color:#2c8a4b;display:none}
+
+  /* 리스트(포트폴리오/클라이언트/문의) */
+  .row{display:flex;gap:8px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px;background:#fafaf8}
+  .row .thumb{width:96px;height:54px;object-fit:cover;border-radius:6px;background:#ddd;flex:none}
+  .row .fields{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .row .fields .cols{display:flex;gap:6px}
+  .row .ctrl{display:flex;flex-direction:column;gap:4px;flex:none}
+  .row .ctrl button{width:32px;height:26px;border:1px solid var(--line);background:#fff;border-radius:6px;font-size:12px;color:#666}
+  .row .ctrl button:hover{border-color:var(--accent);color:var(--accent)}
+  .addbox{border:2px dashed var(--line);border-radius:12px;padding:18px;margin-top:18px}
+  .addbox h3{font-size:14px;margin-bottom:4px}
+  .muted{font-size:12.5px;color:#999}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:12px;color:#888;white-space:nowrap}
+  td .msg{white-space:pre-wrap;color:#555;max-width:340px}
+  .why-item,.svc-item{border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:12px;background:#fafaf8;position:relative}
+  .why-item .del,.svc-item .del{position:absolute;top:10px;right:10px}
+  @media(max-width:640px){ .row{flex-wrap:wrap} .panel{padding:18px} }
+</style>
+</head>
+<body>
+
+<!-- 로그인 -->
+<div id="loginView">
+  <form class="login-card" id="loginForm">
+    <h1>JJAM <span style="color:var(--accent)">ADMIN</span></h1>
+    <p>관리자 비밀번호를 입력하세요.</p>
+    <input type="password" id="pw" placeholder="비밀번호" autocomplete="current-password" required>
+    <div class="err" id="loginErr"></div>
+    <button class="btn full" type="submit">로그인</button>
+  </form>
+</div>
+
+<!-- 관리자 -->
+<div id="adminView">
+  <div class="topbar">
+    <b>JJAM <span>ADMIN</span></b>
+    <div class="actions">
+      <a href="/" target="_blank">사이트 보기 ↗</a>
+      <button id="logoutBtn">로그아웃</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="tabs" id="tabs">
+      <button data-tab="hero" class="on">히어로</button>
+      <button data-tab="about">소개</button>
+      <button data-tab="services">서비스</button>
+      <button data-tab="why">WHY JJAM</button>
+      <button data-tab="portfolio">포트폴리오</button>
+      <button data-tab="clients">클라이언트</button>
+      <button data-tab="footer">푸터</button>
+      <button data-tab="inbox">문의내역</button>
+    </div>
+
+    <!-- 히어로 -->
+    <div class="panel on" data-panel="hero">
+      <h2>메인 히어로 문구</h2>
+      <p class="hint">붉은 포인트 단어는 첫 줄 문구 안에 포함된 단어를 그대로 적으면 됩니다.</p>
+      <label>첫 줄</label><input id="hero_line1">
+      <label>둘째 줄</label><input id="hero_line2">
+      <label>포인트(붉은색) 단어</label><input id="hero_accent">
+      <label>설명 문구</label><input id="hero_desc">
+      <div class="savebar"><button class="btn" onclick="saveHero()">저장</button><span class="saved" id="saved_hero">저장되었습니다 ✓</span></div>
+    </div>
+
+    <!-- 소개 -->
+    <div class="panel" data-panel="about">
+      <h2>ABOUT JJAM AGENCY</h2>
+      <label>제목 (줄바꿈 가능)</label><textarea id="about_title" rows="2"></textarea>
+      <label>본문 (문단마다 줄바꿈 2번)</label><textarea id="about_body" rows="8"></textarea>
+      <label>강조 문장</label><input id="about_punch">
+      <label>대표 이름</label><input id="about_ceo_name">
+      <label>대표 직함</label><input id="about_ceo_role">
+      <div class="savebar"><button class="btn" onclick="saveAbout()">저장</button><span class="saved" id="saved_about">저장되었습니다 ✓</span></div>
+    </div>
+
+    <!-- 서비스 -->
+    <div class="panel" data-panel="services">
+      <h2>OUR SERVICES</h2>
+      <p class="hint">항목 추가/삭제 시 사이트 레이아웃이 자동으로 맞춰집니다.</p>
+      <div id="svcList"></div>
+      <button class="btn ghost small" onclick="addSvc()">+ 서비스 추가</button>
+      <div class="savebar"><button class="btn" onclick="saveServices()">저장</button><span class="saved" id="saved_services">저장되었습니다 ✓</span></div>
+    </div>
+
+    <!-- WHY -->
+    <div class="panel" data-panel="why">
+      <h2>WHY JJAM?</h2>
+      <p class="hint">04번째 항목을 추가하면 사이트 레이아웃이 자동으로 조정됩니다.</p>
+      <div id="whyList"></div>
+      <button class="btn ghost small" onclick="addWhy()">+ 항목 추가</button>
+      <div class="savebar"><button class="btn" onclick="saveWhy()">저장</button><span class="saved" id="saved_why">저장되었습니다 ✓</span></div>
+    </div>
+
+    <!-- 포트폴리오 -->
+    <div class="panel" data-panel="portfolio">
+      <h2>포트폴리오</h2>
+      <p class="hint">▲▼ 버튼으로 순서 변경 → 자동 저장됩니다. 제목은 영상 아래 가운데에 표시됩니다.</p>
+      <label>분야(카테고리) — 쉼표로 구분</label>
+      <div style="display:flex;gap:8px"><input id="pfCats"><button class="btn small" style="flex:none" onclick="saveCats()">분류 저장</button></div>
+      <div style="margin-top:18px" id="pfList"></div>
+      <div class="addbox">
+        <h3>새 영상 추가</h3>
+        <p class="muted">유튜브 링크를 붙여넣으면 영상 ID가 자동 인식됩니다.</p>
+        <label>유튜브 링크</label><input id="newPfUrl" placeholder="https://youtu.be/XXXXXXXXXXX">
+        <label>제목</label><input id="newPfTitle" placeholder="영상 제목">
+        <label>분류</label><input id="newPfCat" list="catList" placeholder="기존 분류 선택 또는 새 분류 입력">
+        <datalist id="catList"></datalist>
+        <button class="btn small" style="margin-top:14px" onclick="addPf()">+ 추가</button>
+      </div>
+      <div id="pfSeedWrap" style="display:none;margin-top:16px">
+        <button class="btn ghost small" onclick="seedPf()">현재 사이트의 기본 22개 영상 불러오기</button>
+      </div>
+    </div>
+
+    <!-- 클라이언트 -->
+    <div class="panel" data-panel="clients">
+      <h2>클라이언트 로고</h2>
+      <p class="hint">로고 이미지 주소(URL)를 넣으면 로고가, 없으면 이름 텍스트가 표시됩니다.</p>
+      <div id="clList"></div>
+      <div class="addbox">
+        <h3>새 클라이언트 추가</h3>
+        <label>이름</label><input id="newClName" placeholder="회사명">
+        <label>로고 이미지 URL (선택)</label><input id="newClLogo" placeholder="https://...png">
+        <label>링크 (선택)</label><input id="newClLink" placeholder="https://...">
+        <button class="btn small" style="margin-top:14px" onclick="addCl()">+ 추가</button>
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="panel" data-panel="footer">
+      <h2>푸터 · 회사 정보</h2>
+      <label>회사명</label><input id="ft_company">
+      <label>대표</label><input id="ft_ceo">
+      <label>주소</label><input id="ft_address">
+      <label>전화번호</label><input id="ft_phone">
+      <label>이메일</label><input id="ft_email">
+      <div class="savebar"><button class="btn" onclick="saveFooter()">저장</button><span class="saved" id="saved_footer">저장되었습니다 ✓</span></div>
+    </div>
+
+    <!-- 문의내역 -->
+    <div class="panel" data-panel="inbox">
+      <h2>문의 내역</h2>
+      <p class="hint" id="inboxCount"></p>
+      <div style="overflow-x:auto"><table id="inboxTable">
+        <thead><tr><th>날짜</th><th>이름/회사</th><th>연락처</th><th>유형</th><th>내용</th><th></th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = "/api";
+let TOKEN = localStorage.getItem("jjam_token") || "";
+let CONTENT = {}, PF = [], CL = [];
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+async function api(path, opt = {}) {
+  opt.headers = Object.assign({ "Content-Type": "application/json" }, opt.headers || {});
+  if (TOKEN) opt.headers.Authorization = "Bearer " + TOKEN;
+  const r = await fetch(API + path, opt);
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 401 && path !== "/login") { logout(); throw new Error("세션이 만료되었습니다. 다시 로그인해주세요."); }
+  if (!r.ok) throw new Error(d.error || ("오류 (" + r.status + ")"));
+  return d;
+}
+function flash(id){ const el = $("#saved_"+id); if(!el) return; el.style.display="inline"; setTimeout(()=>el.style.display="none", 2500); }
+function logout(){ TOKEN=""; localStorage.removeItem("jjam_token"); $("#adminView").style.display="none"; $("#loginView").style.display="flex"; }
+
+// ---------- 로그인 ----------
+$("#loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const err = $("#loginErr"); err.style.display = "none";
+  try {
+    const d = await api("/login", { method: "POST", body: JSON.stringify({ password: $("#pw").value }) });
+    TOKEN = d.token; localStorage.setItem("jjam_token", TOKEN);
+    enter();
+  } catch (ex) { err.textContent = ex.message; err.style.display = "block"; }
+});
+$("#logoutBtn").addEventListener("click", logout);
+
+// ---------- 탭 ----------
+$("#tabs").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  document.querySelectorAll(".tabs button").forEach(x => x.classList.toggle("on", x === b));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("on", p.dataset.panel === b.dataset.tab));
+});
+
+// ---------- 진입 & 로드 ----------
+async function enter() {
+  $("#loginView").style.display = "none"; $("#adminView").style.display = "block";
+  await Promise.all([loadContent(), loadPf(), loadCl(), loadInbox()]);
+}
+async function loadContent() {
+  CONTENT = await api("/content");
+  const h = CONTENT.hero || {};
+  $("#hero_line1").value = h.line1 || ""; $("#hero_line2").value = h.line2 || "";
+  $("#hero_accent").value = h.accent || ""; $("#hero_desc").value = h.desc || "";
+  const a = CONTENT.about || {};
+  $("#about_title").value = a.title || "";
+  $("#about_body").value = (a.body || []).join("\n\n");
+  $("#about_punch").value = a.punch || "";
+  $("#about_ceo_name").value = a.ceo_name || ""; $("#about_ceo_role").value = a.ceo_role || "";
+  renderSvc(); renderWhy();
+  const f = CONTENT.footer || {};
+  $("#ft_company").value = f.company || ""; $("#ft_ceo").value = f.ceo || "";
+  $("#ft_address").value = f.address || ""; $("#ft_phone").value = f.phone || ""; $("#ft_email").value = f.email || "";
+  $("#pfCats").value = (CONTENT.portfolio_categories || []).join(", ");
+  renderCatList();
+}
+function renderCatList(){
+  $("#catList").innerHTML = (CONTENT.portfolio_categories||[]).map(c=>`<option value="${esc(c)}">`).join("");
+}
+
+// ---------- 저장: 히어로/소개/푸터 ----------
+async function saveHero() {
+  await api("/content", { method:"PUT", body: JSON.stringify({ key:"hero", value:{
+    line1:$("#hero_line1").value, line2:$("#hero_line2").value, accent:$("#hero_accent").value, desc:$("#hero_desc").value } }) });
+  flash("hero");
+}
+async function saveAbout() {
+  await api("/content", { method:"PUT", body: JSON.stringify({ key:"about", value:{
+    title:$("#about_title").value,
+    body:$("#about_body").value.split(/\n\s*\n/).map(s=>s.trim()).filter(Boolean),
+    punch:$("#about_punch").value, ceo_name:$("#about_ceo_name").value, ceo_role:$("#about_ceo_role").value } }) });
+  flash("about");
+}
+async function saveFooter() {
+  await api("/content", { method:"PUT", body: JSON.stringify({ key:"footer", value:{
+    company:$("#ft_company").value, ceo:$("#ft_ceo").value, address:$("#ft_address").value,
+    phone:$("#ft_phone").value, email:$("#ft_email").value } }) });
+  flash("footer");
+}
+async function saveCats() {
+  CONTENT.portfolio_categories = $("#pfCats").value.split(",").map(s=>s.trim()).filter(Boolean);
+  await api("/content", { method:"PUT", body: JSON.stringify({ key:"portfolio_categories", value: CONTENT.portfolio_categories }) });
+  renderCatList(); alert("분류가 저장되었습니다.");
+}
+
+// ---------- 서비스 ----------
+function renderSvc() {
+  $("#svcList").innerHTML = (CONTENT.services||[]).map((s,i)=>`
+    <div class="svc-item">
+      <button class="btn danger small del" onclick="delSvc(${i})">삭제</button>
+      <label>서비스명 (0${i+1})</label><input data-svc="${i}" data-f="title" value="${esc(s.title)}">
+      <label>영문명</label><input data-svc="${i}" data-f="en" value="${esc(s.en)}">
+      <label>설명</label><textarea data-svc="${i}" data-f="desc" rows="2">${esc(s.desc)}</textarea>
+    </div>`).join("");
+}
+function collectSvc(){
+  document.querySelectorAll("[data-svc]").forEach(el=>{ CONTENT.services[+el.dataset.svc][el.dataset.f] = el.value; });
+}
+function addSvc(){ collectSvc(); CONTENT.services.push({title:"",en:"",desc:""}); renderSvc(); }
+function delSvc(i){ collectSvc(); CONTENT.services.splice(i,1); renderSvc(); }
+async function saveServices(){ collectSvc();
+  await api("/content",{method:"PUT",body:JSON.stringify({key:"services",value:CONTENT.services})}); flash("services"); }
+
+// ---------- WHY ----------
+function renderWhy() {
+  $("#whyList").innerHTML = (CONTENT.why||[]).map((w,i)=>`
+    <div class="why-item">
+      <button class="btn danger small del" onclick="delWhy(${i})">삭제</button>
+      <label>제목 (0${i+1})</label><input data-why="${i}" data-f="title" value="${esc(w.title)}">
+      <label>설명</label><textarea data-why="${i}" data-f="desc" rows="2">${esc(w.desc)}</textarea>
+    </div>`).join("");
+}
+function collectWhy(){
+  document.querySelectorAll("[data-why]").forEach(el=>{ CONTENT.why[+el.dataset.why][el.dataset.f] = el.value; });
+}
+function addWhy(){ collectWhy(); CONTENT.why.push({title:"",desc:""}); renderWhy(); }
+function delWhy(i){ collectWhy(); CONTENT.why.splice(i,1); renderWhy(); }
+async function saveWhy(){ collectWhy();
+  await api("/content",{method:"PUT",body:JSON.stringify({key:"why",value:CONTENT.why})}); flash("why"); }
+
+// ---------- 포트폴리오 ----------
+const ytId = (s) => {
+  s = (s||"").trim();
+  const m = s.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/) || s.match(/^([\w-]{11})$/);
+  return m ? m[1] : "";
+};
+async function loadPf() {
+  PF = await api("/portfolio");
+  $("#pfSeedWrap").style.display = PF.length ? "none" : "block";
+  $("#pfList").innerHTML = PF.map((p,i)=>`
+    <div class="row">
+      <img class="thumb" src="https://i.ytimg.com/vi/${esc(p.video_id)}/mqdefault.jpg" alt="">
+      <div class="fields">
+        <input data-pf="${p.id}" data-f="title" value="${esc(p.title)}" placeholder="제목 (영상 아래 가운데 표시)">
+        <div class="cols">
+          <input data-pf="${p.id}" data-f="url" value="${esc(p.url||('https://youtu.be/'+p.video_id))}" placeholder="유튜브 링크">
+          <input data-pf="${p.id}" data-f="category" list="catList" value="${esc(p.category)}" placeholder="분류" style="max-width:140px">
+        </div>
+        <div class="cols">
+          <button class="btn small" onclick="savePf(${p.id})">저장</button>
+          <button class="btn danger small" onclick="delPf(${p.id})">삭제</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <button onclick="movePf(${i},-1)" ${i===0?"disabled":""}>▲</button>
+        <button onclick="movePf(${i},1)" ${i===PF.length-1?"disabled":""}>▼</button>
+      </div>
+    </div>`).join("");
+}
+async function savePf(id) {
+  const g = (f) => document.querySelector(`[data-pf="${id}"][data-f="${f}"]`).value;
+  const vid = ytId(g("url"));
+  if (!vid) return alert("유튜브 링크에서 영상 ID를 찾지 못했습니다.");
+  await api("/portfolio", { method:"PUT", body: JSON.stringify({ id, title:g("title"), url:g("url"), video_id:vid, category:g("category") }) });
+  await loadPf();
+}
+async function delPf(id) {
+  if (!confirm("이 영상을 삭제할까요?")) return;
+  await api("/portfolio?id="+id, { method:"DELETE" }); await loadPf();
+}
+async function movePf(i, dir) {
+  const j = i + dir; if (j < 0 || j >= PF.length) return;
+  const order = PF.map(p=>p.id); [order[i],order[j]] = [order[j],order[i]];
+  await api("/portfolio/reorder", { method:"POST", body: JSON.stringify({ order }) });
+  await loadPf();
+}
+async function addPf() {
+  const vid = ytId($("#newPfUrl").value);
+  if (!vid) return alert("유튜브 링크에서 영상 ID를 찾지 못했습니다.");
+  const cat = $("#newPfCat").value.trim();
+  await api("/portfolio", { method:"POST", body: JSON.stringify({
+    title:$("#newPfTitle").value.trim(), url:$("#newPfUrl").value.trim(), video_id:vid, category:cat }) });
+  if (cat && !(CONTENT.portfolio_categories||[]).includes(cat)) {
+    CONTENT.portfolio_categories = [...(CONTENT.portfolio_categories||[]), cat];
+    await api("/content",{method:"PUT",body:JSON.stringify({key:"portfolio_categories",value:CONTENT.portfolio_categories})});
+    $("#pfCats").value = CONTENT.portfolio_categories.join(", "); renderCatList();
+  }
+  $("#newPfUrl").value = $("#newPfTitle").value = $("#newPfCat").value = "";
+  await loadPf();
+}
+async function seedPf(){ await api("/portfolio/seed",{method:"POST"}); await loadPf(); }
+
+// ---------- 클라이언트 ----------
+async function loadCl() {
+  CL = await api("/clients");
+  $("#clList").innerHTML = CL.length ? CL.map((c,i)=>`
+    <div class="row">
+      <div class="fields">
+        <div class="cols">
+          <input data-cl="${c.id}" data-f="name" value="${esc(c.name)}" placeholder="이름">
+          <input data-cl="${c.id}" data-f="logo_url" value="${esc(c.logo_url)}" placeholder="로고 URL">
+          <input data-cl="${c.id}" data-f="link" value="${esc(c.link)}" placeholder="링크">
+        </div>
+        <div class="cols">
+          <button class="btn small" onclick="saveCl(${c.id})">저장</button>
+          <button class="btn danger small" onclick="delCl(${c.id})">삭제</button>
+        </div>
+      </div>
+      <div class="ctrl">
+        <button onclick="moveCl(${i},-1)" ${i===0?"disabled":""}>▲</button>
+        <button onclick="moveCl(${i},1)" ${i===CL.length-1?"disabled":""}>▼</button>
+      </div>
+    </div>`).join("") : '<p class="muted">등록된 클라이언트가 없습니다. 등록 전에는 사이트에 LOGO 자리표시가 보입니다.</p>';
+}
+async function saveCl(id) {
+  const g = (f) => document.querySelector(`[data-cl="${id}"][data-f="${f}"]`).value;
+  await api("/clients", { method:"PUT", body: JSON.stringify({ id, name:g("name"), logo_url:g("logo_url"), link:g("link") }) });
+  await loadCl();
+}
+async function delCl(id) {
+  if (!confirm("삭제할까요?")) return;
+  await api("/clients?id="+id, { method:"DELETE" }); await loadCl();
+}
+async function moveCl(i, dir) {
+  const j = i + dir; if (j < 0 || j >= CL.length) return;
+  const order = CL.map(c=>c.id); [order[i],order[j]] = [order[j],order[i]];
+  await api("/clients/reorder", { method:"POST", body: JSON.stringify({ order }) });
+  await loadCl();
+}
+async function addCl() {
+  await api("/clients", { method:"POST", body: JSON.stringify({
+    name:$("#newClName").value.trim(), logo_url:$("#newClLogo").value.trim(), link:$("#newClLink").value.trim() }) });
+  $("#newClName").value = $("#newClLogo").value = $("#newClLink").value = "";
+  await loadCl();
+}
+
+// ---------- 문의내역 ----------
+async function loadInbox() {
+  const list = await api("/contact");
+  $("#inboxCount").textContent = "총 " + list.length + "건";
+  $("#inboxTable tbody").innerHTML = list.map(s=>`
+    <tr>
+      <td style="white-space:nowrap">${esc((s.created_at||"").slice(0,10))}<br><span class="muted">${esc((s.created_at||"").slice(11,16))}</span></td>
+      <td><b>${esc(s.name)}</b>${s.company?`<br><span class="muted">${esc(s.company)}</span>`:""}</td>
+      <td>${esc(s.phone)}<br><span class="muted">${esc(s.email)}</span></td>
+      <td>${esc(s.type)}</td>
+      <td><div class="msg">${esc(s.message)}${s.ref_url?`<br><a href="${esc(s.ref_url)}" target="_blank" rel="noopener">${esc(s.ref_url)}</a>`:""}</div></td>
+      <td><button class="btn danger small" onclick="delInbox(${s.id})">삭제</button></td>
+    </tr>`).join("") || '<tr><td colspan="6" class="muted">아직 문의가 없습니다.</td></tr>';
+}
+async function delInbox(id) {
+  if (!confirm("이 문의를 삭제할까요?")) return;
+  await api("/contact?id="+id, { method:"DELETE" }); await loadInbox();
+}
+
+// ---------- 자동 로그인 ----------
+(async () => {
+  if (!TOKEN) return;
+  try { const d = await api("/me"); if (d.authed) enter(); else logout(); } catch { logout(); }
+})();
+</script>
+</body>
+</html>

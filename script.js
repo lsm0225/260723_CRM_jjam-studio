@@ -135,7 +135,7 @@ const PF_VIDEOS = [
   { id: "S4AM6T1zqoc", t: "제이잼 포트폴리오", c: "문화·라이프" },
 ];
 
-(function initPortfolioSlider() {
+function initPortfolioSlider(videos, catNames) {
   const host = document.getElementById("pfSlider");
   const tabsEl = document.getElementById("pfTabs");
   if (!host || !tabsEl) return;
@@ -219,16 +219,16 @@ const PF_VIDEOS = [
     setTimeout(() => { track.style.transition = ""; slides().forEach((s) => (s.style.transition = "")); }, 760);
   }
 
-  // 탭 구성
-  const cats = ["전체", ...new Set(PF_VIDEOS.map((v) => v.c))];
+  // 탭 구성 (관리자에서 분류를 저장하면 그 순서를 따름)
+  const cats = ["전체", ...(catNames && catNames.length ? catNames : [...new Set(videos.map((v) => v.c))])];
   tabsEl.innerHTML = cats.map((c, i) => `<button class="pf-tab${i === 0 ? " on" : ""}" data-c="${c}">${c}</button>`).join("");
-  const listFor = (c) => (c === "전체" ? PF_VIDEOS : PF_VIDEOS.filter((v) => v.c === c));
+  const listFor = (c) => (c === "전체" ? videos : videos.filter((v) => v.c === c));
 
   // 더보기 → 그리드 토글
   const section = document.getElementById("portfolio");
   const grid = document.getElementById("pfGrid");
   const moreBtn = document.getElementById("pfMore");
-  let currentList = PF_VIDEOS, gridMode = false;
+  let currentList = videos, gridMode = false;
   function renderGrid(list) {
     grid.innerHTML = list.map((v, i) =>
       `<button class="pf-gtile" data-id="${v.id}" style="animation-delay:${(i * 0.05).toFixed(2)}s"><img src="https://i.ytimg.com/vi/${v.id}/maxresdefault.jpg" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${v.id}/hqdefault.jpg'" alt=""><span class="pf-gplay"></span><span class="pf-gtit">${v.t}</span></button>`
@@ -260,13 +260,13 @@ const PF_VIDEOS = [
   });
 
   // 초기: 전체 목록 빌드 + 활성 세팅, 슬라이드는 화면 오른쪽 밖에서 투명 대기
-  buildTrack(PF_VIDEOS);
-  renderGrid(PF_VIDEOS);                          // 모바일에서 슬라이더 대신 바로 보이도록 그리드 미리 렌더
+  buildTrack(videos);
+  renderGrid(videos);                             // 모바일에서 슬라이더 대신 바로 보이도록 그리드 미리 렌더
   setActive(); center(); track.classList.remove("is-sliding");
   (function preHide() { track.style.transition = "none"; track.style.transform = `translateX(${targetX() + vpW()}px)`; slides().forEach((s) => (s.style.opacity = "0")); void track.offsetWidth; track.style.transition = ""; })();
   window.addEventListener("resize", center);
   new IntersectionObserver((es) => { if (es[0].isIntersecting && !entered) { entered = true; firstEntrance(); } }, { threshold: 0.3 }).observe(host);
-})();
+}
 
 // ----- 대표 약력 모달 -----
 const profileBtn = document.getElementById("profileBtn");
@@ -305,7 +305,7 @@ if (phoneInput) {
   });
 }
 
-form.addEventListener("submit", (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const company = form.company.value.trim();
@@ -330,6 +330,21 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
+  // 1) 서버(DB) 저장 시도 — Cloudflare에서 동작, 관리자 화면 '문의내역'에 쌓임
+  try {
+    const r = await fetch("/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ company, name, phone, email, type: type.value, ref_url: refUrl, message }),
+    });
+    if (r.ok) {
+      form.reset();
+      formNote.textContent = "문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다. 감사합니다!";
+      return;
+    }
+  } catch { /* 정적 호스팅 등 API 미지원 환경 → 메일 폴백 */ }
+
+  // 2) 폴백: 메일 앱 열기
   const subject = encodeURIComponent(`[문의] ${name}님 — ${type.value}`);
   const lines = [
     `업체명: ${company || "-"}`,
@@ -342,7 +357,150 @@ form.addEventListener("submit", (e) => {
     message,
   ].filter(Boolean);
   const body = encodeURIComponent(lines.join("\n"));
-  window.location.href = `mailto:ej74321@hanmail.net?subject=${subject}&body=${body}`;
+  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
 
   formNote.textContent = "메일 앱이 열립니다. 전송 버튼을 눌러 문의를 완료해주세요.";
 });
+
+// ============================================
+// CMS(관리자 화면) 콘텐츠 연동
+// /api/* 는 Cloudflare Pages Functions — 관리자에서 저장한 값만 반영하고,
+// 저장된 적 없거나 API가 없는 환경(GitHub Pages)에서는 기본 콘텐츠 그대로 표시
+// ============================================
+let CONTACT_EMAIL = "ej74321@hanmail.net";
+
+const escHtml = (s) => {
+  const d = document.createElement("div");
+  d.textContent = s ?? "";
+  return d.innerHTML;
+};
+
+function applyContent(c, ov) {
+  // 히어로
+  if (ov.has("hero") && c.hero) {
+    const h = c.hero;
+    const mark = (line) => {
+      const t = escHtml(line);
+      return h.accent && line.includes(h.accent) ? t.replace(escHtml(h.accent), `<em>${escHtml(h.accent)}</em>`) : t;
+    };
+    const l1 = document.querySelector(".hero__line.delay-1");
+    const l2 = document.querySelector(".hero__line.delay-2");
+    if (l1 && h.line1) l1.innerHTML = mark(h.line1);
+    if (l2 && h.line2) l2.innerHTML = mark(h.line2);
+    const hd = document.querySelector(".hero__desc");
+    if (hd && h.desc) hd.textContent = h.desc;
+  }
+
+  // About
+  if (ov.has("about") && c.about) {
+    const a = c.about;
+    const at = document.querySelector(".about__title");
+    if (at && a.title) at.innerHTML = escHtml(a.title).replace(/\n/g, "<br />");
+    const ab = document.querySelector(".about__body");
+    if (ab && Array.isArray(a.body) && a.body.length) {
+      ab.innerHTML =
+        a.body.map((p) => `<p>${escHtml(p)}</p>`).join("") +
+        (a.punch ? `<p class="about__punch">${escHtml(a.punch)}</p>` : "");
+    }
+    const cn = document.querySelector(".ceo-name");
+    if (cn && a.ceo_name) cn.innerHTML = `<em>CEO</em> ${escHtml(a.ceo_name)}`;
+    const cr = document.querySelector(".ceo-role");
+    if (cr && a.ceo_role) cr.textContent = a.ceo_role;
+  }
+
+  // 서비스 (아이콘은 기존 4종을 순환 재사용)
+  if (ov.has("services") && Array.isArray(c.services) && c.services.length) {
+    const rows = document.querySelector(".services__rows");
+    if (rows) {
+      const icons = [...rows.querySelectorAll(".svc-row__icon")].map((el) => el.outerHTML);
+      rows.innerHTML = c.services
+        .map(
+          (s, i) => `
+        <div class="svc-row reveal">
+          <div class="svc-row__title"><h3>${escHtml(s.title)}</h3><p>${escHtml(s.en)}</p></div>
+          <p class="svc-row__desc">${escHtml(s.desc)}</p>
+          ${icons[i % icons.length] || ""}
+        </div>`
+        )
+        .join("");
+      rows.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+    }
+  }
+
+  // WHY JJAM? (개수가 늘면 레이아웃 자동 조정)
+  if (ov.has("why") && Array.isArray(c.why) && c.why.length) {
+    const g = document.querySelector(".why__grid");
+    if (g) {
+      g.innerHTML = c.why
+        .map(
+          (w, i) => `
+        <div class="why-item reveal">
+          <span class="why-item__num">${String(i + 1).padStart(2, "0")}</span>
+          <h3>${escHtml(w.title)}</h3><p>${escHtml(w.desc)}</p>
+        </div>`
+        )
+        .join("");
+      g.classList.toggle("n4", c.why.length === 4);
+      g.classList.toggle("nmany", c.why.length > 4);
+      g.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+    }
+  }
+
+  // 포트폴리오 소제목
+  if (ov.has("portfolio_heading") && c.portfolio_heading && c.portfolio_heading.sub) {
+    const el = document.querySelector(".pf-sub");
+    if (el) el.textContent = c.portfolio_heading.sub;
+  }
+
+  // 푸터
+  if (ov.has("footer") && c.footer) {
+    const f = c.footer;
+    if (f.email) CONTACT_EMAIL = f.email;
+    const colTitle = document.querySelector(".footer__col .footer__col-title");
+    if (colTitle && f.company) {
+      const m = f.company.match(/^(.*?)\s*(\(.+\))\s*$/);
+      colTitle.innerHTML = m ? `${escHtml(m[1])} <span>${escHtml(m[2])}</span>` : escHtml(f.company);
+    }
+    const lists = document.querySelectorAll(".footer__list");
+    if (lists[0]) lists[0].innerHTML = `<li><span>대표</span> ${escHtml(f.ceo)}</li><li><span>주소</span> ${escHtml(f.address)}</li>`;
+    if (lists[1]) lists[1].innerHTML =
+      `<li><span>전화</span> <a href="tel:${escHtml(f.phone)}">${escHtml(f.phone)}</a></li>` +
+      `<li><span>메일</span> <a href="mailto:${escHtml(f.email)}">${escHtml(f.email)}</a></li>`;
+  }
+}
+
+function applyClients(list) {
+  if (!Array.isArray(list) || !list.length) return; // 등록 전에는 LOGO 자리표시 유지
+  const grid = document.querySelector(".client__grid");
+  if (!grid) return;
+  grid.innerHTML = list
+    .map((cl) => {
+      const inner = cl.logo_url
+        ? `<img src="${escHtml(cl.logo_url)}" alt="${escHtml(cl.name)}" loading="lazy" />`
+        : `<span class="client__name">${escHtml(cl.name)}</span>`;
+      return cl.link
+        ? `<a class="client__logo" href="${escHtml(cl.link)}" target="_blank" rel="noopener">${inner}</a>`
+        : `<div class="client__logo">${inner}</div>`;
+    })
+    .join("");
+  const note = document.querySelector(".client__note");
+  if (note) note.remove();
+}
+
+(async function bootCMS() {
+  const j = (u) => fetch(u).then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))));
+  const timeout = (ms) => new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms));
+  let videos = PF_VIDEOS, cats = null;
+  try {
+    const [content, pf, clients] = await Promise.race([
+      Promise.all([j("/api/content"), j("/api/portfolio"), j("/api/clients")]),
+      timeout(4000),
+    ]);
+    const ov = new Set(content._overrides || []);
+    applyContent(content, ov);
+    applyClients(clients);
+    if (Array.isArray(pf) && pf.length) videos = pf.map((p) => ({ id: p.video_id, t: p.title || "", c: p.category || "" }));
+    if (ov.has("portfolio_categories") && Array.isArray(content.portfolio_categories)) cats = content.portfolio_categories;
+  } catch { /* API 없음/실패 → 기본 콘텐츠로 진행 */ }
+  initPortfolioSlider(videos, cats);
+})();

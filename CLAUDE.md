@@ -59,3 +59,11 @@
   - 새로고침 시 항상 히어로에서 시작(history.scrollRestoration=manual + load에서 scrollTo top). 로고 클릭 시 새로고침(해시 제거 후 reload).
   - **레이아웃**: 균일 그리드 → **크기 제각각 모자이크**로 변경(클라이언트 요청). CSS grid 4열 + grid-auto-rows 170px + dense flow, 타일 크기변형 big(2×2)/wide(2×1)/tall(1×2)/기본(1×1), 크기는 index%9 패턴(gen-portfolio.py의 SIZE_BY_MOD). 작은/큰 타일 모두 자연 16:9라 왜곡 없음. **호버 시 썸네일 블러+어둡게 되며 제목 텍스트 표시**(평소엔 선명, 제목 숨김). 반응형 4→3(≤980)→2열 균일(≤640).
 - 2026-07-23: 섹션 순서 재배치 → hero → about → service → portfolio → client(신규) → contact. 내비도 About/Service/Portfolio/Client/Contact로 변경(모바일 메뉴 포함). SERVICE는 유지(About 다음). **Client 섹션 신규**: 화이트 배경 + 5열×2줄 로고 플레이스홀더 10개(#client), 실제 클라이언트 로고 없어 "LOGO" 텍스트 타일로 대체 — **로고 받으면 .client__logo 내부를 img로 교체**. 반응형 5→3(≤980)→2(≤640)열.
+- 2026-07-23: **관리자(CMS) 백엔드 구축 — Cloudflare Pages + Functions + D1.**
+  - `schema.sql`: D1 테이블 4개(content 키-값 / portfolio / clients / submissions).
+  - `functions/api/[[path]].js`: 캐치올 API — POST /login(ADMIN_PASSWORD → HMAC 토큰, SESSION_SECRET 서명, 12시간), GET/PUT /content(코드에 DEFAULTS 내장, DB 값이 있으면 덮어씀 + `_overrides`로 "실제 저장된 키"만 알려줌), portfolio CRUD + reorder(batch) + seed(기본 22개), clients CRUD + reorder, POST /contact(공개) + GET/DELETE(관리자). CORS 허용.
+  - `admin.html`: 로그인 + 8개 탭(히어로/소개/서비스/WHY JJAM/포트폴리오/클라이언트/푸터/문의내역). 포트폴리오: 유튜브 링크 붙여넣으면 영상 ID 자동 추출, 제목 칸(영상 아래 가운데 표시), 분류 자동 추가(datalist), ▲▼ 순서 변경 즉시 저장, 비어있으면 "기본 22개 불러오기" 시드 버튼. WHY JJAM 04번 추가 시 사이트 레이아웃 자동(2×2: `.why__grid.n4`, 5개 이상: auto-fit `.nmany`). 토큰은 localStorage(`jjam_token`), 401 시 자동 로그아웃.
+  - `script.js`: 포트폴리오 IIFE → `initPortfolioSlider(videos, catNames)` 함수화. `bootCMS()`가 /api/content·portfolio·clients 3개를 병렬 fetch(4초 타임아웃) → 성공 시 관리자 저장값 반영, 실패/정적 호스팅(GitHub Pages)이면 기존 하드코딩 콘텐츠 그대로(완전 폴백). `_overrides`에 있는 섹션만 DOM 재렌더(수정 안 한 섹션은 원본 마크업·<strong>·reveal 애니메이션 유지). 재렌더된 요소는 revealObserver에 재등록. Contact 폼: /api/contact POST 우선(성공 시 "문의가 접수되었습니다") → 실패 시 기존 mailto 폴백(수신 메일도 CMS 푸터 이메일 반영).
+  - `ADMIN_SETUP.md`: Cloudflare 1회 설정 가이드(Pages Git 연결·빌드설정 없음/비움, D1 `jjam-db` 생성+schema 실행, 바인딩 변수명 `DB`, ADMIN_PASSWORD/SESSION_SECRET 시크릿, 재배포). **주의: Workers("npx wrangler deploy" 화면)가 아니라 Pages로 연결해야 함** — 사용자가 Workers 흐름에 들어갔다가 뒤로 나옴.
+  - style.css: why__grid n4/nmany 규칙, client__logo img/client__name 규칙 추가. 캐시 v34.
+  - 관리자 주소: `https://프로젝트명.pages.dev/admin.html` (GitHub Pages에서는 API가 없어 admin 동작 안 함 — Cloudflare 전용).
