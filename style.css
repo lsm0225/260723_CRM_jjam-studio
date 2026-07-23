@@ -621,8 +621,11 @@ ul { list-style: none; }
 
 /* 더보기 → 그리드 토글 */
 .pf-more-wrap { margin-top: 40px; text-align: center; }
-#pfMore span { font-size: 0.85em; }
-.pf-grid { display: none; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+/* 더보기/접기 버튼: 칙칙한 다크아웃라인 → 브랜드 레드 */
+#pfMore { border-color: var(--color-accent); color: var(--color-accent); background: transparent; }
+#pfMore:hover { background: var(--color-accent); color: #fff; }
+#pfMore span { font-size: 0.8em; color: inherit; margin-left: 2px; }
+.pf-grid { display: none; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
 .portfolio.is-grid .pf-slider { display: none; }
 .portfolio.is-grid .pf-grid { display: grid; }
 .pf-gtile {
@@ -715,14 +718,9 @@ ul { list-style: none; }
 
 /* ===== Client (로고 스트립, 플레이스홀더) ===== */
 .client { background: var(--color-white); }
-.client__head { margin-bottom: 48px; }
-.client__title {
-  font-size: clamp(1.9rem, 4.4vw, 3.1rem);
-  font-weight: 800;
-  line-height: 1.3;
-  letter-spacing: -0.03em;
-  margin: 22px 0 14px;
-}
+.client__head { text-align: center; margin-bottom: 52px; }
+.client__title-lg { display: inline-block; margin-bottom: 16px; }
+.client__title-lg span { display: inline; color: var(--color-accent); } /* 한 줄 유지 + CLIENTS 레드 */
 .client__sub {
   font-size: 1.02rem;
   color: var(--color-ink-soft);
