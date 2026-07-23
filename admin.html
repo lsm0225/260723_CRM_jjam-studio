@@ -151,7 +151,7 @@
     <!-- 포트폴리오 -->
     <div class="panel" data-panel="portfolio">
       <h2>포트폴리오</h2>
-      <p class="hint">▲▼ 버튼으로 순서 변경 → 자동 저장됩니다. 제목은 영상 아래 가운데에 표시됩니다.</p>
+      <p class="hint">각 영상의 <b>제목 칸을 고치고 그 줄의 "저장"</b>을 누르면 사이트 썸네일 아래 제목이 바뀝니다. ▲▼ 버튼은 순서 변경(즉시 저장).</p>
       <label>분야(카테고리) — 쉼표로 구분</label>
       <div style="display:flex;gap:8px"><input id="pfCats"><button class="btn small" style="flex:none" onclick="saveCats()">분류 저장</button></div>
       <div style="margin-top:18px" id="pfList"></div>
@@ -343,7 +343,9 @@ async function loadPf() {
     <div class="row">
       <img class="thumb" src="https://i.ytimg.com/vi/${esc(p.video_id)}/mqdefault.jpg" alt="">
       <div class="fields">
-        <input data-pf="${p.id}" data-f="title" value="${esc(p.title)}" placeholder="제목 (영상 아래 가운데 표시)">
+        <label style="margin:0 0 -2px">제목 <span style="font-weight:400;color:#aaa">(썸네일 아래에 표시)</span></label>
+        <input data-pf="${p.id}" data-f="title" value="${esc(p.title)}" placeholder="영상 제목을 입력하세요">
+        <label style="margin:4px 0 -2px">유튜브 링크 · 분류</label>
         <div class="cols">
           <input data-pf="${p.id}" data-f="url" value="${esc(p.url||('https://youtu.be/'+p.video_id))}" placeholder="유튜브 링크">
           <input data-pf="${p.id}" data-f="category" list="catList" value="${esc(p.category)}" placeholder="분류" style="max-width:140px">
