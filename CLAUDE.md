@@ -11,6 +11,7 @@
 - **제작/수정 작업이 끝날 때마다 이 파일의 "작업 기록"에 한 줄 추가한다.**
 - **수정 후 배포 시점마다 자동으로 `git add -A && git commit && git push` 한다.** (푸시하면 GitHub Pages에 자동 반영됨)
 - 커밋 메시지는 한국어로 간결하게.
+- **style.css / script.js를 수정하면 index.html의 `?v=` 버전 숫자를 함께 올린다.** (GitHub Pages가 CSS/JS를 10분 캐시하므로, 버전을 안 올리면 새 HTML + 옛 CSS 조합으로 화면이 깨져 보일 수 있음)
 
 ## 디자인 방향
 
