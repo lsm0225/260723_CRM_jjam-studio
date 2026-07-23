@@ -35,7 +35,8 @@
   @keyframes wmWrite{to{opacity:.09;transform:translateY(0);filter:blur(0);}}
   .viewport{position:relative;z-index:1;overflow:visible;}
   .track{display:flex;gap:18px;will-change:transform;transition:transform .6s cubic-bezier(.5,0,.2,1);}
-  .track.is-sliding{filter:url(#hblur);}
+  .track.is-sliding{animation:slideBlur .55s cubic-bezier(.4,0,.25,1);}
+  @keyframes slideBlur{0%{filter:blur(0)}20%{filter:blur(11px)}100%{filter:blur(0)}}
   .slide{position:relative;flex:0 0 auto;width:60%;aspect-ratio:16/9;border:0;padding:0;background:#111;border-radius:12px;overflow:hidden;cursor:pointer;opacity:.4;transform:scale(.88);transition:opacity .5s,transform .5s cubic-bezier(.22,1,.36,1);}
   .slide.active{opacity:1;transform:scale(1);box-shadow:0 30px 70px rgba(0,0,0,.25);}
   .slide img{width:100%;height:100%;object-fit:cover;}
@@ -132,7 +133,7 @@ function makeSlider(host, items){
   tot.textContent=String(items.length).padStart(2,"0");
   const slides=[...track.querySelectorAll(".slide")];
   const dots=[...dotsEl.querySelectorAll(".dot")];
-  let idx=0, blurTimer;
+  let idx=0;
 
   const vpW=()=>host.querySelector(".viewport").getBoundingClientRect().width;
   // 슬라이드 폭을 뷰포트 기준으로 명시 지정 → 가운데 정렬 정확
@@ -144,6 +145,8 @@ function makeSlider(host, items){
   }
   function targetX(){ const {w,sw}=layout(); return w/2-(idx*(sw+GAP)+sw/2); }
   function center(){ track.style.transform=`translateX(${targetX()}px)`; }
+  // 슬라이드 시 모션 블러: 애니메이션이 항상 blur(0)로 끝나 잔상이 남지 않음. 매 이동마다 재시작.
+  function flashBlur(){ track.classList.remove("is-sliding"); void track.offsetWidth; track.classList.add("is-sliding"); }
 
   function stopAll(){ slides.forEach(s=>{ const f=s.querySelector("iframe"); if(f) f.remove(); s.classList.remove("playing"); }); }
   function playActive(){
@@ -165,9 +168,7 @@ function makeSlider(host, items){
     cur.textContent=String(idx+1).padStart(2,"0");
     bar.style.width=((idx+1)/items.length*100)+"%";
     center();
-    track.classList.add("is-sliding");                 // 슬라이드 중 가로 모션 블러
-    clearTimeout(blurTimer);
-    blurTimer=setTimeout(()=>track.classList.remove("is-sliding"),680);  // 전환(.6s) 후 항상 해제
+    flashBlur();                                        // 슬라이드 중 모션 블러(자동으로 0에서 끝남)
   }
   function go(i){ const n=Math.max(0,Math.min(items.length-1,i)); if(n===idx) return; idx=n; update(); }
   host.querySelector(".prev").onclick=()=>go(idx-1);
@@ -188,10 +189,10 @@ function makeSlider(host, items){
     setTimeout(()=>{                       // ② 0.8초 뒤 진입 시작
       wm.classList.add("fade");            //    글씨 서서히 사라짐(0.55s) → 영상 도착(0.95s) 전 완전히 사라짐
       track.style.transition="transform .95s cubic-bezier(.5,0,.2,1)";
-      track.classList.add("is-sliding");
       center();                            //    오른쪽 → 가운데로 진입
+      flashBlur();                         //    진입 모션 블러
       slides.forEach((s,i)=>{ s.style.transition=`opacity .6s ease ${i*0.05}s, transform .5s cubic-bezier(.22,1,.36,1)`; s.style.opacity=""; });
-      setTimeout(()=>{ track.classList.remove("is-sliding"); track.style.transition=""; slides.forEach(s=>s.style.transition=""); },1050);
+      setTimeout(()=>{ track.style.transition=""; slides.forEach(s=>s.style.transition=""); },1050);
     },500);
   }
   new IntersectionObserver(es=>{ if(es[0].isIntersecting && !entered){ entered=true; runEntrance(); } },{threshold:.3}).observe(host);
