@@ -126,19 +126,19 @@ ul { list-style: none; }
   display: none;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
-  width: 44px; height: 44px;
+  gap: 5px;
+  width: 40px; height: 40px;
   background: none; border: none; cursor: pointer;
 }
 .header__menu-btn span {
   display: block;
-  width: 24px; height: 2px;
+  width: 20px; height: 1.5px;
   margin: 0 auto;
   background: var(--color-white);
   transition: transform 0.3s var(--ease), opacity 0.3s;
 }
-.header__menu-btn.is-open span:nth-child(1) { transform: translateY(4px) rotate(45deg); }
-.header__menu-btn.is-open span:nth-child(2) { transform: translateY(-4px) rotate(-45deg); }
+.header__menu-btn.is-open span:nth-child(1) { transform: translateY(3.5px) rotate(45deg); }
+.header__menu-btn.is-open span:nth-child(2) { transform: translateY(-3.5px) rotate(-45deg); }
 
 /* ===== Mobile menu ===== */
 .mobile-menu {
@@ -1090,25 +1090,63 @@ ul { list-style: none; }
 }
 
 @media (max-width: 640px) {
+  :root { --header-h: 64px; }
+  .container { padding: 0 20px; }
   .header__inner { display: flex; justify-content: space-between; }
   .header__nav, .header__actions { display: none; }
   .header__menu-btn { display: flex; }
+  .header__logo img { height: 38px; }
   .br-desktop { display: none; }
-  .section { padding: 84px 0; }
-  .services__grid { grid-template-columns: 1fr; gap: 36px; }
-  .client__grid { grid-template-columns: repeat(2, 1fr); }
-  .portfolio__grid {
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: auto;
-    grid-auto-flow: row;
-  }
-  .pf-item { aspect-ratio: 16 / 9; }
-  .pf-item--big, .pf-item--wide, .pf-item--tall, .pf-item--full {
-    grid-column: auto;
-    grid-row: auto;
-  }
+  .section { padding: 72px 0; }
+
+  /* 대형 제목 공통 축소 */
+  .giant-title { font-size: clamp(2rem, 9vw, 2.6rem); margin-bottom: 30px; }
+
+  /* Hero */
+  .hero__title { font-size: clamp(1.6rem, 7.4vw, 2.2rem); }
+  .hero__desc { font-size: 0.97rem; margin-top: 22px; line-height: 1.7; }
+  .hero__actions { margin-top: 32px; gap: 10px; }
+  .hero__actions .btn { padding: 14px 24px; font-size: 0.95rem; }
+
+  /* About */
+  .about__grid { grid-template-columns: 1fr; gap: 34px; }
+  .about__title { font-size: clamp(1.5rem, 6.4vw, 1.9rem); margin: 18px 0 26px; }
+  .about__body p { font-size: 0.98rem; }
+  .about__ceo-card { left: 14px; bottom: 14px; padding: 13px 18px; }
+  .ceo-name { font-size: 1rem; }
+
+  /* Services (dark) */
+  .services__head .giant-title { margin-bottom: 14px; }
+  .services__sub { font-size: 0.97rem; }
+  .svc-row { padding: 26px 0; }
+  .svc-row__title h3 { font-size: 1.18rem; }
+  .svc-row__desc { font-size: 0.94rem; }
+
+  /* Why JJAM */
+  .why__grid { max-width: 340px; gap: 40px; }
+
+  /* Portfolio: 모바일은 슬라이더 제외 → 그리드로 */
+  .pf-slider, .pf-more-wrap { display: none; }
+  .pf-grid { display: grid !important; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 26px; }
+  .pf-sub { font-size: 0.96rem; margin-bottom: 22px; }
+  .pf-tabs { gap: 8px; }
+  .pf-tab { padding: 8px 14px; font-size: 0.85rem; }
+  .pf-gtit { font-size: 0.76rem; padding: 20px 10px 9px; }
+
+  /* Client */
+  .client__grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .client__title-lg { font-size: clamp(1.9rem, 9vw, 2.4rem); }
+  .client__sub { font-size: 0.95rem; }
+
+  /* Contact */
+  .contact__grid { grid-template-columns: 1fr; gap: 40px; }
   .form-row { grid-template-columns: 1fr; }
-  .footer__grid { grid-template-columns: 1fr; gap: 36px; }
+  .concerns__title { font-size: 1.3rem; }
+  .concerns__list li { font-size: 0.9rem; }
+
+  /* Footer */
+  .footer__grid { grid-template-columns: 1fr; gap: 30px; }
+  .footer__logo-img { height: 40px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

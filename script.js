@@ -255,11 +255,13 @@ const PF_VIDEOS = [
     const b = e.target.closest(".pf-tab"); if (!b) return;
     tabsEl.querySelectorAll(".pf-tab").forEach((t) => t.classList.remove("on")); b.classList.add("on");
     currentList = listFor(b.dataset.c);
-    if (gridMode) renderGrid(currentList); else switchTo(currentList);
+    renderGrid(currentList);                    // 그리드(모바일 상시 + 데스크톱 더보기) 갱신
+    if (!gridMode) switchTo(currentList);        // 슬라이더(데스크톱) 갱신
   });
 
   // 초기: 전체 목록 빌드 + 활성 세팅, 슬라이드는 화면 오른쪽 밖에서 투명 대기
   buildTrack(PF_VIDEOS);
+  renderGrid(PF_VIDEOS);                          // 모바일에서 슬라이더 대신 바로 보이도록 그리드 미리 렌더
   setActive(); center(); track.classList.remove("is-sliding");
   (function preHide() { track.style.transition = "none"; track.style.transform = `translateX(${targetX() + vpW()}px)`; slides().forEach((s) => (s.style.opacity = "0")); void track.offsetWidth; track.style.transition = ""; })();
   window.addEventListener("resize", center);
