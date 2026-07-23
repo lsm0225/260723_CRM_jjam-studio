@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="style.css?v=20" />
+  <link rel="stylesheet" href="style.css?v=23" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%23be2d2f' d='M50 5l11 30 34 1-27 21 10 33-28-20-28 20 10-33-27-21 34-1z'/></svg>" />
 </head>
 <body>
@@ -20,6 +20,7 @@
     <div class="container header__inner">
       <a href="#hero" class="header__logo"><img src="assets/logo-white.png" alt="jjam agency" /></a>
       <nav class="header__nav" id="nav">
+        <a href="#hero" class="nav-link">Home</a>
         <a href="#about" class="nav-link">About</a>
         <a href="#services" class="nav-link">Service</a>
         <a href="#portfolio" class="nav-link">Portfolio</a>
@@ -27,7 +28,6 @@
         <a href="#contact" class="nav-link">Contact</a>
       </nav>
       <div class="header__actions">
-        <a href="#contact" class="header__cta header__cta--consult">무료 상담신청</a>
         <a href="#" class="header__cta header__cta--kakao" aria-label="카카오톡 상담 (링크 준비 중)">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.48 3 2 6.36 2 10.5c0 2.64 1.78 4.96 4.46 6.28l-.9 3.33c-.08.3.26.54.52.37l3.96-2.62c.63.09 1.28.14 1.96.14 5.52 0 10-3.36 10-7.5S17.52 3 12 3z"/></svg>
           카카오톡 상담
@@ -42,13 +42,13 @@
   <!-- ===== Mobile menu ===== -->
   <div class="mobile-menu" id="mobileMenu">
     <nav class="mobile-menu__nav">
+      <a href="#hero" class="mobile-link">Home</a>
       <a href="#about" class="mobile-link">About</a>
       <a href="#services" class="mobile-link">Service</a>
       <a href="#portfolio" class="mobile-link">Portfolio</a>
       <a href="#client" class="mobile-link">Client</a>
       <a href="#contact" class="mobile-link">Contact</a>
       <div class="mobile-menu__actions">
-        <a href="#contact" class="header__cta header__cta--consult">무료 상담신청</a>
         <a href="#" class="header__cta header__cta--kakao">카카오톡 상담</a>
       </div>
     </nav>
@@ -73,12 +73,11 @@
           <span class="hero__line reveal delay-2">Content Production</span>
         </h1>
         <p class="hero__desc reveal delay-3">
-          제이잼스튜디오는 브랜드의 본질을 담아<br class="br-desktop" />
-          오래 기억되는 디자인을 만듭니다.
+          제이잼스튜디오는 브랜드의 본질을 담아 오래 기억되는 콘텐츠를 만듭니다.
         </p>
         <div class="hero__actions reveal delay-4">
-          <a href="#contact" class="btn btn--accent">프로젝트 시작하기</a>
           <a href="#about" class="btn btn--outline">스튜디오 소개</a>
+          <a href="#contact" class="btn btn--accent">문의하기</a>
         </div>
       </div>
       <div class="hero__scroll" aria-hidden="true">
@@ -373,9 +372,32 @@
 
   <!-- ===== Footer ===== -->
   <footer class="footer">
-    <div class="container footer__inner">
-      <p class="footer__logo"><img src="assets/logo-white.png" alt="jjam agency" /></p>
-      <p class="footer__copy">© 2026 제이잼스튜디오. All rights reserved.<br />대표 이은정</p>
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img class="footer__logo-img" src="assets/logo-white.png" alt="jjam agency" />
+        <p class="footer__copy">© 2026 JJAM AGENCY.<br />All rights reserved.</p>
+      </div>
+      <div class="footer__col">
+        <p class="footer__col-title">제이잼 에이전시 <span>(JJAM AGENCY)</span></p>
+        <ul class="footer__list">
+          <li><span>대표</span> 이은정</li>
+          <li><span>주소</span> 서울 강남구 압구정로134 타워빌딩 302호</li>
+        </ul>
+      </div>
+      <div class="footer__col">
+        <p class="footer__col-title">문의하기</p>
+        <ul class="footer__list">
+          <li><span>전화</span> <a href="tel:010-3370-1432">010-3370-1432</a></li>
+          <li><span>메일</span> <a href="mailto:ej74321@hanmail.net">ej74321@hanmail.net</a></li>
+        </ul>
+        <div class="footer__btns">
+          <a href="#" class="footer__btn footer__btn--kakao" aria-label="카카오톡 문의 (링크 준비 중)">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3C6.48 3 2 6.36 2 10.5c0 2.64 1.78 4.96 4.46 6.28l-.9 3.33c-.08.3.26.54.52.37l3.96-2.62c.63.09 1.28.14 1.96.14 5.52 0 10-3.36 10-7.5S17.52 3 12 3z"/></svg>
+            카톡 문의
+          </a>
+          <a href="#contact" class="footer__btn">온라인 문의</a>
+        </div>
+      </div>
     </div>
   </footer>
 
@@ -408,6 +430,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=20"></script>
+  <script src="script.js?v=23"></script>
 </body>
 </html>

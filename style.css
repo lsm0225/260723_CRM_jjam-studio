@@ -85,15 +85,16 @@ ul { list-style: none; }
 }
 .header__inner {
   height: var(--header-h);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); /* 양옆 폭 강제 동일 → 내비 정확히 가운데 */
+  position: relative;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 32px;
 }
-.header__logo { display: flex; align-items: center; justify-self: start; }
+.header__logo { display: flex; align-items: center; }
 .header__logo img { height: 44px; width: auto; display: block; }
-.header__nav { display: flex; gap: 36px; justify-self: center; }
-.header__actions { justify-self: end; }
+/* 내비를 헤더 정중앙에 절대 고정 (로고·버튼 폭과 무관) */
+.header__nav { display: flex; gap: 36px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
 .nav-link {
   font-size: 0.95rem;
   font-weight: 600;
@@ -212,7 +213,7 @@ ul { list-style: none; }
   background:
     linear-gradient(180deg, rgba(12, 12, 13, 0.55) 0%, rgba(12, 12, 13, 0.35) 45%, rgba(12, 12, 13, 0.75) 100%);
 }
-.hero__content { position: relative; z-index: 1; }
+.hero__content { position: relative; z-index: 1; text-align: center; }
 .hero__title {
   font-size: clamp(2.1rem, 6vw, 5.4rem);
   font-weight: 900;
@@ -232,7 +233,7 @@ ul { list-style: none; }
   color: rgba(255, 255, 255, 0.72);
   line-height: 1.75;
 }
-.hero__actions { margin-top: 48px; display: flex; gap: 14px; flex-wrap: wrap; }
+.hero__actions { margin-top: 48px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
 
 .hero__scroll {
   position: absolute;
@@ -985,22 +986,66 @@ ul { list-style: none; }
 .footer {
   background: var(--color-dark);
   border-top: 1px solid var(--color-line-dark);
-  padding: 44px 0;
+  padding: 64px 0 48px;
   color: var(--color-white);
 }
-.footer__inner {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 24px;
-  flex-wrap: wrap;
+.footer__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.5fr 1.2fr;
+  gap: 48px;
+  align-items: start;
 }
-.footer__logo img { height: 52px; width: auto; display: block; }
+.footer__logo-img { height: 46px; width: auto; display: block; }
 .footer__copy {
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.45);
-  text-align: right;
+  margin-top: 22px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
   line-height: 1.7;
+}
+.footer__col-title {
+  font-size: 1rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+.footer__col-title span { color: rgba(255, 255, 255, 0.5); font-weight: 600; font-size: 0.9em; }
+.footer__list { display: grid; gap: 11px; }
+.footer__list li {
+  font-size: 0.93rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.6;
+}
+.footer__list li span {
+  display: inline-block;
+  min-width: 40px;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+}
+.footer__list a { color: rgba(255, 255, 255, 0.85); transition: color 0.2s; }
+.footer__list a:hover { color: var(--color-accent); }
+.footer__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.footer__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid var(--color-line-dark);
+  color: #fff;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, filter 0.2s;
+}
+.footer__btn:hover { border-color: var(--color-accent); }
+.footer__btn svg { width: 15px; height: 15px; }
+.footer__btn--kakao {
+  background: var(--color-kakao);
+  color: var(--color-kakao-ink);
+  border-color: var(--color-kakao);
+}
+.footer__btn--kakao:hover { filter: brightness(1.05); border-color: var(--color-kakao); }
+@media (max-width: 860px) {
+  .footer__grid { grid-template-columns: 1fr 1fr; gap: 40px 36px; }
+  .footer__brand { grid-column: 1 / -1; }
 }
 
 /* ===== Responsive ===== */
@@ -1053,8 +1098,7 @@ ul { list-style: none; }
     grid-row: auto;
   }
   .form-row { grid-template-columns: 1fr; }
-  .footer__inner { flex-direction: column; align-items: flex-start; }
-  .footer__copy { text-align: left; }
+  .footer__grid { grid-template-columns: 1fr; gap: 36px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
