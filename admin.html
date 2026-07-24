@@ -63,7 +63,9 @@
   .sb__foot a:hover,.sb__foot button:hover{background:#f6f6f8;color:var(--ink)}
   .sb__foot svg{width:17px;height:17px;stroke:currentColor}
 
-  .mn{margin-left:236px;padding:30px 36px 80px;max-width:1160px}
+  /* 사이드바(236) 오른쪽 영역에서 콘텐츠를 1280 기준으로 가운데 정렬 */
+  .mn{margin-left:236px;padding:30px 36px 80px}
+  .mn > *{max-width:1044px;margin-left:auto;margin-right:auto} /* 236 + 1044 = 1280 */
   .mn__head{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:22px}
   .mn__head h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
   .mn__head p{font-size:13px;color:var(--sub);margin-top:5px}
