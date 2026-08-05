@@ -756,16 +756,23 @@ ul { list-style: none; }
   color: rgba(255, 255, 255, 0.6);
   line-height: 1.8;
 }
+.services__intro {
+  margin-top: 22px;
+  font-size: 0.97rem;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.85;
+}
 .services__rows { display: flex; flex-direction: column; }
 .svc-row {
   display: grid;
-  grid-template-columns: 0.9fr 1.4fr auto;
+  grid-template-columns: 1fr 1.25fr;
   gap: 32px;
-  align-items: center;
-  padding: 38px 0;
+  align-items: start;
+  padding: 40px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.14);
 }
 .svc-row:first-child { border-top: 1px solid rgba(255, 255, 255, 0.14); }
+.svc-row__head { display: flex; align-items: center; gap: 16px; }
 .svc-row__title h3 {
   font-size: 1.35rem;
   font-weight: 800;
@@ -780,17 +787,38 @@ ul { list-style: none; }
   color: var(--color-accent);
 }
 .svc-row__desc {
-  font-size: 0.98rem;
-  color: rgba(255, 255, 255, 0.62);
-  line-height: 1.75;
+  font-size: 1.02rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
 }
 .svc-row__desc strong {
   color: var(--color-white);
   font-weight: 700;
   white-space: nowrap; /* 강조 문구가 중간에 끊기지 않도록 */
 }
+/* 세부 항목 = 라운드 칩 (항목이 늘어도 자연스럽게 줄바꿈) */
+.svc-row__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.svc-row__items li {
+  padding: 8px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 100px;
+  font-size: 0.87rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  transition: border-color 0.3s, color 0.3s;
+}
+.svc-row:hover .svc-row__items li {
+  border-color: rgba(190, 45, 47, 0.5);
+  color: rgba(255, 255, 255, 0.9);
+}
 .svc-row__icon {
   display: inline-flex;
+  flex: none;
   color: rgba(255, 255, 255, 0.85);
   transition: color 0.3s, transform 0.3s var(--ease);
 }
@@ -1160,14 +1188,10 @@ ul { list-style: none; }
 
 @media (max-width: 760px) {
   .svc-row {
-    grid-template-columns: 1fr auto;
-    grid-template-areas: "title icon" "desc desc";
-    gap: 14px 20px;
+    grid-template-columns: 1fr;
+    gap: 16px;
     padding: 30px 0;
   }
-  .svc-row__title { grid-area: title; }
-  .svc-row__desc { grid-area: desc; }
-  .svc-row__icon { grid-area: icon; }
 }
 
 @media (max-width: 900px) {
@@ -1222,9 +1246,13 @@ ul { list-style: none; }
   /* Services (dark) */
   .services__head .giant-title { margin-bottom: 14px; }
   .services__sub { font-size: 0.97rem; }
+  .services__intro { font-size: 0.92rem; margin-top: 16px; }
   .svc-row { padding: 26px 0; }
   .svc-row__title h3 { font-size: 1.18rem; }
-  .svc-row__desc { font-size: 0.94rem; }
+  .svc-row__desc { font-size: 0.96rem; }
+  .svc-row__items { gap: 7px; margin-top: 14px; }
+  .svc-row__items li { padding: 7px 13px; font-size: 0.83rem; }
+  .svc-row__icon svg { width: 30px; height: 30px; }
 
   /* Why JJAM */
   .why__grid { max-width: 340px; gap: 40px; }

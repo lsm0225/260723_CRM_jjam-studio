@@ -518,10 +518,16 @@ function renderSvc() {
         <div><label>영문명</label><input data-svc="${i}" data-f="en" value="${esc(s.en)}"></div>
       </div>
       <label>설명</label><textarea data-svc="${i}" data-f="desc" rows="2">${esc(s.desc)}</textarea>
+      <label>세부 항목 (한 줄에 하나씩 — 사이트에 알약 모양으로 표시됩니다)</label>
+      <textarea data-svc="${i}" data-f="items" rows="4">${esc(((s.items)||[]).join("\n"))}</textarea>
     </div>`).join("");
 }
-function collectSvc(){ document.querySelectorAll("[data-svc]").forEach(el=>{ CONTENT.services[+el.dataset.svc][el.dataset.f] = el.value; }); }
-function addSvc(){ collectSvc(); CONTENT.services.push({title:"",en:"",desc:""}); renderSvc(); }
+function collectSvc(){ document.querySelectorAll("[data-svc]").forEach(el=>{
+  const f = el.dataset.f;
+  CONTENT.services[+el.dataset.svc][f] =
+    f === "items" ? el.value.split("\n").map(v=>v.trim()).filter(Boolean) : el.value;
+}); }
+function addSvc(){ collectSvc(); CONTENT.services.push({title:"",en:"",desc:"",items:[]}); renderSvc(); }
 function delSvc(i){ collectSvc(); CONTENT.services.splice(i,1); renderSvc(); }
 async function saveServices(){ collectSvc();
   await api("/content",{method:"PUT",body:JSON.stringify({key:"services",value:CONTENT.services})}); flash("services"); }

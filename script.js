@@ -422,14 +422,23 @@ function applyContent(c, ov) {
     if (rows) {
       const icons = [...rows.querySelectorAll(".svc-row__icon")].map((el) => el.outerHTML);
       rows.innerHTML = c.services
-        .map(
-          (s, i) => `
+        .map((s, i) => {
+          const items = Array.isArray(s.items) ? s.items.filter(Boolean) : [];
+          const list = items.length
+            ? `<ul class="svc-row__items">${items.map((x) => `<li>${escHtml(x)}</li>`).join("")}</ul>`
+            : "";
+          return `
         <div class="svc-row reveal">
-          <div class="svc-row__title"><h3>${escHtml(s.title)}</h3><p>${escHtml(s.en)}</p></div>
-          <p class="svc-row__desc">${escHtml(s.desc)}</p>
-          ${icons[i % icons.length] || ""}
-        </div>`
-        )
+          <div class="svc-row__head">
+            ${icons[i % icons.length] || ""}
+            <div class="svc-row__title"><h3>${escHtml(s.title)}</h3><p>${escHtml(s.en)}</p></div>
+          </div>
+          <div class="svc-row__body">
+            <p class="svc-row__desc">${escHtml(s.desc)}</p>
+            ${list}
+          </div>
+        </div>`;
+        })
         .join("");
       rows.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
     }
