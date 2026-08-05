@@ -447,14 +447,16 @@ function applyContent(c, ov) {
   if (ov.has("why") && Array.isArray(c.why) && c.why.length) {
     const g = document.querySelector(".why__grid");
     if (g) {
+      // 기존 일러스트는 재사용 (사진이 지정된 항목만 사진으로 대체)
+      const ills = [...g.querySelectorAll(".why-item__ill")].map((el) => el.outerHTML);
       g.innerHTML = c.why
         .map((w, i) => {
-          const img = w.img
+          const media = w.img
             ? `<img class="why-item__img" src="${escHtml(w.img)}" alt="${escHtml(w.title)}" loading="lazy" />`
-            : "";
+            : ills[i % (ills.length || 1)] || "";
           return `
         <div class="why-item reveal">
-          ${img}
+          ${media}
           <span class="why-item__num">${String(i + 1).padStart(2, "0")}</span>
           <h3>${escHtml(w.title)}</h3><p>${escHtml(w.desc)}</p>
         </div>`;
