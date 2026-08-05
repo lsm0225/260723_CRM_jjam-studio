@@ -294,6 +294,13 @@ ul { list-style: none; }
   color: var(--color-white);
 }
 .btn--outline:hover { border-color: var(--color-white); }
+.btn--kakao {
+  background: var(--color-kakao);
+  color: var(--color-kakao-ink);
+  gap: 8px;
+}
+.btn--kakao:hover { filter: brightness(1.05); }
+.btn--kakao svg { width: 18px; height: 18px; }
 .btn--full { width: 100%; }
 
 /* ===== Sections common ===== */

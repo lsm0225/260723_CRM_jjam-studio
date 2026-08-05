@@ -17,10 +17,10 @@ const json = (data, status = 200) =>
 // ---------- 기본 콘텐츠 (DB에 값이 없을 때 반환되는 현재 사이트 내용) ----------
 const DEFAULTS = {
   hero: {
-    line1: "Mastering Premium",
-    line2: "Content Production",
+    line1: "Premium Content",
+    line2: "Creator Company",
     accent: "Premium",
-    desc: "제이잼스튜디오는 브랜드의 본질을 담아 오래 기억되는 콘텐츠를 만듭니다.",
+    desc: "브랜드의 성장을 만드는 콘텐츠 파트너",
     video: "https://vimeo.com/1207998411", // 배경 영상 (Vimeo 링크)
   },
   about: {
