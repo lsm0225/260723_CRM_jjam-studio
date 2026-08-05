@@ -581,7 +581,7 @@ ul { list-style: none; }
 }
 
 /* Why JJAM? — 독립 섹션 · OUR SERVICES 스타일 대형 제목 · 가운데 정렬 · 한 줄 */
-.why { background: var(--color-white); text-align: center; }
+.why { background: var(--color-bg); text-align: center; }
 .why__giant { display: inline-block; margin-bottom: 8px; }
 .why__giant span { display: inline; color: var(--color-accent); } /* 한 줄 유지 + JJAM? 레드 */
 .why__tag {
@@ -609,10 +609,10 @@ ul { list-style: none; }
   aspect-ratio: 4 / 3;
   margin-bottom: 22px;
   border-radius: 12px;
-  background: #f4f3ef;
+  background: #eae8e2;
   transition: background 0.3s;
 }
-.why-item:hover .why-item__ph { background: #efeee9; }
+.why-item:hover .why-item__ph { background: #e3e0d8; }
 /* 항목별 사진(선택) — 관리자에서 이미지 주소를 넣으면 제목 위에 표시 */
 .why-item__img {
   display: block;
@@ -729,7 +729,7 @@ ul { list-style: none; }
 }
 
 /* ===== Portfolio (카테고리 슬라이더 + 모션 블러) ===== */
-.portfolio { background: var(--color-bg); overflow: hidden; }
+.portfolio { background: var(--color-white); overflow: hidden; }
 .portfolio .eyebrow { margin-bottom: 22px; }
 .pf-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
 .pf-tab {
@@ -951,7 +951,7 @@ ul { list-style: none; }
 .svc-row:hover .svc-row__icon { color: var(--color-accent); }
 
 /* ===== Client (로고 스트립, 플레이스홀더) ===== */
-.client { background: var(--color-white); }
+.client { background: var(--color-bg); }
 .client__head { text-align: center; margin-bottom: 52px; }
 .client__title-lg { display: inline-block; margin-bottom: 16px; }
 .client__title-lg span { display: inline; color: var(--color-accent); } /* 한 줄 유지 + CLIENTS 레드 */
@@ -1502,3 +1502,15 @@ ul { list-style: none; }
   .reveal { opacity: 1; transform: none; transition: none; }
   .hero__scroll i::after { animation: none; }
 }
+
+/* ===== 섹션 제목 가운데 정렬 + 한 줄 (Services / Portfolio / Contact) ===== */
+.services__head,
+.contact__head { text-align: center; }
+.services__intro,
+.contact__intro { margin-left: auto; margin-right: auto; }
+.services__head .giant-title span,
+.contact__head .giant-title span,
+.portfolio .giant-title span { display: inline; }
+.portfolio .giant-title { text-align: center; margin-bottom: 20px; }
+.portfolio .pf-sub { text-align: center; }
+.pf-tabs { justify-content: center; }
