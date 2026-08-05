@@ -451,7 +451,7 @@ function applyContent(c, ov) {
         .map((w, i) => {
           const media = w.img
             ? `<img class="why-item__img" src="${escHtml(w.img)}" alt="${escHtml(w.title)}" loading="lazy" />`
-            : "";
+            : `<span class="why-item__ph" aria-hidden="true"></span>`;
           return `
         <div class="why-item reveal">
           ${media}
