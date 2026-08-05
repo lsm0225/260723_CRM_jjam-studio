@@ -502,7 +502,22 @@ function initClientMore() {
     wrap.style.display = shown() < grid.children.length ? "" : "none";
   };
   btn.onclick = () => {
+    // 토글 직전에 "지금 숨어 있는 것들" = 이번에 새로 드러날 타일
+    const willAppear = [...grid.children].filter(
+      (el) => getComputedStyle(el).display === "none"
+    );
     const open = grid.classList.toggle("is-expanded");
+    if (open) {
+      willAppear.forEach((el, i) => {
+        el.style.setProperty("--d", (i * 0.028).toFixed(3) + "s");
+        el.classList.add("is-new");
+      });
+    } else {
+      [...grid.children].forEach((el) => {
+        el.classList.remove("is-new");
+        el.style.removeProperty("--d");
+      });
+    }
     btn.innerHTML = open ? '접기 <span>▴</span>' : '더보기 <span>▾</span>';
   };
   sync();
