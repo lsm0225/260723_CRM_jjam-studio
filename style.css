@@ -606,7 +606,7 @@ ul { list-style: none; }
 .why-item__ph {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   margin-bottom: 22px;
   border-radius: 12px;
   background: #eae8e2;
@@ -617,7 +617,7 @@ ul { list-style: none; }
 .why-item__img {
   display: block;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
   border-radius: 12px;
   margin-bottom: 22px;
