@@ -380,6 +380,12 @@ ul { list-style: none; }
   gap: 88px;
   align-items: start;
 }
+/* 섹션 라벨을 텍스트 대신 로고로 (라이트 배경이라 원본색 logo.png) */
+.about__logo {
+  display: block;
+  height: 44px;
+  width: auto;
+}
 .about__title {
   font-size: clamp(1.9rem, 4.4vw, 3.1rem);
   font-weight: 800;
