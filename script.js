@@ -429,14 +429,13 @@ function applyContent(c, ov) {
             : "";
           return `
         <div class="svc-row reveal">
-          <div class="svc-row__head">
-            ${icons[i % icons.length] || ""}
-            <div class="svc-row__title"><h3>${escHtml(s.title)}</h3><p>${escHtml(s.en)}</p></div>
-          </div>
+          <span class="svc-row__num" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span>
+          <div class="svc-row__title"><h3>${escHtml(s.title)}</h3><p>${escHtml(s.en)}</p></div>
           <div class="svc-row__body">
             <p class="svc-row__desc">${escHtml(s.desc)}</p>
             ${list}
           </div>
+          ${icons[i % icons.length] || ""}
         </div>`;
         })
         .join("");

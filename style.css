@@ -743,12 +743,6 @@ ul { list-style: none; }
   background: var(--color-dark);
   color: var(--color-white);
 }
-.services__layout {
-  display: grid;
-  grid-template-columns: 0.9fr 1.6fr;
-  gap: 64px;
-  align-items: start;
-}
 .services__head { position: static; }
 .services__head .giant-title { margin-bottom: 28px; }
 .services__sub {
@@ -761,72 +755,84 @@ ul { list-style: none; }
   font-size: 0.97rem;
   color: rgba(255, 255, 255, 0.45);
   line-height: 1.85;
+  max-width: 760px;
 }
-.services__rows { display: flex; flex-direction: column; }
+.services__rows { display: flex; flex-direction: column; margin-top: 56px; }
+/* 행 = [넘버] [제목] [설명+세부항목] [아이콘] */
 .svc-row {
   display: grid;
-  grid-template-columns: 1fr 1.25fr;
-  gap: 32px;
+  grid-template-columns: auto 300px 1fr auto;
+  grid-template-areas: "num title body icon";
+  gap: 36px;
   align-items: start;
-  padding: 40px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 46px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
 }
-.svc-row:first-child { border-top: 1px solid rgba(255, 255, 255, 0.14); }
-.svc-row__head { display: flex; align-items: center; gap: 16px; }
+.svc-row:last-child { border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+.svc-row__num {
+  grid-area: num;
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 0.9;
+  color: rgba(255, 255, 255, 0.11);
+  transition: color 0.3s;
+}
+.svc-row:hover .svc-row__num { color: rgba(190, 45, 47, 0.55); }
+.svc-row__title { grid-area: title; }
+.svc-row__body { grid-area: body; }
 .svc-row__title h3 {
-  font-size: 1.35rem;
+  font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.02em;
+  line-height: 1.3;
 }
 .svc-row__title p {
-  margin-top: 6px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  margin-top: 9px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--color-accent);
 }
 .svc-row__desc {
-  font-size: 1.02rem;
-  color: rgba(255, 255, 255, 0.78);
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.75);
   line-height: 1.7;
+  margin-bottom: 18px;
 }
 .svc-row__desc strong {
   color: var(--color-white);
   font-weight: 700;
   white-space: nowrap; /* 강조 문구가 중간에 끊기지 않도록 */
 }
-/* 세부 항목 = 라운드 칩 (항목이 늘어도 자연스럽게 줄바꿈) */
-.svc-row__items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 18px;
-}
+/* 세부 항목 = 레드 대시 마커 + 2열 (항목 수가 달라도 세로 길이가 고르게) */
+.svc-row__items { columns: 2; column-gap: 30px; }
 .svc-row__items li {
-  padding: 8px 15px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  border-radius: 100px;
-  font-size: 0.87rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  transition: border-color 0.3s, color 0.3s;
+  position: relative;
+  padding-left: 17px;
+  font-size: 0.93rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 2.05;
+  break-inside: avoid;
 }
-.svc-row:hover .svc-row__items li {
-  border-color: rgba(190, 45, 47, 0.5);
-  color: rgba(255, 255, 255, 0.9);
+.svc-row__items li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1em;
+  width: 8px;
+  height: 1px;
+  background: var(--color-accent);
 }
 .svc-row__icon {
+  grid-area: icon;
   display: inline-flex;
   flex: none;
-  color: rgba(255, 255, 255, 0.85);
-  transition: color 0.3s, transform 0.3s var(--ease);
+  color: rgba(255, 255, 255, 0.3);
+  transition: color 0.3s;
 }
-.svc-row__icon svg { width: 36px; height: 36px; }
-.svc-row:hover .svc-row__icon {
-  color: var(--color-accent);
-  transform: scale(1.1);
-}
+.svc-row__icon svg { width: 30px; height: 30px; }
+.svc-row:hover .svc-row__icon { color: var(--color-accent); }
 
 /* ===== Client (로고 스트립, 플레이스홀더) ===== */
 .client { background: var(--color-white); }
@@ -1177,8 +1183,8 @@ ul { list-style: none; }
 
 /* ===== Responsive ===== */
 @media (max-width: 1080px) {
-  .services__layout { grid-template-columns: 1fr; gap: 44px; }
-  .services__head { position: static; }
+  .svc-row { grid-template-columns: auto 240px 1fr; gap: 26px; }
+  .svc-row__icon { display: none; }
 }
 
 @media (max-width: 980px) {
@@ -1187,11 +1193,15 @@ ul { list-style: none; }
 }
 
 @media (max-width: 760px) {
+  /* 넘버는 제목 옆에, 설명·항목은 그 아래로 */
   .svc-row {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    padding: 30px 0;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "num title" "body body";
+    gap: 16px 18px;
+    align-items: center;
+    padding: 32px 0;
   }
+  .svc-row__num { font-size: 2rem; }
 }
 
 @media (max-width: 900px) {
@@ -1247,12 +1257,12 @@ ul { list-style: none; }
   .services__head .giant-title { margin-bottom: 14px; }
   .services__sub { font-size: 0.97rem; }
   .services__intro { font-size: 0.92rem; margin-top: 16px; }
-  .svc-row { padding: 26px 0; }
+  .services__rows { margin-top: 34px; }
+  .svc-row { padding: 28px 0; }
   .svc-row__title h3 { font-size: 1.18rem; }
-  .svc-row__desc { font-size: 0.96rem; }
-  .svc-row__items { gap: 7px; margin-top: 14px; }
-  .svc-row__items li { padding: 7px 13px; font-size: 0.83rem; }
-  .svc-row__icon svg { width: 30px; height: 30px; }
+  .svc-row__desc { font-size: 0.96rem; margin-bottom: 14px; }
+  .svc-row__items { columns: 1; } /* 좁은 화면에선 1열 */
+  .svc-row__items li { font-size: 0.9rem; line-height: 1.95; }
 
   /* Why JJAM */
   .why__grid { max-width: 340px; gap: 40px; }
