@@ -312,6 +312,37 @@ ul { list-style: none; }
 .btn--kakao svg { width: 18px; height: 18px; }
 .btn--full { width: 100%; }
 
+/* ===== Slogan banner (히어로 다음 슬로건 배너) ===== */
+.slogan {
+  background: var(--color-dark-soft);
+  color: var(--color-white);
+  padding: 120px 0;
+  text-align: center;
+  border-bottom: 1px solid var(--color-line-dark);
+}
+.slogan__line {
+  font-size: clamp(1.45rem, 3.2vw, 2.75rem);
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.slogan__line em {
+  font-style: normal;
+  color: var(--color-accent);
+}
+.slogan__logo {
+  display: block;
+  width: clamp(118px, 13vw, 168px);
+  height: auto;
+  margin: 44px auto 36px;
+}
+.slogan__tag {
+  font-size: clamp(0.97rem, 1.5vw, 1.15rem);
+  color: rgba(255, 255, 255, 0.66);
+  line-height: 1.7;
+}
+.slogan__tag strong { color: var(--color-white); font-weight: 700; }
+
 /* ===== Sections common ===== */
 .section { padding: 150px 0; }
 
@@ -1122,6 +1153,8 @@ ul { list-style: none; }
 
 @media (max-width: 900px) {
   .section { padding: 100px 0; }
+  .slogan { padding: 88px 0; }
+  .slogan__logo { margin: 34px auto 28px; }
   .about__grid, .contact__grid { grid-template-columns: 1fr; gap: 52px; }
   .giant-title { margin-bottom: 44px; }
   .why { margin-top: 90px; }
@@ -1137,6 +1170,7 @@ ul { list-style: none; }
   .header__logo img { height: 38px; }
   .br-desktop { display: none; }
   .section { padding: 72px 0; }
+  .slogan { padding: 64px 0; }
 
   /* 대형 제목 공통 축소 */
   .giant-title { font-size: clamp(2rem, 9vw, 2.6rem); margin-bottom: 30px; }
