@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="style.css?v=41" />
+  <link rel="stylesheet" href="style.css?v=42" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path fill='%23be2d2f' d='M50 5l11 30 34 1-27 21 10 33-28-20-28 20 10-33-27-21 34-1z'/></svg>" />
 </head>
 <body>
@@ -92,9 +92,35 @@
     <!-- ===== Slogan banner ===== -->
     <section class="slogan" id="slogan">
       <div class="container">
-        <p class="slogan__line reveal">언제나 새롭게 <em>NEW</em></p>
-        <p class="slogan__line reveal delay-1">트렌디하게 <em>TRENDY</em></p>
-        <p class="slogan__line reveal delay-2">창의적으로 <em>CREATIVE</em></p>
+        <div class="slogan__grid">
+          <div class="slogan__cell reveal">
+            <span class="slogan__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l2.4 5.9L20.5 10l-5.4 2.3L12 18l-2.4-5.7L4 10l6-1.1L12 3z"/>
+              </svg>
+            </span>
+            <p class="slogan__en">NEW</p>
+            <p class="slogan__ko">언제나 새롭게</p>
+          </div>
+          <div class="slogan__cell reveal delay-1">
+            <span class="slogan__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 17l5.5-5.5 3.5 3.5L21 6"/><path d="M15 6h6v6"/>
+              </svg>
+            </span>
+            <p class="slogan__en">TRENDY</p>
+            <p class="slogan__ko">트렌디하게</p>
+          </div>
+          <div class="slogan__cell reveal delay-2">
+            <span class="slogan__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.4.3.6.7.6 1.1h5.8c0-.4.2-.8.6-1.1A6 6 0 0 0 12 3z"/>
+              </svg>
+            </span>
+            <p class="slogan__en">CREATIVE</p>
+            <p class="slogan__ko">창의적으로</p>
+          </div>
+        </div>
         <img class="slogan__logo reveal delay-3" src="assets/logo-white.png" alt="jjam agency" />
         <p class="slogan__tag reveal delay-3">
           당신의 브랜딩 파트너 영상 제작사 <strong>jjam agency 쨈 에이전시</strong>
@@ -437,6 +463,6 @@
     </div>
   </div>
 
-  <script src="script.js?v=41"></script>
+  <script src="script.js?v=42"></script>
 </body>
 </html>

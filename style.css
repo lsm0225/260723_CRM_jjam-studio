@@ -320,21 +320,40 @@ ul { list-style: none; }
   text-align: center;
   border-bottom: 1px solid var(--color-line-dark);
 }
-.slogan__line {
-  font-size: clamp(1.45rem, 3.2vw, 2.75rem);
-  font-weight: 800;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+.slogan__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 1000px;
+  margin: 0 auto;
 }
-.slogan__line em {
-  font-style: normal;
+.slogan__cell {
+  padding: 38px 20px;
+  border-left: 1px solid rgba(255, 255, 255, 0.13);
+}
+.slogan__cell:last-child { border-right: 1px solid rgba(255, 255, 255, 0.13); }
+.slogan__ico {
+  display: block;
+  width: 46px;
+  height: 46px;
+  margin: 0 auto 20px;
   color: var(--color-accent);
+}
+.slogan__ico svg { width: 100%; height: 100%; }
+.slogan__en {
+  font-size: clamp(1.15rem, 2.1vw, 1.6rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+}
+.slogan__ko {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.62);
 }
 .slogan__logo {
   display: block;
   width: clamp(118px, 13vw, 168px);
   height: auto;
-  margin: 44px auto 36px;
+  margin: 56px auto 36px;
 }
 .slogan__tag {
   font-size: clamp(0.97rem, 1.5vw, 1.15rem);
@@ -1171,6 +1190,18 @@ ul { list-style: none; }
   .br-desktop { display: none; }
   .section { padding: 72px 0; }
   .slogan { padding: 64px 0; }
+  /* 좁은 화면에선 3열 → 1열, 세로 구분선을 가로선으로 */
+  .slogan__grid { grid-template-columns: 1fr; max-width: 330px; }
+  .slogan__cell {
+    padding: 24px 12px;
+    border-left: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+  }
+  .slogan__cell:last-child {
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.13);
+  }
+  .slogan__ico { width: 36px; height: 36px; margin-bottom: 14px; }
 
   /* 대형 제목 공통 축소 */
   .giant-title { font-size: clamp(2rem, 9vw, 2.6rem); margin-bottom: 30px; }
