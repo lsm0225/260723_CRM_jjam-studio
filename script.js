@@ -448,13 +448,17 @@ function applyContent(c, ov) {
     const g = document.querySelector(".why__grid");
     if (g) {
       g.innerHTML = c.why
-        .map(
-          (w, i) => `
+        .map((w, i) => {
+          const img = w.img
+            ? `<img class="why-item__img" src="${escHtml(w.img)}" alt="${escHtml(w.title)}" loading="lazy" />`
+            : "";
+          return `
         <div class="why-item reveal">
+          ${img}
           <span class="why-item__num">${String(i + 1).padStart(2, "0")}</span>
           <h3>${escHtml(w.title)}</h3><p>${escHtml(w.desc)}</p>
-        </div>`
-        )
+        </div>`;
+        })
         .join("");
       g.classList.toggle("n4", c.why.length === 4);
       g.classList.toggle("nmany", c.why.length > 4);
