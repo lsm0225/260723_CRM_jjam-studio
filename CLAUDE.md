@@ -21,7 +21,7 @@
 - 섹션 헤드라인: 두 줄 대문자 대형 타이포 (WHO WE ARE / OUR SERVICES / LET'S CONTACT)
 - 포인트 컬러: 크림슨 레드 (#be2d2f, 로고 별 색), 폰트: Pretendard
 - **크림(#fffdea) 키 컬러는 폐기됨 — 절대 재사용 금지. 라이트 배경은 중립 오프화이트(#f5f4f1).** (2026-07-23 클라이언트 지시)
-- 구성(현재): 히어로 → About → Service(다크 행리스트) → Portfolio(카테고리 슬라이더) → Client(로고 스트립) → Contact(다크 폼)
+- 구성(현재): 히어로 → 슬로건 배너 → **Service(다크 행리스트)** → About → Why → Portfolio(카테고리 슬라이더) → Client(로고 스트립) → Contact(다크 폼)
 - **포트폴리오 = 카테고리 필터 + 가로 블러 슬라이더.** 데이터는 script.js의 `PF_VIDEOS` 배열(id/제목/분야) — **영상 추가 = 이 배열에 한 줄**. (구 mosaic용 gen-portfolio.py/portfolio-videos.txt는 폐기.) 스크롤 진입 시 최초 1회 PORTFOLIO 글씨 써짐→0.5초 뒤 우→가운데 진입(글씨 페이드아웃), 탭 클릭은 슬라이드만 교체, 가운데 슬라이드 재생버튼 클릭 시 인라인 재생. slider.html은 프로토타입(참고용).
 
 ## 확정 정보 (2026-07-23 클라이언트 제공)
@@ -82,3 +82,5 @@
 - 2026-08-05: **슬로건 배너 섹션 신설(#slogan, 히어로 바로 다음).** 기획안의 NEW/TRENDY/CREATIVE 배너 구현. 구성: 3줄 슬로건(한글 화이트 + 영문 레드 `<em>`) → **가운데 로고(logo-white.png)** → 태그라인 "당신의 브랜딩 파트너 영상 제작사 **jjam agency 쨈 에이전시**". 배경 `--color-dark-soft`(#17171a)로 히어로(#0c0c0d)와 미묘하게 구분, 하단 보더로 흰 About 섹션과 분리. 가운데 정렬. 내비에는 추가 안 함(배너 성격). CMS 미연동(정적 마크업) — 문구 수정은 index.html 직접. 캐시 v41. 검증: 데스크톱 1440 + 실제 390px(iframe 하니스) 오버플로 없음.
   - **미리보기 팁**: 섹션만 따로 렌더할 때 임시 HTML을 만들면 ①`<meta charset="UTF-8">` 필수(없으면 한글 깨짐) ②`.reveal{opacity:1!important;transform:none!important}` 오버라이드 필요(script.js 없이는 opacity:0이라 안 보임). 임시 파일은 렌더 후 반드시 삭제(커밋 오염 방지).
 - 2026-08-05: 슬로건 배너 표기 수정(트랜디 → **트렌디**, 표준 표기). 이어서 "디자인 요소를 넣고 싶다"는 요청에 **시안 4종을 실제 CSS로 렌더해 제시**(A 에디토리얼 넘버링 / B 흐르는 레드 마퀴 / C 3열 아이콘 / D 고스트 대형 타이포 배경) → **클라이언트가 C 선택, 적용 완료(v42)**. 구성: `.slogan__grid` 3열 + 세로 구분선(`border-left`, 마지막 칸만 `border-right`), 각 칸에 레드 라인 아이콘(반짝임/상승그래프/전구 인라인 SVG) + 영문(900) + 한글(회색). ≤640px에서 **1열 스택 + 구분선 세로→가로 전환**(max-width 330px). 미채택 시안 A/B/D의 CSS는 남기지 않음(필요하면 재작성).
+- 2026-08-05: **SERVICE 섹션을 3번째로 이동 + 내용 확장 리디자인(v43).** 섹션 순서 히어로→슬로건→**서비스**→About→Why→…(내비/모바일메뉴 순서도 Service를 About 앞으로). 헤드에 설명 문구 `.services__intro` 추가("브랜드에 필요한 콘텐츠는 모두 다릅니다 / 쨈 에이전시는 고객의 목표와 예산에 맞춰…"). 각 행 구조를 `title|desc|icon` 3단 → **`[아이콘+제목] | [설명+세부항목 칩]` 2단**(`.svc-row__head` / `.svc-row__body` / `.svc-row__items`)으로 재편, 세부항목은 라운드 칩(5·4·4·4개), 행 호버 시 칩 테두리가 레드로. 열비 `1fr 1.25fr` — 0.85fr이면 "유튜브 크리에이터 교육"이 두 줄로 깨짐. ≤760px 1열 스택(기존 grid-template-areas 규칙은 새 구조와 안 맞아 제거).
+  - **CMS 동기화 필수 3곳**(하나라도 빠지면 관리자 저장 시 화면이 깨짐): ①`functions/api/[[path]].js` DEFAULTS.services에 `items: []` ②`script.js` applyContent 서비스 재렌더에 칩 마크업 ③`admin.html` renderSvc/collectSvc/addSvc에 items 입력칸(줄바꿈 구분 → 배열 변환). 현재 DB `_overrides`는 비어 있어 하드코딩 HTML이 표시됨.
