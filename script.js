@@ -92,7 +92,7 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 // ----- Active nav highlight -----
-const sections = ["hero", "about", "services", "portfolio", "partners", "contact"].map((id) => document.getElementById(id));
+const sections = ["hero", "services", "about", "why", "portfolio", "partners", "contact"].map((id) => document.getElementById(id));
 const navLinks = document.querySelectorAll(".nav-link");
 
 const sectionObserver = new IntersectionObserver(
@@ -111,28 +111,28 @@ sections.forEach((s) => s && sectionObserver.observe(s));
 
 // ----- 포트폴리오 카테고리 슬라이더 -----
 const PF_VIDEOS = [
-  { id: "YMkMfrhTy1U", t: "고지혈증 치료, 획기적인 신약등장!! 스타틴 부작용 있다면?", c: "의료·제약" },
-  { id: "WV8x4BC2Iwk", t: "배로 하는 척추수술(ALIF/OLIF) — 부산 우리들병원", c: "의료·제약" },
-  { id: "d9KyiFb_DMU", t: "위고비 Vs 마운자로, 나에게 맞는 비만 치료제는?", c: "의료·제약" },
-  { id: "vAAuU_1JWsg", t: "[엄마약방] 처방없이 약국에서 구매하는 다이어트 약!!", c: "의료·제약" },
-  { id: "2doDVaOWvvs", t: "MEET THE EXPERT #10 분당서울대병원 신경과 한문구 교수", c: "의료·제약" },
-  { id: "9Ujoxe-MFkI", t: "가성비 콜라겐의 끝판왕 앱솔루트콜라겐 3.5!!", c: "의료·제약" },
-  { id: "NFTjLFFpz_4", t: "당뇨병에 좋은 영양제! 현직 약사가 다 알려줌", c: "의료·제약" },
-  { id: "G2sN4OBMUpY", t: "당뇨를 100% 막을 수 있는 마지막 골든타임!", c: "의료·제약" },
-  { id: "NDu6rGoEtZg", t: "부산우리들병원", c: "의료·제약" },
-  { id: "nKmjEDQCP5I", t: "엔지니어드 스톤 주방상판으로 괜찮을까요?", c: "기업·제품" },
-  { id: "mQW6chRAKQ0", t: "한풍제약 공장 소개", c: "기업·제품" },
-  { id: "5CLC1gvD4zQ", t: "한풍제약 경기약사학술대회 브이로그", c: "기업·제품" },
-  { id: "MGl2tn_x5m0", t: "Soflisse Before&After", c: "기업·제품" },
-  { id: "E_LuGEFSW-s", t: "Seojinsystem 홍보영상 2022", c: "기업·제품" },
-  { id: "y45bK2Lldf0", t: "밀로 만든 안동소주 / 맹개술도가", c: "문화·라이프" },
-  { id: "hmSi3PG1_V0", t: "정원이 아름다운 양조장 / 해창주조장", c: "문화·라이프" },
-  { id: "qQcgkA9MUoA", t: "서울국제도서전에 갔다 왔어요", c: "문화·라이프" },
-  { id: "L-vzl1EGMTw", t: "인페인터글로벌 아트투어 7기", c: "문화·라이프" },
-  { id: "7oa3hJS4bTY", t: "대통령배 현장취재", c: "문화·라이프" },
-  { id: "rSWXxcZr-kQ", t: "코딩랜드 보물을 함께 찾아요 · 시즌2 11화", c: "문화·라이프" },
-  { id: "miUYlT1kOpA", t: "제이잼 포트폴리오", c: "문화·라이프" },
-  { id: "S4AM6T1zqoc", t: "제이잼 포트폴리오", c: "문화·라이프" },
+  { id: "WV8x4BC2Iwk", t: "부산우리들병원 〈배로 하는 척추 수술편〉", c: "의료·제약" },
+  { id: "NDu6rGoEtZg", t: "부산우리들병원 원내 홍보영상", c: "의료·제약" },
+  { id: "YMkMfrhTy1U", t: "청담 주앤클리닉 〈젊어지는 주앤TV〉", c: "의료·제약" },
+  { id: "G2sN4OBMUpY", t: "(주)어웰 〈K닥터스〉", c: "의료·제약" },
+  { id: "d9KyiFb_DMU", t: "한국피부성형학회 〈뷰티고민 원터치〉", c: "의료·제약" },
+  { id: "2doDVaOWvvs", t: "대한중환자의학회 〈MEET THE EXPERT〉", c: "의료·제약" },
+  { id: "5CLC1gvD4zQ", t: "(주)한풍제약 〈경기약사학술대회〉", c: "의료·제약" },
+  { id: "mQW6chRAKQ0", t: "(주)한풍제약 〈한풍제약 공장 소개〉", c: "의료·제약" },
+  { id: "miUYlT1kOpA", t: "(주)경남제약 〈리놀 인플루언서 세미나〉", c: "의료·제약" },
+  { id: "vAAuU_1JWsg", t: "샘물약국 현고은 약사 〈엄마약방〉", c: "의료·제약" },
+  { id: "S4AM6T1zqoc", t: "인천 21세기 약국 〈유쾌한 김약사의 톡톡〉", c: "의료·제약" },
+  { id: "9Ujoxe-MFkI", t: "(주)Wellver 〈Wellver TV〉", c: "의료·제약" },
+  { id: "NFTjLFFpz_4", t: "(주)굿팜 〈굿팜TV 약사에게 물어봐〉", c: "의료·제약" },
+  { id: "nKmjEDQCP5I", t: "(주)라미크 이태리 〈돌파는언니TV〉", c: "기업·제품" },
+  { id: "MGl2tn_x5m0", t: "(주)소프리스 〈소프리스 풋케어 홍보〉", c: "기업·제품" },
+  { id: "rSWXxcZr-kQ", t: "(주)로보로보 〈아로프렌즈〉", c: "기업·제품" },
+  { id: "E_LuGEFSW-s", t: "(주)서진시스템 홍보영상", c: "기업·제품" },
+  { id: "7oa3hJS4bTY", t: "서울마사회 조교사협회 〈말할수밖에〉", c: "문화·라이프" },
+  { id: "y45bK2Lldf0", t: "술술술술 〈안동 진맥소주〉", c: "문화·라이프" },
+  { id: "hmSi3PG1_V0", t: "술술술술 〈해창주조〉", c: "문화·라이프" },
+  { id: "qQcgkA9MUoA", t: "도파민TV 〈서울국제도서전〉", c: "문화·라이프" },
+  { id: "L-vzl1EGMTw", t: "아트투어 〈일본 에히메편〉", c: "문화·라이프" },
 ];
 
 function initPortfolioSlider(videos, catNames) {

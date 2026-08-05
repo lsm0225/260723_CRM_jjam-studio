@@ -1529,3 +1529,14 @@ ul { list-style: none; }
 .portfolio .giant-title { text-align: center; margin-bottom: 20px; }
 .portfolio .pf-sub { text-align: center; }
 .pf-tabs { justify-content: center; }
+
+/* 내비 항목이 7개로 늘어 좁은 화면에서 겹치지 않도록 단계 축소 */
+@media (max-width: 1180px) {
+  .header__nav { gap: 22px; }
+  .nav-link { font-size: 0.9rem; }
+}
+@media (max-width: 960px) {
+  .header__nav { gap: 15px; }
+  .nav-link { font-size: 0.82rem; letter-spacing: 0.02em; }
+  .header__cta { font-size: 0.86rem; padding: 10px 15px; }
+}
