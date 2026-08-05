@@ -645,6 +645,75 @@ ul { list-style: none; }
   line-height: 1.75;
 }
 
+/* ===== Process (제작 프로세스 6단계, 다크) ===== */
+.process {
+  background: var(--color-dark);
+  color: var(--color-white);
+  text-align: center;
+}
+.process__giant { display: inline-block; margin-bottom: 10px; }
+.process__sub {
+  font-size: clamp(1.05rem, 1.9vw, 1.35rem);
+  font-weight: 700;
+}
+.process__intro {
+  margin-top: 14px;
+  font-size: 0.97rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.8;
+}
+.process__grid {
+  margin-top: 64px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+.step { position: relative; padding: 0 8px; }
+/* 단계 사이 연결선 (아이콘 중심끼리 이음) */
+.step::before {
+  content: "";
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.step:last-child::before { display: none; }
+.step__ico {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 20px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: var(--color-dark);
+  color: var(--color-accent);
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+}
+.step__ico svg { width: 28px; height: 28px; }
+.step:hover .step__ico {
+  border-color: var(--color-accent);
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+.step__n {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+.step h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
 /* ===== Portfolio (카테고리 슬라이더 + 모션 블러) ===== */
 .portfolio { background: var(--color-bg); overflow: hidden; }
 .portfolio .eyebrow { margin-bottom: 22px; }
@@ -1218,6 +1287,9 @@ ul { list-style: none; }
 @media (max-width: 1080px) {
   .svc-row { grid-template-columns: auto 240px 1fr; gap: 26px; }
   .svc-row__icon { display: none; }
+  /* 프로세스 6 → 3열 2행 (각 행 끝 연결선 제거) */
+  .process__grid { grid-template-columns: repeat(3, 1fr); row-gap: 52px; }
+  .step:nth-child(3n)::before { display: none; }
 }
 
 @media (max-width: 980px) {
@@ -1299,6 +1371,15 @@ ul { list-style: none; }
 
   /* Why JJAM */
   .why__grid { max-width: 340px; gap: 40px; }
+
+  /* Process: 2열 3행 */
+  .process__grid { grid-template-columns: repeat(2, 1fr); row-gap: 42px; margin-top: 44px; }
+  .step::before { display: block; } /* 3열 규칙 초기화 */
+  .step:nth-child(2n)::before { display: none; }
+  .step__ico { width: 56px; height: 56px; margin-bottom: 16px; }
+  .step__ico svg { width: 24px; height: 24px; }
+  .step::before { top: 28px; }
+  .step h3 { font-size: 0.92rem; }
 
   /* Portfolio: 모바일은 슬라이더 제외 → 그리드로 */
   .pf-slider, .pf-more-wrap { display: none; }
