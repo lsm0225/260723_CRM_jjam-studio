@@ -92,7 +92,7 @@ const revealObserver = new IntersectionObserver(
 document.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
 
 // ----- Active nav highlight -----
-const sections = ["hero", "about", "services", "portfolio", "client", "contact"].map((id) => document.getElementById(id));
+const sections = ["hero", "about", "services", "portfolio", "partners", "contact"].map((id) => document.getElementById(id));
 const navLinks = document.querySelectorAll(".nav-link");
 
 const sectionObserver = new IntersectionObserver(
@@ -489,6 +489,31 @@ function applyContent(c, ov) {
   }
 }
 
+// ----- 파트너 로고 더보기 (접힘 상태는 CSS가 3줄까지만 노출) -----
+function initClientMore() {
+  const grid = document.getElementById("clientGrid");
+  const btn = document.getElementById("clientMore");
+  if (!grid || !btn) return;
+  const wrap = btn.parentElement;
+  const shown = () =>
+    [...grid.children].filter((el) => getComputedStyle(el).display !== "none").length;
+  const sync = () => {
+    if (grid.classList.contains("is-expanded")) return;
+    wrap.style.display = shown() < grid.children.length ? "" : "none";
+  };
+  btn.onclick = () => {
+    const open = grid.classList.toggle("is-expanded");
+    btn.innerHTML = open ? '접기 <span>▴</span>' : '더보기 <span>▾</span>';
+  };
+  sync();
+  let t;
+  window.addEventListener("resize", () => {
+    clearTimeout(t);
+    t = setTimeout(sync, 200);
+  });
+}
+initClientMore();
+
 function applyClients(list) {
   if (!Array.isArray(list) || !list.length) return; // 등록 전에는 LOGO 자리표시 유지
   const grid = document.querySelector(".client__grid");
@@ -505,6 +530,7 @@ function applyClients(list) {
     .join("");
   const note = document.querySelector(".client__note");
   if (note) note.remove();
+  initClientMore(); // 목록이 교체됐으니 더보기 상태 재계산
 }
 
 (async function bootCMS() {
