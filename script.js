@@ -375,6 +375,8 @@ const escHtml = (s) => {
   return d.innerHTML;
 };
 
+const nl2br = (t) => escHtml(t).replace(/\n/g, "<br />");
+
 function applyContent(c, ov) {
   // 히어로
   if (ov.has("hero") && c.hero) {
@@ -441,6 +443,121 @@ function applyContent(c, ov) {
         .join("");
       rows.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
     }
+  }
+
+
+  // 슬로건 배너
+  if (ov.has("slogan") && c.slogan) {
+    const g = c.slogan;
+    const cells = document.querySelectorAll(".slogan__cell");
+    if (Array.isArray(g.items)) {
+      g.items.forEach((it, i) => {
+        const cell = cells[i];
+        if (!cell) return;
+        const en = cell.querySelector(".slogan__en"), ko = cell.querySelector(".slogan__ko");
+        if (en && it.en) en.textContent = it.en;
+        if (ko && it.ko) ko.textContent = it.ko;
+      });
+    }
+    const tag = document.querySelector(".slogan__tag");
+    if (tag && g.tagline) {
+      tag.innerHTML = escHtml(g.tagline) + (g.tagline_brand ? ` <strong>${escHtml(g.tagline_brand)}</strong>` : "");
+    }
+  }
+
+  // PROCESS (아이콘은 기존 것 재사용)
+  if (ov.has("process") && c.process) {
+    const pr = c.process;
+    const ps = document.querySelector(".process__sub");
+    if (ps && pr.sub) ps.textContent = pr.sub;
+    const pi = document.querySelector(".process__intro");
+    if (pi && pr.intro) pi.innerHTML = nl2br(pr.intro);
+    const list = document.querySelector(".process__list");
+    if (list && Array.isArray(pr.steps) && pr.steps.length) {
+      const icons = [...list.querySelectorAll(".pstep__ico")].map((el) => el.outerHTML);
+      list.innerHTML = pr.steps
+        .map(
+          (st, i) => `
+        <div class="pstep reveal">
+          <div class="pstep__left">
+            ${icons[i % (icons.length || 1)] || ""}
+            <div>
+              <span class="pstep__n">STEP ${String(i + 1).padStart(2, "0")}</span>
+              <h3>${escHtml(st.title)}</h3>
+            </div>
+          </div>
+          <p class="pstep__desc">${escHtml(st.desc)}</p>
+        </div>`
+        )
+        .join("");
+      list.querySelectorAll(".reveal").forEach((el) => revealObserver.observe(el));
+    }
+  }
+
+  // 최종 CTA
+  if (ov.has("cta") && c.cta) {
+    const t = c.cta;
+    const eb = document.querySelector(".cta__eyebrow");
+    if (eb && t.eyebrow) eb.textContent = t.eyebrow;
+    const ti = document.querySelector(".cta__title");
+    if (ti && t.title) ti.innerHTML = escHtml(t.title) + (t.accent ? ` <span>${escHtml(t.accent)}</span>` : "");
+    const btns = document.querySelectorAll(".cta__actions .btn");
+    if (btns[0] && t.btn1) btns[0].textContent = t.btn1;
+    if (btns[1] && t.btn2) btns[1].textContent = t.btn2;
+  }
+
+  // CONTACT 문구
+  if (ov.has("contact") && c.contact) {
+    const ct = c.contact;
+    const cs = document.querySelector(".contact__sub");
+    if (cs && ct.sub) cs.textContent = ct.sub;
+    const ci = document.querySelector(".contact__intro");
+    if (ci && ct.intro) ci.innerHTML = nl2br(ct.intro);
+    const ch = document.querySelector(".concerns__title");
+    if (ch && ct.headline) ch.innerHTML = nl2br(ct.headline);
+    const cc = document.querySelector(".concerns__sub");
+    if (cc && ct.subcopy) cc.innerHTML = nl2br(ct.subcopy);
+    const ul = document.querySelector(".concerns__list ul");
+    if (ul && Array.isArray(ct.concerns) && ct.concerns.length) {
+      ul.innerHTML = ct.concerns.map((x) => `<li>${escHtml(x)}</li>`).join("");
+    }
+    const sol = document.querySelector(".solution p");
+    if (sol && ct.solution) {
+      const t = escHtml(ct.solution);
+      sol.innerHTML = ct.solution_accent && ct.solution.includes(ct.solution_accent)
+        ? t.replace(escHtml(ct.solution_accent), `<strong>${escHtml(ct.solution_accent)}</strong>`)
+        : t;
+    }
+  }
+
+  // 대표 약력 모달
+  if (ov.has("profile") && c.profile) {
+    const pf = c.profile;
+    const nm = document.querySelector(".modal__name");
+    if (nm && pf.name) nm.innerHTML = `${escHtml(pf.name)} <span>${escHtml(pf.role || "")}</span>`;
+    const secs = document.querySelectorAll(".modal__section");
+    const fill = (sec, items) => {
+      if (!sec || !Array.isArray(items) || !items.length) return;
+      const ul = sec.querySelector("ul");
+      if (ul) ul.innerHTML = items.map((x) => `<li>${escHtml(x)}</li>`).join("");
+    };
+    fill(secs[0], pf.directing);
+    fill(secs[1], pf.lecture);
+    const q = document.querySelector(".modal__quote");
+    if (q && pf.quote) q.innerHTML = nl2br(pf.quote);
+  }
+
+  // 카카오톡 링크 (헤더·히어로·푸터 일괄)
+  if (c.links && c.links.kakao) {
+    const url = c.links.kakao;
+    document
+      .querySelectorAll(".header__cta--kakao, .btn--kakao, .footer__btn--kakao")
+      .forEach((a) => {
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.removeAttribute("aria-label");
+      });
   }
 
   // WHY JJAM? (개수가 늘면 레이아웃 자동 조정)
