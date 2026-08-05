@@ -613,7 +613,8 @@ ul { list-style: none; }
   transition: background 0.3s;
 }
 .why-item:hover .why-item__ph { background: #e3e0d8; }
-/* 항목별 사진(선택) — 관리자에서 이미지 주소를 넣으면 제목 위에 표시 */
+/* 항목별 사진(선택) — 관리자에서 이미지 주소를 넣으면 제목 위에 표시.
+   흑백 처리해 레드 포인트 컬러가 도드라지도록 (클라이언트 요청) */
 .why-item__img {
   display: block;
   width: 100%;
@@ -621,6 +622,8 @@ ul { list-style: none; }
   object-fit: cover;
   border-radius: 12px;
   margin-bottom: 22px;
+  filter: grayscale(1);
+  transition: filter 0.45s var(--ease);
 }
 .why-item:hover { border-top-color: var(--color-accent); }
 .why-item__num {
