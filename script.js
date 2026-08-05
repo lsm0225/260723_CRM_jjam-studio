@@ -367,7 +367,7 @@ form.addEventListener("submit", async (e) => {
 // /api/* 는 Cloudflare Pages Functions — 관리자에서 저장한 값만 반영하고,
 // 저장된 적 없거나 API가 없는 환경(GitHub Pages)에서는 기본 콘텐츠 그대로 표시
 // ============================================
-let CONTACT_EMAIL = "ej74321@hanmail.net";
+let CONTACT_EMAIL = "jjamagency@gmail.com";
 
 const escHtml = (s) => {
   const d = document.createElement("div");
