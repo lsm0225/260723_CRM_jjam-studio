@@ -206,7 +206,7 @@
 <!-- ===== 앱 ===== -->
 <div id="app">
   <aside class="sb">
-    <div class="sb__logo">
+    <div class="sb__logo" id="sbLogo" title="새로고침 (대시보드로 이동)" style="cursor:pointer">
       <img src="assets/logo.png" alt="jjam agency">
       <span class="adm">ADMIN</span>
     </div>
@@ -530,6 +530,8 @@ $("#loginForm").addEventListener("submit", async (e) => {
   } catch (ex) { err.textContent = ex.message; err.style.display = "block"; }
 });
 $("#logoutBtn").addEventListener("click", logout);
+// 로고 클릭 → 새로고침하며 대시보드로 진입
+$("#sbLogo").addEventListener("click", () => location.reload()); // 진입 시 항상 대시보드로 시작함
 
 // ---------- 내비게이션 ----------
 const VIEW_META = {
@@ -681,6 +683,25 @@ function pvLive() {
   const on = document.querySelector("#nav button.on");
   if (!on) return;
   const v = on.dataset.v;
+  // 목록형(포트폴리오·파트너)은 사이트의 전용 렌더 함수를 직접 호출
+  if (v === "portfolio") {
+    const vids = PF.map((p) => {
+      const g = (f) => { const el = document.querySelector(`[data-pf="${p.id}"][data-f="${f}"]`); return el ? el.value : ""; };
+      return { id: p.video_id, t: g("title") || p.title || "", c: g("category") || p.category || "" };
+    });
+    const cats = ($("#pfCats").value || "").split(",").map(x => x.trim()).filter(Boolean);
+    try { w.initPortfolioSlider(vids, cats.length ? cats : null); } catch (e) {}
+    pvScrollOnce(); pvDirty(true);
+    return;
+  }
+  if (v === "clients") {
+    const list = CL.map((c) => {
+      const g = (f) => { const el = document.querySelector(`[data-cl="${c.id}"][data-f="${f}"]`); return el ? el.value : ""; };
+      return { name: g("name") || c.name, logo_url: g("logo_url") || c.logo_url, link: g("link") || c.link };
+    });
+    if (list.length) { try { w.applyClients(list); } catch (e) {} pvScrollOnce(); pvDirty(true); }
+    return;
+  }
   const parts = [];
   const d = draftFor(v);
   if (d) parts.push(d);

@@ -140,10 +140,21 @@ const PF_VIDEOS = [
   { id: "L-vzl1EGMTw", t: "아트투어 〈일본 에히메편〉", c: "문화·라이프" },
 ];
 
+// 관리자 미리보기에서 값이 바뀔 때마다 다시 호출될 수 있으므로,
+// 이전 호출이 등록한 리스너·옵저버를 먼저 정리한다(중복 등록 방지).
+let PF_CLEANUP = null;
+
 function initPortfolioSlider(videos, catNames) {
+  if (PF_CLEANUP) { PF_CLEANUP(); PF_CLEANUP = null; }
   const host = document.getElementById("pfSlider");
-  const tabsEl = document.getElementById("pfTabs");
+  let tabsEl = document.getElementById("pfTabs");
   if (!host || !tabsEl) return;
+  // 탭·더보기 버튼은 재사용되는 요소라 복제로 교체해 과거 클릭 리스너를 떨어뜨린다
+  tabsEl.replaceWith(tabsEl.cloneNode(false));
+  tabsEl = document.getElementById("pfTabs");
+  const oldMore = document.getElementById("pfMore");
+  if (oldMore) oldMore.replaceWith(oldMore.cloneNode(true));
+  const CLEANUPS = [];
 
   host.innerHTML =
     '<div class="wm"></div>' +
@@ -270,7 +281,11 @@ function initPortfolioSlider(videos, catNames) {
   setActive(); center(); track.classList.remove("is-sliding");
   (function preHide() { track.style.transition = "none"; track.style.transform = `translateX(${targetX() + vpW()}px)`; slides().forEach((s) => (s.style.opacity = "0")); void track.offsetWidth; track.style.transition = ""; })();
   window.addEventListener("resize", center);
-  new IntersectionObserver((es) => { if (es[0].isIntersecting && !entered) { entered = true; firstEntrance(); } }, { threshold: 0.3 }).observe(host);
+  CLEANUPS.push(() => window.removeEventListener("resize", center));
+  const pfIO = new IntersectionObserver((es) => { if (es[0].isIntersecting && !entered) { entered = true; firstEntrance(); } }, { threshold: 0.3 });
+  pfIO.observe(host);
+  CLEANUPS.push(() => pfIO.disconnect());
+  PF_CLEANUP = () => CLEANUPS.forEach((f) => f());
 }
 
 // ----- 대표 약력 모달 -----
