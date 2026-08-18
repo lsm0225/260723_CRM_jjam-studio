@@ -159,6 +159,58 @@ const DEFAULT_PORTFOLIO = [
   ["아트투어 〈일본 에히메편〉", "L-vzl1EGMTw", "문화·라이프"],
 ];
 
+// 최초 시드용 기본 파트너 로고 (현재 사이트 48개)
+const DEFAULT_CLIENTS = [
+  ["부산우리들병원", "assets/partners/partner-01.png"],
+  ["JUANCLINIC", "assets/partners/partner-02.png"],
+  ["한풍제약", "assets/partners/partner-03.png"],
+  ["경남제약", "assets/partners/partner-04.png"],
+  ["쉬즈메디병원", "assets/partners/partner-05.png"],
+  ["Awell", "assets/partners/partner-06.png"],
+  ["굿팜", "assets/partners/partner-07.png"],
+  ["대한중환자의학회", "assets/partners/partner-08.png"],
+  ["유로스메디컬의원", "assets/partners/partner-09.png"],
+  ["Wellver", "assets/partners/partner-10.png"],
+  ["MBC", "assets/partners/partner-11.png"],
+  ["SBS", "assets/partners/partner-12.png"],
+  ["MBN", "assets/partners/partner-13.png"],
+  ["MBC every1", "assets/partners/partner-14.png"],
+  ["명지대학교", "assets/partners/partner-15.png"],
+  ["한국방송예술진흥원", "assets/partners/partner-16.png"],
+  ["IT'S MODELS", "assets/partners/partner-17.png"],
+  ["믿는구석", "assets/partners/partner-18.png"],
+  ["플라이닥터", "assets/partners/partner-19.png"],
+  ["십장생한의원", "assets/partners/partner-20.png"],
+  ["BNI INNOVATION", "assets/partners/partner-21.png"],
+  ["RAMIQUE", "assets/partners/partner-22.png"],
+  ["BROWN STONE", "assets/partners/partner-23.png"],
+  ["LEADGEN LAB", "assets/partners/partner-24.png"],
+  ["REFERENCE CHECK KOREA", "assets/partners/partner-25.png"],
+  ["노무법인 유연", "assets/partners/partner-26.png"],
+  ["파트너사", "assets/partners/partner-27.png"],
+  ["아신특허법률사무소", "assets/partners/partner-28.png"],
+  ["법무법인 해율", "assets/partners/partner-29.png"],
+  ["회계법인 리파인드", "assets/partners/partner-30.png"],
+  ["EL Flower", "assets/partners/partner-31.png"],
+  ["나르샤", "assets/partners/partner-32.png"],
+  ["BLACK PENCIL", "assets/partners/partner-33.png"],
+  ["BETTYMOON STUDIO", "assets/partners/partner-34.png"],
+  ["파트너사", "assets/partners/partner-35.png"],
+  ["신아디앤피", "assets/partners/partner-36.png"],
+  ["원일ENG", "assets/partners/partner-37.png"],
+  ["EK CREATION", "assets/partners/partner-38.png"],
+  ["SMH 인테리어", "assets/partners/partner-39.png"],
+  ["한샘부동산", "assets/partners/partner-40.png"],
+  ["iM MOTORS", "assets/partners/partner-41.png"],
+  ["법무법인 도시", "assets/partners/partner-42.png"],
+  ["신한라이프", "assets/partners/partner-43.png"],
+  ["메리츠화재", "assets/partners/partner-44.png"],
+  ["소프리스", "assets/partners/partner-45.png"],
+  ["Amway", "assets/partners/partner-46.png"],
+  ["나는나다", "assets/partners/partner-47.png"],
+  ["Alice life", "assets/partners/partner-48.png"],
+];
+
 // ---------- 토큰 (HMAC 서명) ----------
 const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 async function hmac(secret, msg) {
@@ -299,6 +351,15 @@ export async function onRequest({ request, env, params }) {
       if (!authed) return needAuth();
       await db.prepare("DELETE FROM clients WHERE id=?").bind(url.searchParams.get("id")).run();
       return json({ ok: true });
+    }
+    if (path === "/clients/seed" && method === "POST") {
+      if (!authed) return needAuth();
+      const cnt = await db.prepare("SELECT COUNT(*) AS c FROM clients").first();
+      if ((cnt?.c || 0) > 0) return json({ error: "이미 데이터가 있습니다. 비어있을 때만 시드할 수 있어요." }, 400);
+      await db.batch(DEFAULT_CLIENTS.map(([name, logo], i) =>
+        db.prepare("INSERT INTO clients (name,logo_url,link,sort_order) VALUES (?,?,?,?)")
+          .bind(name, logo, "", i + 1)));
+      return json({ ok: true, count: DEFAULT_CLIENTS.length });
     }
     if (path === "/clients/reorder" && method === "POST") {
       if (!authed) return needAuth();
