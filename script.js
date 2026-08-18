@@ -53,6 +53,30 @@ if (heroVideo) {
   heroVideo.addEventListener("load", () => setTimeout(showVideo, 2000));
 }
 
+
+// ----- 방문 기록 (관리자 대시보드 통계용) -----
+// 개인정보는 저장하지 않는다. 기기 구분(PC/모바일)과 브라우저별 임의 식별자만 보낸다.
+(function trackVisit() {
+  if (IS_PREVIEW) return;                    // 관리자 미리보기는 집계에서 제외
+  try {
+    if (sessionStorage.getItem("jjam_visited")) return;  // 한 방문(세션)당 1회
+    sessionStorage.setItem("jjam_visited", "1");
+    let vid = localStorage.getItem("jjam_vid");
+    if (!vid) {
+      vid = (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+      localStorage.setItem("jjam_vid", vid);
+    }
+    const isMobile = matchMedia("(max-width: 900px)").matches ||
+      /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    fetch("/api/visit", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ device: isMobile ? "mobile" : "pc", vid }),
+      keepalive: true,
+    }).catch(() => {});
+  } catch (e) { /* 저장소 차단 등 — 통계는 부가 기능이므로 조용히 무시 */ }
+})();
+
 // ----- Header scroll state -----
 const header = document.getElementById("header");
 const onScroll = () => {

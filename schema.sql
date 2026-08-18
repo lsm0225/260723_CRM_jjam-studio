@@ -35,3 +35,12 @@ CREATE TABLE IF NOT EXISTS submissions (
   message    TEXT,
   created_at TEXT
 );
+
+-- 방문 통계 (API가 최초 사용 시 자동 생성하기도 함)
+CREATE TABLE IF NOT EXISTS visits (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  ts TEXT NOT NULL,          -- UTC ISO8601, 집계 시 +9시간(KST)으로 변환
+  device TEXT NOT NULL,      -- 'pc' | 'mobile'
+  vid TEXT NOT NULL          -- 브라우저별 임의 식별자(개인정보 아님)
+);
+CREATE INDEX IF NOT EXISTS idx_visits_ts ON visits (ts);

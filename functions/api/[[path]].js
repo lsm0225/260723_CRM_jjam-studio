@@ -229,6 +229,24 @@ async function verifyToken(secret, token) {
   try { return JSON.parse(atob(payload)).exp > Date.now(); } catch { return false; }
 }
 
+
+// ---------- 방문 통계 ----------
+// D1에 테이블이 없을 수 있으므로 최초 사용 시 만든다(별도 마이그레이션 불필요)
+let visitsReady = false;
+async function ensureVisits(db) {
+  if (visitsReady) return;
+  await db.prepare(`CREATE TABLE IF NOT EXISTS visits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts TEXT NOT NULL,
+    device TEXT NOT NULL,
+    vid TEXT NOT NULL
+  )`).run();
+  await db.prepare("CREATE INDEX IF NOT EXISTS idx_visits_ts ON visits (ts)").run();
+  visitsReady = true;
+}
+// 한국시간(UTC+9) 기준으로 묶는다
+const KST = "+9 hours";
+
 // ---------- content 헬퍼 ----------
 async function getContent(db, key) {
   const row = await db.prepare("SELECT value FROM content WHERE key=?").bind(key).first();
@@ -366,6 +384,47 @@ export async function onRequest({ request, env, params }) {
       const { order } = await request.json();
       await db.batch(order.map((id, i) => db.prepare("UPDATE clients SET sort_order=? WHERE id=?").bind(i + 1, id)));
       return json({ ok: true });
+    }
+
+    // ---------- 방문 기록(공개) ----------
+    if (path === "/visit" && method === "POST") {
+      await ensureVisits(db);
+      const b = await request.json().catch(() => ({}));
+      const device = b.device === "mobile" ? "mobile" : "pc";
+      const vid = String(b.vid || "").slice(0, 64) || "anon";
+      await db.prepare("INSERT INTO visits (ts, device, vid) VALUES (datetime('now'), ?, ?)").bind(device, vid).run();
+      return json({ ok: true });
+    }
+
+    // ---------- 방문 통계(관리자) ----------
+    if (path === "/stats" && method === "GET") {
+      if (!authed) return needAuth();
+      await ensureVisits(db);
+      const days = Math.min(Math.max(parseInt(url.searchParams.get("days") || "7", 10) || 7, 1), 365);
+      const hourly = days <= 1;
+      const keyExpr = hourly
+        ? `strftime('%H', ts, '${KST}')`
+        : `strftime('%Y-%m-%d', ts, '${KST}')`;
+      // 시작 시점: 오늘(=1일)이면 오늘 0시, 아니면 (days-1)일 전 0시 — 모두 한국시간 기준
+      const from = hourly
+        ? `datetime(date('now','${KST}'), '-9 hours')`
+        : `datetime(date('now','${KST}','-${days - 1} days'), '-9 hours')`;
+      const { results } = await db.prepare(
+        `SELECT ${keyExpr} AS k,
+                SUM(CASE WHEN device='pc' THEN 1 ELSE 0 END) AS pc,
+                SUM(CASE WHEN device='mobile' THEN 1 ELSE 0 END) AS mobile,
+                COUNT(*) AS total,
+                COUNT(DISTINCT vid) AS uniq
+         FROM visits WHERE ts >= ${from}
+         GROUP BY k ORDER BY k ASC`
+      ).all();
+      const tot = await db.prepare(
+        `SELECT COUNT(*) AS total, COUNT(DISTINCT vid) AS uniq,
+                SUM(CASE WHEN device='pc' THEN 1 ELSE 0 END) AS pc,
+                SUM(CASE WHEN device='mobile' THEN 1 ELSE 0 END) AS mobile
+         FROM visits WHERE ts >= ${from}`
+      ).first();
+      return json({ unit: hourly ? "hour" : "day", days, rows: results || [], totals: tot || {} });
     }
 
     // ---------- 문의 ----------

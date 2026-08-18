@@ -159,6 +159,29 @@
   .pv__dirty{margin-left:12px;font-size:11.5px;font-weight:800;color:#9a6a00;background:#fff5d6;border:1px solid #f0dca0;border-radius:6px;padding:4px 8px}
   .pv__hint{padding:10px 18px;font-size:12px;color:var(--muted);border-top:1px solid var(--line2);background:#fbfbfc}
 
+
+  /* ---------- 방문 통계 ---------- */
+  .vs__head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .vs__ranges{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+  .vs__ranges button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 12px;font-size:12.5px;font-weight:700;color:#5b6068;cursor:pointer;transition:.15s}
+  .vs__ranges button:hover{border-color:var(--red);color:var(--red)}
+  .vs__ranges button.on{background:var(--red);border-color:var(--red);color:#fff}
+  .vs__custom{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+  .vs__custom input{width:74px;padding:6px 8px;font-size:12.5px;text-align:center}
+  .vs__sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0 6px}
+  .vs__sum>div{border:1px solid var(--line2);border-radius:12px;padding:12px 14px}
+  .vs__sum .k{font-size:11.5px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px}
+  .vs__sum .v{font-size:20px;font-weight:800;margin-top:4px}
+  .vs__dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+  .vs__legend{display:flex;gap:14px;align-items:center;font-size:12.5px;color:#5b6068;font-weight:700}
+  .vs__chart{position:relative;margin-top:8px}
+  .vs__chart svg{display:block;width:100%;height:auto;overflow:visible}
+  .vs__tip{position:absolute;pointer-events:none;background:#17181c;color:#fff;border-radius:9px;padding:8px 10px;font-size:12px;line-height:1.55;white-space:nowrap;opacity:0;transition:opacity .12s;z-index:5;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+  .vs__empty{padding:34px 0;text-align:center;color:var(--muted);font-size:13.5px}
+  .vs__tbl{margin-top:12px;max-height:230px;overflow:auto;display:none}
+  .vs__tbl table{font-size:12.5px}
+  .vs__more{margin-top:8px}
+
   /* ---------- 문의 테이블 ---------- */
   .tbl-wrap{overflow-x:auto;margin-top:6px}
   table{width:100%;border-collapse:collapse;font-size:13.5px}
@@ -264,6 +287,33 @@
         <div class="stat"><div class="chip" style="background:var(--blue-soft);color:var(--blue)"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M3 7h6l2 3h10v9a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 19V7z"/><path d="M3 7V5.5A1.5 1.5 0 014.5 4H9"/></svg></div><div class="k">분류(카테고리)</div><div class="v"><span id="stCat">–</span><small>개</small></div></div>
         <div class="stat"><div class="chip" style="background:var(--green-soft);color:var(--green)"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 2.9-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17.5" cy="9" r="2.7"/><path d="M16.5 14.7c2.9.3 5 2.1 5 4.8"/></svg></div><div class="k">클라이언트</div><div class="v"><span id="stCl">–</span><small>개</small></div></div>
         <div class="stat"><div class="chip" style="background:var(--amber-soft);color:var(--amber)"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 8l9 6 9-6"/></svg></div><div class="k">받은 문의</div><div class="v"><span id="stIn">–</span><small>건</small></div></div>
+      </div>
+      <div class="card" id="visitCard">
+        <div class="vs__head">
+          <h3 style="margin:0"><span class="chip blue"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg></span>방문자 통계</h3>
+          <div class="vs__ranges" id="vsRanges">
+            <button data-d="1">오늘</button>
+            <button data-d="7" class="on">7일</button>
+            <button data-d="30">30일</button>
+            <button data-d="90">90일</button>
+          </div>
+        </div>
+        <div class="vs__custom">직접 지정 <input id="vsDays" type="number" min="1" max="365" placeholder="일수"> 일 (최대 365)
+          <button class="btn ghost sm" onclick="vsCustom()">적용</button>
+          <span style="margin-left:auto" class="vs__legend">
+            <span><i class="vs__dot" style="background:#be2d2f"></i> PC</span>
+            <span><i class="vs__dot" style="background:#1d4ed8"></i> 모바일</span>
+          </span>
+        </div>
+        <div class="vs__sum">
+          <div><div class="k">방문자</div><div class="v" id="vsUniq">–</div></div>
+          <div><div class="k">조회수</div><div class="v" id="vsTotal">–</div></div>
+          <div><div class="k"><i class="vs__dot" style="background:#be2d2f"></i> PC</div><div class="v" id="vsPc">–</div></div>
+          <div><div class="k"><i class="vs__dot" style="background:#1d4ed8"></i> 모바일</div><div class="v" id="vsMobile">–</div></div>
+        </div>
+        <div class="vs__chart" id="vsChart"><div class="vs__empty">불러오는 중...</div></div>
+        <div class="vs__more"><button class="btn ghost sm" onclick="vsToggleTable()" id="vsTblBtn">표로 보기</button></div>
+        <div class="vs__tbl" id="vsTbl"></div>
       </div>
       <div class="dash2">
         <div class="card">
@@ -641,6 +691,7 @@ $("#pvToggle").addEventListener("click", () => {
   pvUpdate(document.querySelector("#nav button.on").dataset.v);
 });
 $("#pvReload").addEventListener("click", pvRefresh);
+$("#vsRanges").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) loadStats(+b.dataset.d); });
 $("#pvRevert").addEventListener("click", () => { pvDirty(false); pvRefresh(); });
 window.addEventListener("resize", () => { if (PV_OPEN && PV_LOADED) pvFit(); });
 
@@ -725,6 +776,143 @@ document.addEventListener("input", (e) => {
   PV_DEB = setTimeout(pvLive, 250);
 });
 
+
+// ---------- 방문자 통계 ----------
+const VS_PC = "#be2d2f", VS_MO = "#1d4ed8";   // 색각이상 검증 통과 조합(ΔE 27)
+let VS_DAYS = 7, VS_DATA = null, VS_TABLE_ON = false;
+
+async function loadStats(days) {
+  VS_DAYS = days;
+  document.querySelectorAll("#vsRanges button").forEach(b => b.classList.toggle("on", +b.dataset.d === days));
+  try { VS_DATA = await api("/stats?days=" + days); }
+  catch (e) { $("#vsChart").innerHTML = '<div class="vs__empty">통계를 불러오지 못했습니다.</div>'; return; }
+  const t = VS_DATA.totals || {};
+  $("#vsUniq").textContent   = (t.uniq   || 0).toLocaleString();
+  $("#vsTotal").textContent  = (t.total  || 0).toLocaleString();
+  $("#vsPc").textContent     = (t.pc     || 0).toLocaleString();
+  $("#vsMobile").textContent = (t.mobile || 0).toLocaleString();
+  drawStats();
+  if (VS_TABLE_ON) renderStatTable();
+}
+function vsCustom() {
+  const n = Math.min(Math.max(parseInt($("#vsDays").value, 10) || 0, 1), 365);
+  if (!n) return alert("1~365 사이의 일수를 입력하세요.");
+  loadStats(n);
+}
+function vsToggleTable() {
+  VS_TABLE_ON = !VS_TABLE_ON;
+  $("#vsTbl").style.display = VS_TABLE_ON ? "block" : "none";
+  $("#vsTblBtn").textContent = VS_TABLE_ON ? "표 숨기기" : "표로 보기";
+  if (VS_TABLE_ON) renderStatTable();
+}
+
+// 기간이 길면 주 단위로 묶어 막대가 실오라기처럼 얇아지지 않게 한다
+function vsBuckets() {
+  const unit = VS_DATA.unit, rows = VS_DATA.rows || [];
+  const keyed = new Map(rows.map(r => [String(r.k), r]));
+  const out = [];
+  if (unit === "hour") {
+    for (let h = 0; h < 24; h++) {
+      const k = String(h).padStart(2, "0"), r = keyed.get(k);
+      out.push({ label: h + "시", pc: r ? +r.pc : 0, mobile: r ? +r.mobile : 0 });
+    }
+    return { list: out, grouped: false };
+  }
+  const today = new Date();
+  const days = [];
+  for (let i = VS_DAYS - 1; i >= 0; i--) {
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    const k = d.toISOString().slice(0, 10), r = keyed.get(k);
+    days.push({ date: d, k, pc: r ? +r.pc : 0, mobile: r ? +r.mobile : 0 });
+  }
+  if (days.length <= 120) {
+    return { list: days.map(d => ({ label: `${d.date.getMonth() + 1}/${d.date.getDate()}`, pc: d.pc, mobile: d.mobile, k: d.k })), grouped: false };
+  }
+  for (let i = 0; i < days.length; i += 7) {
+    const c = days.slice(i, i + 7);
+    out.push({ label: `${c[0].date.getMonth() + 1}/${c[0].date.getDate()}`,
+               pc: c.reduce((a, b) => a + b.pc, 0), mobile: c.reduce((a, b) => a + b.mobile, 0),
+               k: `${c[0].k} ~ ${c[c.length - 1].k}` });
+  }
+  return { list: out, grouped: true };
+}
+
+function drawStats() {
+  const host = $("#vsChart");
+  const { list, grouped } = vsBuckets();
+  const max = Math.max(1, ...list.map(d => d.pc + d.mobile));
+  if (!list.some(d => d.pc + d.mobile > 0)) {
+    host.innerHTML = '<div class="vs__empty">아직 기록된 방문이 없습니다. 홈페이지에 방문이 생기면 여기에 표시됩니다.</div>';
+    return;
+  }
+  const W = 1000, H = 240, PL = 44, PR = 8, PT = 10, PB = 26;
+  const iw = W - PL - PR, ih = H - PT - PB;
+  const step = iw / list.length;
+  const bw = Math.max(2, Math.min(26, step - (step > 8 ? 4 : 1)));
+  const y = v => PT + ih - (v / max) * ih;
+
+  // 가로 눈금 4개 (눈에 띄지 않게)
+  let ticks = "", n = 4;
+  for (let i = 0; i <= n; i++) {
+    const v = Math.round(max * i / n), yy = y(v);
+    ticks += `<line x1="${PL}" y1="${yy}" x2="${W - PR}" y2="${yy}" stroke="#eceef1" stroke-width="1"/>`
+          +  `<text x="${PL - 8}" y="${yy + 4}" text-anchor="end" font-size="11" fill="#9aa0a8">${v.toLocaleString()}</text>`;
+  }
+  // 막대: 모바일(위) + PC(아래) 누적, 사이 2px 여백, 데이터 끝 4px 라운드
+  let bars = "", labels = "";
+  const R = 4;
+  list.forEach((d, i) => {
+    const cx = PL + step * i + step / 2, x = cx - bw / 2;
+    const tot = d.pc + d.mobile;
+    const hPc = (d.pc / max) * ih, hMo = (d.mobile / max) * ih;
+    const yPc = PT + ih - hPc;
+    const yMo = yPc - hMo - (hPc > 0 && hMo > 0 ? 2 : 0);
+    if (hPc > 0) bars += `<path d="${roundTopRect(x, yPc, bw, hPc, hMo > 0 ? 0 : R)}" fill="${VS_PC}"/>`;
+    if (hMo > 0) bars += `<path d="${roundTopRect(x, yMo, bw, hMo, R)}" fill="${VS_MO}"/>`;
+    bars += `<rect class="vs__hit" x="${PL + step * i}" y="${PT}" width="${step}" height="${ih}" fill="transparent"
+                   data-i="${i}" data-l="${esc(d.label)}" data-k="${esc(d.k || d.label)}" data-pc="${d.pc}" data-mo="${d.mobile}" data-t="${tot}"/>`;
+    // 라벨은 겹치지 않을 만큼만
+    const every = Math.ceil(list.length / (list.length > 40 ? 10 : 14));
+    if (i % every === 0 || i === list.length - 1) {
+      labels += `<text x="${cx}" y="${H - 8}" text-anchor="middle" font-size="11" fill="#9aa0a8">${esc(d.label)}</text>`;
+    }
+  });
+  host.innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="기간별 방문 수 (PC·모바일 누적 막대)">${ticks}${bars}${labels}</svg>
+     <div class="vs__tip" id="vsTip"></div>`;
+
+  const tip = $("#vsTip");
+  host.querySelectorAll(".vs__hit").forEach(r => {
+    r.addEventListener("mouseenter", (e) => {
+      const d = e.target.dataset;
+      tip.innerHTML = `<b>${d.k}</b><br>방문 ${(+d.t).toLocaleString()}회`
+        + `<br><i class="vs__dot" style="background:${VS_PC}"></i> PC ${(+d.pc).toLocaleString()}`
+        + `<br><i class="vs__dot" style="background:${VS_MO}"></i> 모바일 ${(+d.mo).toLocaleString()}`;
+      tip.style.opacity = "1";
+    });
+    r.addEventListener("mousemove", (e) => {
+      const b = host.getBoundingClientRect();
+      let x = e.clientX - b.left + 14, yy = e.clientY - b.top - 10;
+      if (x + tip.offsetWidth > b.width) x = e.clientX - b.left - tip.offsetWidth - 14;
+      tip.style.left = x + "px"; tip.style.top = yy + "px";
+    });
+    r.addEventListener("mouseleave", () => { tip.style.opacity = "0"; });
+  });
+  if (grouped) host.insertAdjacentHTML("beforeend",
+    '<div style="font-size:11.5px;color:#9aa0a8;margin-top:6px">* 기간이 길어 주 단위로 묶어 표시합니다.</div>');
+}
+// 위쪽 두 모서리만 둥근 막대
+function roundTopRect(x, y, w, h, r) {
+  r = Math.min(r, w / 2, h);
+  return `M${x},${y + h} L${x},${y + r} Q${x},${y} ${x + r},${y} L${x + w - r},${y} Q${x + w},${y} ${x + w},${y + r} L${x + w},${y + h} Z`;
+}
+function renderStatTable() {
+  const { list } = vsBuckets();
+  $("#vsTbl").innerHTML = `<table><thead><tr><th>기간</th><th>PC</th><th>모바일</th><th>합계</th></tr></thead><tbody>`
+    + list.map(d => `<tr><td>${esc(d.k || d.label)}</td><td>${d.pc}</td><td>${d.mobile}</td><td>${d.pc + d.mobile}</td></tr>`).join("")
+    + `</tbody></table>`;
+}
+
 // ---------- 진입 & 로드 ----------
 async function enter() {
   $("#loginView").style.display = "none"; $("#app").style.display = "block";
@@ -733,6 +921,7 @@ async function enter() {
   $("#dashDate").textContent = `${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
   $("#calM").textContent = (now.getMonth()+1) + "월"; $("#calD").textContent = now.getDate();
   go("dash");
+  loadStats(7);
   await Promise.all([loadContent(), loadPf(), loadCl(), loadInbox()]);
   renderDash();
 }
