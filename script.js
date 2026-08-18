@@ -2,14 +2,19 @@
    J JAM STUDIO — Interactions
    ============================================ */
 
+// 관리자 미리보기(iframe)로 열린 경우 — 특정 섹션을 보여줘야 하므로 최상단 강제 이동을 끈다
+const IS_PREVIEW = new URLSearchParams(location.search).has("preview");
+
 // ----- 새로고침 시 항상 히어로(최상단)에서 시작 -----
-if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-const scrollToHero = () => window.scrollTo(0, 0);
-window.addEventListener("load", () => {
-  // 해시로 인한 자동 점프까지 덮어써서 최상단으로
-  scrollToHero();
-  requestAnimationFrame(scrollToHero);
-});
+if (!IS_PREVIEW) {
+  if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  const scrollToHero = () => window.scrollTo(0, 0);
+  window.addEventListener("load", () => {
+    // 해시로 인한 자동 점프까지 덮어써서 최상단으로
+    scrollToHero();
+    requestAnimationFrame(scrollToHero);
+  });
+}
 
 // ----- 로고 클릭 시 새로고침 -----
 const headerLogo = document.querySelector(".header__logo");
