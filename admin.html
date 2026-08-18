@@ -155,6 +155,7 @@
   .pv__body{height:400px;overflow:hidden;position:relative;background:#f0f0f0}
   .pv__body.is-closed{display:none}
   .pv__body iframe{position:absolute;top:0;left:0;width:1440px;height:1000px;border:0;transform-origin:0 0}
+  .pv__dirty{margin-left:12px;font-size:11.5px;font-weight:800;color:#9a6a00;background:#fff5d6;border:1px solid #f0dca0;border-radius:6px;padding:4px 8px}
   .pv__hint{padding:10px 18px;font-size:12px;color:var(--muted);border-top:1px solid var(--line2);background:#fbfbfc}
 
   /* ---------- 문의 테이블 ---------- */
@@ -236,13 +237,15 @@
     <div class="pv" id="pv" style="display:none">
       <div class="pv__bar">
         <h4><span class="tag">미리보기</span> <span id="pvName">—</span> 부분이 수정됩니다</h4>
+        <span id="pvDirty" class="pv__dirty" style="display:none">저장 전 미리보기</span>
         <div class="pv__acts">
+          <button class="btn ghost sm" id="pvRevert">되돌리기</button>
           <button class="btn ghost sm" id="pvReload">새로고침</button>
           <button class="btn ghost sm" id="pvToggle">접기</button>
         </div>
       </div>
       <div class="pv__body" id="pvBody"><iframe id="pvFrame" title="사이트 미리보기"></iframe></div>
-      <div class="pv__hint">실제 홈페이지 화면입니다. 저장하면 이 미리보기도 자동으로 새로고침됩니다.</div>
+      <div class="pv__hint">입력하면 저장 전에도 이 미리보기에 바로 반영됩니다. 확인 후 저장을 누르세요. (되돌리기 = 저장된 상태로)</div>
     </div>
 
     <!-- ===== 대시보드 ===== -->
@@ -512,7 +515,7 @@ async function api(path, opt = {}) {
   if (!r.ok) throw new Error(d.error || ("오류 (" + r.status + ")"));
   return d;
 }
-function flash(id){ const el = $("#saved_"+id); if(el){ el.style.display="inline"; setTimeout(()=>el.style.display="none", 2500); } setTimeout(pvRefresh, 400); }
+function flash(id){ const el = $("#saved_"+id); if(el){ el.style.display="inline"; setTimeout(()=>el.style.display="none", 2500); } pvDirty(false); setTimeout(pvRefresh, 400); }
 function logout(){ TOKEN=""; localStorage.removeItem("jjam_token"); $("#app").style.display="none"; $("#loginView").style.display="flex"; }
 
 // ---------- 로그인 ----------
@@ -635,7 +638,70 @@ $("#pvToggle").addEventListener("click", () => {
   pvUpdate(document.querySelector("#nav button.on").dataset.v);
 });
 $("#pvReload").addEventListener("click", pvRefresh);
+$("#pvRevert").addEventListener("click", () => { pvDirty(false); pvRefresh(); });
 window.addEventListener("resize", () => { if (PV_OPEN && PV_LOADED) pvFit(); });
+
+
+// ---------- 폼에 입력된 현재 값 (저장·미리보기 공용) ----------
+function draftFor(v) {
+  switch (v) {
+    case "hero": return ["hero", { line1:$("#hero_line1").value, line2:$("#hero_line2").value,
+      accent:$("#hero_accent").value, desc:$("#hero_desc").value, video:$("#hero_video").value.trim() }];
+    case "about": return ["about", { title:$("#about_title").value,
+      body:$("#about_body").value.split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),
+      punch:$("#about_punch").value, ceo_name:$("#about_ceo_name").value, ceo_role:$("#about_ceo_role").value }];
+    case "slogan": return ["slogan", { items:[0,1,2].map(i=>({ en:$("#sg_en"+i).value, ko:$("#sg_ko"+i).value })),
+      tagline:$("#sg_tag").value, tagline_brand:$("#sg_tagb").value }];
+    case "process": return ["process", { sub:$("#pc_sub").value, intro:$("#pc_intro").value, steps:collectProcess() }];
+    case "contact": return ["contact", { sub:$("#ct_sub").value, intro:$("#ct_intro").value,
+      headline:$("#ct_head").value, subcopy:$("#ct_subcopy").value, concerns:lines($("#ct_concerns").value),
+      solution:$("#ct_sol").value, solution_accent:$("#ct_solacc").value }];
+    case "cta": return ["cta", { eyebrow:$("#cta_eyebrow").value, title:$("#cta_title").value,
+      accent:$("#cta_accent").value, btn1:$("#cta_btn1").value, btn2:$("#cta_btn2").value }];
+    case "footer": return ["footer", { company:$("#ft_company").value, ceo:$("#ft_ceo").value,
+      address:$("#ft_address").value, phone:$("#ft_phone").value, email:$("#ft_email").value }];
+    case "services": collectSvc(); return ["services", CONTENT.services];
+    case "why": collectWhy(); return ["why", CONTENT.why];
+    default: return null;
+  }
+}
+// 소개 탭의 '대표 약력'은 별도 키
+function draftProfile() {
+  return ["profile", { name:$("#pr_name").value, role:$("#pr_role").value,
+    directing:lines($("#pr_directing").value), lecture:lines($("#pr_lecture").value), quote:$("#pr_quote").value }];
+}
+
+// ---------- 입력 즉시 미리보기에 반영 (저장 전) ----------
+let PV_DIRTY = false, PV_DEB = null;
+function pvLive() {
+  if (!PV_LOADED || !PV_OPEN) return;
+  const fr = $("#pvFrame"), w = fr.contentWindow;
+  if (!w || typeof w.applyContent !== "function") return;
+  const on = document.querySelector("#nav button.on");
+  if (!on) return;
+  const v = on.dataset.v;
+  const parts = [];
+  const d = draftFor(v);
+  if (d) parts.push(d);
+  if (v === "about") parts.push(draftProfile());          // 소개 탭에는 약력도 함께 있음
+  if (v === "footer") parts.push(["links", { kakao:$("#lk_kakao").value.trim() }]);
+  if (!parts.length) return;
+  const c = {}; const ov = new Set();
+  parts.forEach(([k, val]) => { c[k] = val; ov.add(k); });
+  try { w.applyContent(c, ov); } catch (e) { return; }
+  pvScrollOnce();
+  pvDirty(true);
+}
+function pvDirty(on) {
+  PV_DIRTY = on;
+  const el = $("#pvDirty");
+  if (el) el.style.display = on ? "inline-flex" : "none";
+}
+document.addEventListener("input", (e) => {
+  if (!e.target.closest(".view")) return;
+  clearTimeout(PV_DEB);
+  PV_DEB = setTimeout(pvLive, 250);
+});
 
 // ---------- 진입 & 로드 ----------
 async function enter() {
@@ -711,8 +777,8 @@ function renderCatList(){
 async function saveHero() {
   const v = $("#hero_video").value.trim();
   if (v && !/vimeo\.com\/(?:video\/)?\d+|^\d{6,}$/.test(v)) return alert("Vimeo 링크 형식이 아닙니다. 예: https://vimeo.com/1207998411");
-  await api("/content", { method:"PUT", body: JSON.stringify({ key:"hero", value:{
-    line1:$("#hero_line1").value, line2:$("#hero_line2").value, accent:$("#hero_accent").value, desc:$("#hero_desc").value, video:v } }) });
+  const [k, val] = draftFor("hero");
+  await api("/content", { method:"PUT", body: JSON.stringify({ key:k, value:val }) });
   flash("hero"); flash("hero2");
 }
 async function saveAbout() {
