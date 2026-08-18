@@ -49,9 +49,9 @@
   /* ---------- 앱 레이아웃 ---------- */
   #app{display:none;min-height:100vh}
   .sb{position:fixed;left:0;top:0;bottom:0;width:236px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:22px 14px;z-index:20}
-  .sb__logo{display:flex;align-items:center;gap:9px;padding:4px 10px 20px;border-bottom:1px solid var(--line2);margin-bottom:14px}
-  .sb__logo img{height:21px;width:auto;flex:none}
-  .sb__logo .adm{font-size:10px;font-weight:800;color:#fff;background:var(--red);border-radius:5px;padding:3px 6px;letter-spacing:.08em;flex:none}
+  .sb__logo{display:flex;flex-direction:column;align-items:center;gap:9px;padding:14px 10px 20px;border-bottom:1px solid var(--line2);margin-bottom:14px}
+  .sb__logo img{height:38px;width:auto;flex:none}
+  .sb__logo .adm{font-size:11px;font-weight:800;color:#fff;background:var(--red);border-radius:5px;padding:3px 6px;letter-spacing:.08em;flex:none}
   .sb nav{flex:1;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
   .sb nav button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;border-radius:10px;font-size:14px;font-weight:600;color:#5d626b;text-align:left;transition:.13s}
   .sb nav button svg{width:18px;height:18px;flex:none;stroke:currentColor}
@@ -76,6 +76,7 @@
 
   .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;box-shadow:var(--sh)}
   .card + .card{margin-top:18px}
+  .dash2 > .card + .card{margin-top:0}  /* 그리드에서는 gap이 간격을 담당 */
   .card h3{font-size:15.5px;font-weight:800;display:flex;align-items:center;gap:9px}
   .card h3 .chip{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:none}
   .card .desc{font-size:12.5px;color:var(--sub);margin-top:5px}
@@ -102,7 +103,7 @@
   .stat .k{font-size:12.5px;color:var(--sub);font-weight:600}
   .stat .v{font-size:24px;font-weight:800;margin-top:3px}
   .stat .v small{font-size:13px;font-weight:700;color:#9aa0a8;margin-left:2px}
-  .dash2{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;align-items:start}
+  .dash2{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;align-items:stretch}
   .list-lite{margin-top:14px}
   .list-lite .li{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line2);font-size:13.5px}
   .list-lite .li:last-child{border-bottom:0}
@@ -158,8 +159,8 @@
   /* ---------- 반응형 ---------- */
   @media(max-width:900px){
     .sb{position:static;width:100%;flex-direction:row;align-items:center;padding:10px 14px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
-    .sb__logo{border:0;margin:0;padding:0 10px 0 0}
-    .sb__logo img{height:17px}
+    .sb__logo{border:0;margin:0;padding:0 10px 0 0;flex-direction:row;align-items:center;gap:8px}
+    .sb__logo img{height:22px}
     .sb__logo .adm{display:none}
     .sb nav{flex-direction:row;gap:2px}
     .sb nav button{padding:9px 11px;white-space:nowrap;font-size:13px}
