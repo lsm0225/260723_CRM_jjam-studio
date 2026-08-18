@@ -127,7 +127,8 @@
   .row .grab svg{width:15px;height:15px}
   .row .thumb{width:104px;height:58px;object-fit:cover;border-radius:9px;background:#e8e9ec;flex:none}
   .row .fields{flex:1;display:flex;flex-direction:column;gap:7px;min-width:0}
-  .row .fields input{padding:9px 12px;font-size:13.5px}
+  .row .fields input,.row .fields select{padding:9px 12px;font-size:13.5px}
+  .row .fields select{cursor:pointer}
   .row .cols{display:flex;gap:7px}
   .row .acts{display:flex;flex-direction:column;gap:6px;flex:none}
   .drag-hint{font-size:12px;color:var(--sub);display:flex;align-items:center;gap:6px;margin-top:14px}
@@ -436,7 +437,7 @@
           <label>유튜브 링크</label><input id="newPfUrl" placeholder="https://youtu.be/XXXXXXXXXXX">
           <div class="grid2">
             <div><label>제목</label><input id="newPfTitle" placeholder="영상 제목"></div>
-            <div><label>분류</label><input id="newPfCat" list="catList" placeholder="선택 또는 새로 입력"><datalist id="catList"></datalist></div>
+            <div><label>분류</label><select id="newPfCat" onchange="catPick(this)"></select></div>
           </div>
           <button class="btn red sm" style="margin-top:16px" onclick="addPf()">+ 추가</button>
         </div>
@@ -770,7 +771,11 @@ async function loadContent() {
   renderCatList();
 }
 function renderCatList(){
-  $("#catList").innerHTML = (CONTENT.portfolio_categories||[]).map(c=>`<option value="${esc(c)}">`).join("");
+  const nc = $("#newPfCat");
+  if (nc) { const v = nc.value; nc.innerHTML = catOptions(v && v !== "__new__" ? v : (CONTENT.portfolio_categories||[])[0] || ""); }
+  document.querySelectorAll("select[data-f='category']").forEach(o => {
+    const v = o.value; o.innerHTML = catOptions(v); o.value = v;
+  });
 }
 
 // ---------- 저장: 히어로/소개/푸터 ----------
@@ -935,6 +940,33 @@ const ytId = (s) => {
   const m = s.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/) || s.match(/^([\w-]{11})$/);
   return m ? m[1] : "";
 };
+
+// 분류 드롭다운 (등록된 분류 + 새 분류 직접 입력)
+function catOptions(cur) {
+  const cats = CONTENT.portfolio_categories || [];
+  const list = cats.slice();
+  if (cur && !list.includes(cur)) list.unshift(cur);   // 목록에 없는 기존 값도 유지
+  return list.map(c => `<option value="${esc(c)}"${c === cur ? " selected" : ""}>${esc(c)}</option>`).join("")
+       + '<option value="__new__">+ 새 분류 입력…</option>';
+}
+// "새 분류 입력…" 선택 시 입력받아 분류 목록에 추가
+async function catPick(sel) {
+  if (sel.value !== "__new__") return;
+  const name = (prompt("새 분류 이름을 입력하세요") || "").trim();
+  if (!name) { sel.value = sel.dataset.prev || ""; return; }
+  if (!(CONTENT.portfolio_categories || []).includes(name)) {
+    CONTENT.portfolio_categories = (CONTENT.portfolio_categories || []).concat(name);
+    await api("/content", { method:"PUT", body: JSON.stringify({ key:"portfolio_categories", value: CONTENT.portfolio_categories }) });
+    $("#pfCats").value = CONTENT.portfolio_categories.join(", ");
+  }
+  document.querySelectorAll("select[data-f='category']").forEach(o => {
+    const v = o === sel ? name : o.value;
+    o.innerHTML = catOptions(v);
+    o.value = v;
+  });
+  $("#newPfCat").innerHTML = catOptions($("#newPfCat").value);
+}
+
 async function loadPf() {
   PF = await api("/portfolio");
   $("#pfSeedWrap").style.display = PF.length ? "none" : "block";
@@ -946,7 +978,7 @@ async function loadPf() {
         <input data-pf="${p.id}" data-f="title" value="${esc(p.title)}" placeholder="제목 (썸네일 아래에 표시)">
         <div class="cols">
           <input data-pf="${p.id}" data-f="url" value="${esc(p.url||('https://youtu.be/'+p.video_id))}" placeholder="유튜브 링크">
-          <input data-pf="${p.id}" data-f="category" list="catList" value="${esc(p.category)}" placeholder="분류" style="max-width:150px">
+          <select data-pf="${p.id}" data-f="category" data-prev="${esc(p.category)}" onchange="catPick(this)" style="max-width:160px">${catOptions(p.category)}</select>
         </div>
       </div>
       <div class="acts">
