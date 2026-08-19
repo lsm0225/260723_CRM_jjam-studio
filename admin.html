@@ -201,6 +201,8 @@
   /* 문의내역: 날짜·이름/업체·연락처·유형은 가운데, 내용은 읽기 쉽게 왼쪽 유지 */
   #inboxTable th:nth-child(-n+4),
   #inboxTable td:nth-child(-n+4){text-align:center}
+  /* 내용이 여러 줄이어도 나머지 칸은 행 높이 기준 상하 중앙에 오도록 */
+  #inboxTable td{vertical-align:middle}
   tr:hover td{background:#fafafb}
   td .msg{white-space:pre-wrap;color:#555;max-width:360px;line-height:1.6}
   td a{color:var(--blue)}
