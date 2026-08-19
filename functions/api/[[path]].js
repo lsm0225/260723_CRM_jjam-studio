@@ -286,10 +286,16 @@ async function verifyPassword(pw, stored) {
   if (alg !== "pbkdf2" || !s || !h) return false;
   return (await pbkdf2(pw, b64uDec(s))) === h;
 }
-// 저장된 해시가 있으면 그것으로, 없으면 환경변수로 검사
+// 아직 한 번도 변경하지 않았을 때 쓰는 초기 비밀번호.
+// ⚠️ 저장소가 공개라 이 값은 누구나 볼 수 있다. 관리자에서 반드시 변경할 것.
+const INITIAL_PASSWORD = "jjam";
+
+// 저장된 해시가 있으면 그것만 사용(= 변경 후에는 아래 값들이 통하지 않음).
+// 아직 변경 전이면 초기 비밀번호 또는 기존 환경변수 비밀번호를 받아준다.
 async function checkPassword(db, env, pw) {
   const stored = await getSetting(db, "admin_password");
   if (stored) return verifyPassword(pw, stored);
+  if (pw === INITIAL_PASSWORD) return true;
   return Boolean(env.ADMIN_PASSWORD) && pw === env.ADMIN_PASSWORD;
 }
 
@@ -326,8 +332,6 @@ export async function onRequest({ request, env, params }) {
     // ---------- 로그인 ----------
     if (path === "/login" && method === "POST") {
       const { password } = await request.json();
-      const hasStored = Boolean(await getSetting(db, "admin_password"));
-      if (!hasStored && !env.ADMIN_PASSWORD) return json({ error: "ADMIN_PASSWORD 환경변수가 없습니다" }, 500);
       if (!(await checkPassword(db, env, password || ""))) return json({ error: "비밀번호가 올바르지 않습니다" }, 401);
       return json({ token: await makeToken(env.SESSION_SECRET) });
     }
