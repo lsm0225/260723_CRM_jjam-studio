@@ -198,6 +198,9 @@
   table{width:100%;border-collapse:collapse;font-size:13.5px}
   th,td{text-align:left;padding:13px 10px;border-bottom:1px solid var(--line2);vertical-align:top}
   th{font-size:11.5px;color:#9aa0a8;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+  /* 문의내역: 날짜·이름/업체·연락처는 가운데, 내용은 읽기 쉽게 왼쪽 유지 */
+  #inboxTable th:nth-child(-n+3),
+  #inboxTable td:nth-child(-n+3){text-align:center}
   tr:hover td{background:#fafafb}
   td .msg{white-space:pre-wrap;color:#555;max-width:360px;line-height:1.6}
   td a{color:var(--blue)}
@@ -329,7 +332,9 @@
       </div>
       <div class="dash2">
         <div class="card">
-          <h3><span class="chip amber"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 8l9 6 9-6"/></svg></span>최근 문의</h3>
+          <h3><span class="chip amber"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 8l9 6 9-6"/></svg></span>최근 문의
+            <button class="btn ghost sm" style="margin-left:auto;font-weight:700" onclick="go('inbox')">전체 보기 →</button>
+          </h3>
           <div class="list-lite" id="dashInbox"><div class="empty">불러오는 중...</div></div>
         </div>
         <div class="card">
