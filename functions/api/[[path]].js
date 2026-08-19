@@ -247,6 +247,52 @@ async function ensureVisits(db) {
 // 한국시간(UTC+9) 기준으로 묶는다
 const KST = "+9 hours";
 
+
+// ---------- 관리자 비밀번호 ----------
+// 환경변수(ADMIN_PASSWORD)는 최초 설정값. 한 번이라도 변경하면 DB에 저장된 해시가 우선한다.
+// 비밀번호 원문은 저장하지 않고 PBKDF2(SHA-256, 10만 회) 해시만 보관한다.
+let settingsReady = false;
+async function ensureSettings(db) {
+  if (settingsReady) return;
+  await db.prepare("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)").run();
+  settingsReady = true;
+}
+async function getSetting(db, key) {
+  await ensureSettings(db);
+  const row = await db.prepare("SELECT value FROM settings WHERE key=?").bind(key).first();
+  return row ? row.value : null;
+}
+async function setSetting(db, key, value) {
+  await ensureSettings(db);
+  await db.prepare("INSERT INTO settings (key,value) VALUES (?,?) ON CONFLICT(key) DO UPDATE SET value=excluded.value")
+    .bind(key, value).run();
+}
+const b64uDec = (t) => {
+  const s = t.replace(/-/g, "+").replace(/_/g, "/");
+  const bin = atob(s + "=".repeat((4 - (s.length % 4)) % 4));
+  return Uint8Array.from(bin, (c) => c.charCodeAt(0));
+};
+async function pbkdf2(pw, salt) {
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", salt, iterations: 100000, hash: "SHA-256" }, key, 256);
+  return b64u(bits);
+}
+async function hashPassword(pw) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  return `pbkdf2$${b64u(salt)}$${await pbkdf2(pw, salt)}`;
+}
+async function verifyPassword(pw, stored) {
+  const [alg, s, h] = String(stored).split("$");
+  if (alg !== "pbkdf2" || !s || !h) return false;
+  return (await pbkdf2(pw, b64uDec(s))) === h;
+}
+// 저장된 해시가 있으면 그것으로, 없으면 환경변수로 검사
+async function checkPassword(db, env, pw) {
+  const stored = await getSetting(db, "admin_password");
+  if (stored) return verifyPassword(pw, stored);
+  return Boolean(env.ADMIN_PASSWORD) && pw === env.ADMIN_PASSWORD;
+}
+
 // ---------- content 헬퍼 ----------
 async function getContent(db, key) {
   const row = await db.prepare("SELECT value FROM content WHERE key=?").bind(key).first();
@@ -280,10 +326,23 @@ export async function onRequest({ request, env, params }) {
     // ---------- 로그인 ----------
     if (path === "/login" && method === "POST") {
       const { password } = await request.json();
-      if (!env.ADMIN_PASSWORD) return json({ error: "ADMIN_PASSWORD 환경변수가 없습니다" }, 500);
-      if (password !== env.ADMIN_PASSWORD) return json({ error: "비밀번호가 올바르지 않습니다" }, 401);
+      const hasStored = Boolean(await getSetting(db, "admin_password"));
+      if (!hasStored && !env.ADMIN_PASSWORD) return json({ error: "ADMIN_PASSWORD 환경변수가 없습니다" }, 500);
+      if (!(await checkPassword(db, env, password || ""))) return json({ error: "비밀번호가 올바르지 않습니다" }, 401);
       return json({ token: await makeToken(env.SESSION_SECRET) });
     }
+    // ---------- 비밀번호 변경 ----------
+    if (path === "/password" && method === "POST") {
+      if (!authed) return needAuth();
+      const b = await request.json().catch(() => ({}));
+      const current = String(b.current || ""), next = String(b.next || "");
+      if (!(await checkPassword(db, env, current))) return json({ error: "현재 비밀번호가 올바르지 않습니다" }, 400);
+      if (next.length < 8) return json({ error: "새 비밀번호는 8자 이상이어야 합니다" }, 400);
+      if (next === current) return json({ error: "현재 비밀번호와 다른 비밀번호를 입력하세요" }, 400);
+      await setSetting(db, "admin_password", await hashPassword(next));
+      return json({ ok: true });
+    }
+
     if (path === "/me" && method === "GET") return json({ authed });
 
     // ---------- 콘텐츠 (히어로/소개/서비스/WHY/푸터/분류/포트폴리오 소제목) ----------

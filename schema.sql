@@ -44,3 +44,9 @@ CREATE TABLE IF NOT EXISTS visits (
   vid TEXT NOT NULL          -- 브라우저별 임의 식별자(개인정보 아님)
 );
 CREATE INDEX IF NOT EXISTS idx_visits_ts ON visits (ts);
+
+-- 관리자 설정 (비밀번호 해시 등). API가 최초 사용 시 자동 생성
+CREATE TABLE IF NOT EXISTS settings (
+  key   TEXT PRIMARY KEY,
+  value TEXT NOT NULL       -- admin_password: pbkdf2$<salt>$<hash> (원문 저장 안 함)
+);

@@ -247,6 +247,7 @@
       <button data-v="clients"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 2.9-5.5 6.5-5.5s6.5 2 6.5 5.5"/><circle cx="17.5" cy="9" r="2.7"/><path d="M16.5 14.7c2.9.3 5 2.1 5 4.8"/></svg>파트너 로고</button>
       <button data-v="footer"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>푸터 · 회사정보</button>
       <button data-v="inbox"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 8l9 6 9-6"/></svg>문의내역<span class="badge" id="inboxBadge" style="display:none"></span></button>
+      <button data-v="account"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>비밀번호 변경</button>
     </nav>
     <div class="sb__foot">
       <a href="/" target="_blank"><svg fill="none" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.4 4 5.5 4 9s-1.5 6.6-4 9c-2.5-2.4-4-5.5-4-9s1.5-6.6 4-9z"/></svg>사이트 보기</a>
@@ -537,6 +538,20 @@
       </div>
     </section>
 
+
+    <!-- ===== 비밀번호 변경 ===== -->
+    <section class="view" data-view="account">
+      <div class="card" style="max-width:520px">
+        <h3><span class="chip red"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>관리자 비밀번호</h3>
+        <p class="desc">변경하면 <b>다음 로그인부터</b> 새 비밀번호를 사용합니다. 지금 로그인된 상태는 유지됩니다.</p>
+        <label>현재 비밀번호</label><input id="pwCur" type="password" autocomplete="current-password">
+        <label>새 비밀번호 <span class="opt">(8자 이상)</span></label><input id="pwNew" type="password" autocomplete="new-password">
+        <label>새 비밀번호 확인</label><input id="pwNew2" type="password" autocomplete="new-password">
+        <p class="desc" id="pwMsg" style="min-height:18px;margin-top:10px"></p>
+        <div class="savebar"><button class="btn red" onclick="changePw()">비밀번호 변경</button></div>
+      </div>
+    </section>
+
     <!-- ===== 문의내역 ===== -->
     <section class="view" data-view="inbox">
       <div class="card">
@@ -598,6 +613,7 @@ const VIEW_META = {
   clients:   ["파트너 로고", "OUR PARTNERS 섹션의 로고를 관리합니다."],
   footer:    ["푸터 · 회사정보", "주소 · 연락처 · 이메일을 관리합니다."],
   inbox:     ["문의내역", "홈페이지 문의 폼으로 접수된 내용입니다."],
+  account:   ["비밀번호 변경", "관리자 로그인 비밀번호를 변경합니다."],
 };
 function go(v) {
   document.querySelectorAll("#nav button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
@@ -911,6 +927,25 @@ function renderStatTable() {
   $("#vsTbl").innerHTML = `<table><thead><tr><th>기간</th><th>PC</th><th>모바일</th><th>합계</th></tr></thead><tbody>`
     + list.map(d => `<tr><td>${esc(d.k || d.label)}</td><td>${d.pc}</td><td>${d.mobile}</td><td>${d.pc + d.mobile}</td></tr>`).join("")
     + `</tbody></table>`;
+}
+
+
+// ---------- 비밀번호 변경 ----------
+async function changePw() {
+  const cur = $("#pwCur").value, n1 = $("#pwNew").value, n2 = $("#pwNew2").value;
+  const msg = $("#pwMsg");
+  const say = (t, ok) => { msg.textContent = t; msg.style.color = ok ? "#12805c" : "var(--red)"; };
+  if (!cur || !n1 || !n2) return say("모든 칸을 입력하세요.");
+  if (n1.length < 8) return say("새 비밀번호는 8자 이상이어야 합니다.");
+  if (n1 !== n2) return say("새 비밀번호가 서로 다릅니다.");
+  if (n1 === cur) return say("현재 비밀번호와 다른 비밀번호를 입력하세요.");
+  try {
+    await api("/password", { method: "POST", body: JSON.stringify({ current: cur, next: n1 }) });
+  } catch (e) {
+    return say(e.message || "변경하지 못했습니다.");
+  }
+  $("#pwCur").value = $("#pwNew").value = $("#pwNew2").value = "";
+  say("비밀번호가 변경되었습니다. 다음 로그인부터 적용됩니다.", true);
 }
 
 // ---------- 진입 & 로드 ----------
