@@ -183,4 +183,4 @@
   - 브라우저 탭 `<title>` → **「쨈에이전시 - JJAM AGENCY」**, 공유 미리보기 제목(`og:title`·`twitter:title`·`og:site_name`) → **「쨈에이전시 (JJAM AGENCY)」**(클라이언트가 두 표기를 구분해 지시). 관리자 탭 제목과 히어로 iframe title 도 맞춤.
   - **`og:image` 가 아예 없어서 카톡에 썸네일이 안 떴다.** `assets/og-v1.jpg` 신설 — 1200×630 · 54KB. 다크(#0c0c0d) 바탕에 브랜드 레드를 옅게 깐 방사형 + `logo-white.png` + 레드 헤어라인 + 「방송 현업의 깊이로 / 새로운 문화를 만듭니다」. 헤드리스 Chrome 으로 HTML→스크린샷 후 `sips` 로 JPEG(품질 88) 변환.
   - ⚠️ **`og:image` 는 절대 URL 이어야 한다.** 상대경로면 카카오가 못 읽어 썸네일이 안 뜬다. `og:url`·`og:image:width/height`·`twitter:card=summary_large_image` 도 함께 넣었다.
-  - ⚠️ **카카오는 OG 를 영구 캐시한다.** 이미지를 바꿀 때 **같은 파일명을 덮어쓰지 말고** `og-v2.jpg`·`og-v3.jpg` 로 올린 뒤 **https://developers.kakao.com/tool/clear/og** 에서 초기화할 것(카카오 계정 로그인 필요). 그래서 처음부터 `-v1` 을 붙였다.
+  - ⚠️ **카카오는 OG 를 영구 캐시한다.** 이미지를 바꿀 때 **같은 파일명을 덮어쓰지 말고** `og-v2.jpg`·`og-v3.jpg` 로 올린 뒤 **https://developers.kakao.com/tool/debugger/sharer** 에서 초기화할 것(카카오 계정 로그인 필요). 그래서 처음부터 `-v1` 을 붙였다.
