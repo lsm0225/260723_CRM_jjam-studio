@@ -130,7 +130,7 @@ const DEFAULTS = {
     email: "jjamagency@gmail.com",
   },
   portfolio_categories: ["의료·제약", "기업·제품", "문화·라이프"],
-  portfolio_heading: { sub: "영상 콘텐츠부터 유튜브 채널까지, 제이잼이 만든 작업들을 분야별로 만나보세요" },
+  portfolio_heading: { sub: "영상 콘텐츠부터 유튜브 채널까지·제이잼이 만든 작업들을 분야별로 만나보세요" },
 };
 
 // 최초 시드용 기본 포트폴리오 (현재 사이트 22개)
