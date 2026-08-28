@@ -120,7 +120,7 @@ const DEFAULTS = {
     quote: "20년 경력의 자신감으로 다양한 분야의 영상 제작 전문가로서\n최선을 다해 여러분의 니즈를 충족시켜 드립니다",
   },
   links: {
-    kakao: "",
+    kakao: "https://open.kakao.com/o/sXh1lWKi",
   },
   footer: {
     company: "jjam agency 쨈 에이전시",

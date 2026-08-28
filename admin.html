@@ -226,6 +226,22 @@
     .hello .cal{display:none}
     .row{flex-wrap:wrap}
   }
+
+  /* 파트너 로고 업로드 (2026-08-28) — 미리보기는 사이트와 같은 2:1 흰 칸에 contain 으로 보여준다 */
+  .logo-up{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;margin-top:8px}
+  .logo-pv{width:104px;height:52px;flex:none;border:1px solid var(--line2);border-radius:9px;
+           background:#fff center/contain no-repeat;display:block}
+  .logo-pv:not(.has){background-image:
+      linear-gradient(45deg,#eef0f3 25%,transparent 25%,transparent 75%,#eef0f3 75%),
+      linear-gradient(45deg,#eef0f3 25%,transparent 25%,transparent 75%,#eef0f3 75%);
+    background-size:12px 12px;background-position:0 0,6px 6px}
+  .logo-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
+  .logo-ctl .chk{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ink2);cursor:pointer}
+  .logo-note{font-size:11.5px;color:var(--ink2);min-width:0}
+  .logo-raw{grid-column:1/-1;display:none;font-size:12px}
+  .logo-up.open .logo-raw{display:block}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+  .btn.ghost:hover{border-color:var(--red);color:var(--red)}
 </style>
 </head>
 <body>
@@ -524,8 +540,23 @@
           <h4><span class="chip green" style="display:inline-flex;align-items:center;justify-content:center"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path d="M12 5v14M5 12h14"/></svg></span>새 파트너 추가</h4>
           <label>이름</label><input id="newClName" placeholder="회사명">
           <div class="grid2">
-            <div><label>로고 이미지 URL <span class="opt">(선택)</span></label><input id="newClLogo" placeholder="https://...png"></div>
             <div><label>링크 <span class="opt">(선택)</span></label><input id="newClLink" placeholder="https://..."></div>
+            <div>
+              <label>로고 <span class="opt">(파일을 고르면 배경을 빼고 규격에 맞춰 넣습니다)</span></label>
+              <div class="logo-up">
+                <span class="logo-pv" id="newClPv"></span>
+                <div class="logo-ctl">
+                  <label class="btn sm ghost">로고 파일 선택
+                    <input type="file" accept="image/*" hidden
+                           onchange="onLogoPick(this,'#newClLogo','#newClPv','#newClNote')">
+                  </label>
+                  <label class="chk"><input type="checkbox" data-bg checked> 배경 제거</label>
+                  <button type="button" class="btn sm ghost" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
+                  <span class="logo-note" id="newClNote"></span>
+                </div>
+                <input class="logo-raw" id="newClLogo" placeholder="assets/partners/partner-01.png">
+              </div>
+            </div>
           </div>
           <button class="btn red sm" style="margin-top:16px" onclick="addCl()">+ 추가</button>
         </div>
@@ -1298,6 +1329,136 @@ async function addPf() {
 async function seedPf(){ await api("/portfolio/seed",{method:"POST"}); await loadPf(); renderDash(); }
 async function seedCl(){ await api("/clients/seed",{method:"POST"}); await loadCl(); renderDash(); }
 
+/* ═══════════════════════════════════════════════════════════════
+   파트너 로고 — 파일 업로드 + 배경 제거 + 규격 맞춤 (2026-08-28 클라이언트 요청)
+   저장소(R2)가 없어 서버를 늘리지 않고, **브라우저에서 다 처리해** PNG data URI 로
+   기존 `clients.logo_url`(TEXT) 에 그대로 넣는다 — 스키마·API 변경 0.
+
+   ⚠️ 이건 AI 누끼가 아니라 **배경색 제거**다. 흰색·단색 배경 로고는 깨끗하게 빠지지만
+      사진 배경이나 그라데이션은 못 뺀다(그런 파일은 「배경 제거」를 끄고 올릴 것).
+   ⚠️ 사이트의 로고 칸은 `aspect-ratio: 2/1` + `object-fit: contain` 이라 **2:1 캔버스**로 맞춘다.
+   ⚠️ data URI 는 /api/clients 응답에 그대로 실린다. 48개가 전부 업로드본이 되면 응답이 커지므로
+      한 장당 상한을 두고, 넘으면 캔버스를 단계적으로 줄여 다시 인코딩한다. */
+const LOGO_W = 360, LOGO_H = 180, LOGO_PAD = 0.08;   // 2:1 · 가장자리 8% 여백
+const LOGO_MAX_BYTES = 60 * 1024;                     // data URI 문자열 기준 상한
+
+function _bgKey(d, i) { return d[i] + "," + d[i+1] + "," + d[i+2]; }
+
+/** 네 모서리에서 가장 흔한 색을 배경으로 본다 */
+function _guessBg(px, w, h) {
+  const pick = [], S = 6;
+  for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+    [[x, y], [w-1-x, y], [x, h-1-y], [w-1-x, h-1-y]].forEach(([cx, cy]) => {
+      pick.push(_bgKey(px, (cy * w + cx) * 4));
+    });
+  }
+  const cnt = {}; let best = null, bn = 0;
+  pick.forEach((k) => { cnt[k] = (cnt[k] || 0) + 1; if (cnt[k] > bn) { bn = cnt[k]; best = k; } });
+  return best.split(",").map(Number);
+}
+
+/** 배경색과 가까운 픽셀을 투명하게. 경계는 거리에 비례한 알파를 줘 계단이 안 생기게 한다. */
+function _removeBg(px, w, h, tol) {
+  const [br, bg, bb] = _guessBg(px, w, h);
+  const near = tol, far = tol * 2.2;
+  for (let i = 0; i < px.length; i += 4) {
+    if (px[i+3] === 0) continue;
+    const d = Math.hypot(px[i] - br, px[i+1] - bg, px[i+2] - bb);
+    if (d <= near) px[i+3] = 0;
+    else if (d < far) px[i+3] = Math.min(px[i+3], Math.round(255 * (d - near) / (far - near)));
+  }
+}
+
+/** 투명 여백을 잘라낸 실제 그림 영역 */
+function _trim(px, w, h) {
+  let x0 = w, y0 = h, x1 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    if (px[(y * w + x) * 4 + 3] > 12) {
+      if (x < x0) x0 = x; if (x > x1) x1 = x;
+      if (y < y0) y0 = y; if (y > y1) y1 = y;
+    }
+  }
+  return x1 < 0 ? null : { x: x0, y: y0, w: x1 - x0 + 1, h: y1 - y0 + 1 };
+}
+
+/**
+ * 파일 → 규격에 맞춘 투명 PNG data URI
+ * @param {File} file
+ * @param {{removeBg:boolean, tol:number}} opt
+ */
+async function makeLogo(file, opt) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, no) => {
+      const im = new Image();
+      im.onload = () => ok(im);
+      im.onerror = () => no(new Error("이미지를 읽지 못했습니다"));
+      im.src = url;
+    });
+    // 원본을 적당한 작업 크기로 (너무 크면 픽셀 순회가 느리다)
+    const scale = Math.min(1, 1200 / Math.max(img.naturalWidth, img.naturalHeight));
+    const sw = Math.max(1, Math.round(img.naturalWidth * scale));
+    const sh = Math.max(1, Math.round(img.naturalHeight * scale));
+    const c0 = document.createElement("canvas"); c0.width = sw; c0.height = sh;
+    const x0 = c0.getContext("2d", { willReadFrequently: true });
+    x0.drawImage(img, 0, 0, sw, sh);
+    const dat = x0.getImageData(0, 0, sw, sh);
+
+    // 이미 투명 배경(PNG)이면 배경 제거를 건너뛴다 — 멀쩡한 로고를 깎을 이유가 없다
+    let hasAlpha = false;
+    for (let i = 3; i < dat.data.length; i += 4) if (dat.data[i] < 250) { hasAlpha = true; break; }
+    if (opt.removeBg && !hasAlpha) _removeBg(dat.data, sw, sh, opt.tol);
+    x0.putImageData(dat, 0, 0);
+
+    const box = _trim(dat.data, sw, sh) || { x: 0, y: 0, w: sw, h: sh };
+
+    // 상한을 넘으면 캔버스를 줄여 다시 인코딩
+    for (const W of [LOGO_W, 320, 280, 240, 200]) {
+      const H = Math.round(W / 2);
+      const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+      const cx = cv.getContext("2d");
+      cx.imageSmoothingQuality = "high";
+      const maxW = W * (1 - LOGO_PAD * 2), maxH = H * (1 - LOGO_PAD * 2);
+      const k = Math.min(maxW / box.w, maxH / box.h);
+      const dw = Math.round(box.w * k), dh = Math.round(box.h * k);
+      cx.drawImage(c0, box.x, box.y, box.w, box.h,
+                   Math.round((W - dw) / 2), Math.round((H - dh) / 2), dw, dh);
+      const out = cv.toDataURL("image/png");
+      if (out.length <= LOGO_MAX_BYTES || W === 200) {
+        return { url: out, w: W, h: H, bytes: out.length, trimmed: box, alpha: hasAlpha };
+      }
+    }
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+const kb = (n) => (n / 1024).toFixed(0) + "KB";
+
+/** 파일 선택 → 처리 → 미리보기·hidden input 반영 */
+async function onLogoPick(inputEl, targetSel, previewSel, noteSel) {
+  const f = inputEl.files && inputEl.files[0];
+  if (!f) return;
+  const note = document.querySelector(noteSel);
+  if (!/^image\//.test(f.type)) { note.textContent = "이미지 파일만 올릴 수 있습니다"; return; }
+  note.textContent = "처리 중…";
+  try {
+    const wrap = inputEl.closest(".logo-up");
+    const removeBg = wrap.querySelector('[data-bg]').checked;
+    const r = await makeLogo(f, { removeBg, tol: 42 });
+    document.querySelector(targetSel).value = r.url;
+    const pv = document.querySelector(previewSel);
+    pv.style.backgroundImage = `url("${r.url}")`;
+    pv.classList.add("has");
+    note.textContent = `${r.w}×${r.h} · ${kb(r.bytes)}` +
+      (r.alpha ? " · 원본이 이미 투명" : (removeBg ? " · 배경 제거함" : ""));
+  } catch (e) {
+    note.textContent = "실패: " + e.message;
+  } finally {
+    inputEl.value = "";
+  }
+}
+
 // ---------- 클라이언트 ----------
 async function loadCl() {
   CL = await api("/clients");
@@ -1307,8 +1468,20 @@ async function loadCl() {
       <div class="fields">
         <div class="cols">
           <input data-cl="${c.id}" data-f="name" value="${esc(c.name)}" placeholder="이름">
-          <input data-cl="${c.id}" data-f="logo_url" value="${esc(c.logo_url)}" placeholder="로고 URL">
           <input data-cl="${c.id}" data-f="link" value="${esc(c.link)}" placeholder="링크">
+        </div>
+        <div class="logo-up">
+          <span class="logo-pv ${c.logo_url ? "has" : ""}" id="clpv${c.id}" style="${c.logo_url ? `background-image:url('${esc(c.logo_url)}')` : ""}"></span>
+          <div class="logo-ctl">
+            <label class="btn sm ghost">로고 파일 선택
+              <input type="file" accept="image/*" hidden
+                     onchange="onLogoPick(this,'[data-cl=\'${c.id}\'][data-f=\'logo_url\']','#clpv${c.id}','#clnote${c.id}')">
+            </label>
+            <label class="chk"><input type="checkbox" data-bg checked> 배경 제거</label>
+            <button type="button" class="btn sm ghost" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
+            <span class="logo-note" id="clnote${c.id}"></span>
+          </div>
+          <input class="logo-raw" data-cl="${c.id}" data-f="logo_url" value="${esc(c.logo_url)}" placeholder="assets/partners/partner-01.png">
         </div>
       </div>
       <div class="acts">
@@ -1332,6 +1505,8 @@ async function addCl() {
   await api("/clients", { method:"POST", body: JSON.stringify({
     name:$("#newClName").value.trim(), logo_url:$("#newClLogo").value.trim(), link:$("#newClLink").value.trim() }) });
   $("#newClName").value = $("#newClLogo").value = $("#newClLink").value = "";
+  const pv = $("#newClPv"); pv.style.backgroundImage = ""; pv.classList.remove("has");
+  $("#newClNote").textContent = "";
   await loadCl(); renderDash();
 }
 
