@@ -259,6 +259,11 @@
   .logo-note:empty{display:none}
   .logo-raw{grid-column:1/-1;display:none;font-size:12px}
   .logo-up.open .logo-raw{display:block}
+  /* 「경로 직접 입력」은 화면에서 감춘다(2026-08-28 클라이언트 요청) — 파일 업로드만 쓰기로.
+     ⚠️ **버튼만 숨기고 입력칸은 DOM 에 그대로 둔다.** 저장(saveCl)이 이 칸의 값을 읽으므로
+        지우면 기존 48개의 `assets/partners/*.png` 경로가 저장할 때 날아간다.
+     되살리려면 이 한 줄만 지우면 된다. */
+  .logo-ctl .btn-raw{display:none}
   .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
   .btn.ghost:hover{border-color:var(--red);color:var(--red)}
 </style>
@@ -570,7 +575,7 @@
                            onchange="onLogoPick(this,'#newClLogo','#newClPv','#newClNote')">
                   </label>
                   <label class="chk"><input type="checkbox" data-bg checked><span>배경 제거</span></label>
-                  <button type="button" class="btn sm ghost" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
+                  <button type="button" class="btn sm ghost btn-raw" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
                   <span class="logo-note" id="newClNote"></span>
                 </div>
                 <input class="logo-raw" id="newClLogo" placeholder="assets/partners/partner-01.png">
@@ -1497,7 +1502,7 @@ async function loadCl() {
                      onchange="onLogoPick(this,'[data-cl=\'${c.id}\'][data-f=\'logo_url\']','#clpv${c.id}','#clnote${c.id}')">
             </label>
             <label class="chk"><input type="checkbox" data-bg checked><span>배경 제거</span></label>
-            <button type="button" class="btn sm ghost" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
+            <button type="button" class="btn sm ghost btn-raw" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
             <span class="logo-note" id="clnote${c.id}"></span>
           </div>
           <input class="logo-raw" data-cl="${c.id}" data-f="logo_url" value="${esc(c.logo_url)}" placeholder="assets/partners/partner-01.png">

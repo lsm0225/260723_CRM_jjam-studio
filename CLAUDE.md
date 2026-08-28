@@ -176,3 +176,6 @@
   - 가는 길에 확인한 것(전부 이것만으로는 안 잡혔다): `flex:0 0 auto` · `min-width:max-content` · 텍스트를 span 으로 감싸기. **입력 요소 전역 스타일이 있는 화면에서 체크박스·라디오를 새로 넣을 때는 먼저 그 규칙부터 되돌릴 것.**
   - 라벨은 flex 가 아니라 `inline-block` + `vertical-align` 으로 뒀다. 전역 `label{display:block;margin:16px 0 7px}` 도 함께 지운다.
   - 검증: 관리자 로그인·API 를 가짜로 물린 하네스(`fetch` 스텁 + `localStorage.jjam_token`)로 클라이언트 탭을 실제 렌더 — `scrollWidth == width`(잘림 없음) 확인.
+- 2026-08-28: 슬로건 배너 태그라인을 **모바일에서 두 줄로** — 「당신의 브랜딩 파트너 영상 제작사 / jjam agency 쨈 에이전시」. `<br class="br-mobile">` 사용(≤640px 에서만 `inline`). 슬로건은 **CMS 미연동 정적 마크업**이라 About punch 때와 달리 `<br>` 이 그대로 살아남는다.
+- 2026-08-28: 관리자 파트너 로고의 **「경로 직접 입력」 버튼을 숨김**(`.logo-ctl .btn-raw{display:none}`). 이제 파일 업로드만 쓴다.
+  - ⚠️ **버튼만 숨기고 입력칸(`.logo-raw`)은 DOM 에 그대로 뒀다.** `saveCl()` 이 그 칸의 값을 읽어 보내므로 지우면 기존 48개의 `assets/partners/*.png` 경로가 **저장할 때 빈 값으로 날아간다.** 되살리려면 CSS 한 줄만 지우면 된다.
