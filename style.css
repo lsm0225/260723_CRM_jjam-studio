@@ -1473,6 +1473,10 @@ ul { list-style: none; }
     padding-left: 0;
     padding-top: 18px;
     position: relative;
+    /* ⚠️ 이 문장은 CMS(about override)가 재렌더하므로 index.html 에 넣은 <br> 이 살아남지 못한다.
+       그래서 줄 나눔을 **CSS 로** 잡는다. balance 가 두 줄 길이를 고르게 맞춘다
+       (기본 흐름은 「…새로운 문화를 / 만드는 것입니다」로 뒷줄만 짧게 남았다). */
+    text-wrap: balance;
   }
   .about__punch::before {
     content: "";
