@@ -400,6 +400,9 @@ ul { list-style: none; }
 }
 .about__body p + p { margin-top: 24px; }
 .about__body strong { color: var(--color-ink); font-weight: 800; }
+/* 모바일 전용 줄바꿈 — 데스크톱에서는 한 줄로 흐르게 둔다(.br-desktop 의 반대짝) */
+.br-mobile { display: none; }
+
 .about__punch {
   border-left: 3px solid var(--color-accent);
   padding-left: 16px;
@@ -1460,6 +1463,27 @@ ul { list-style: none; }
   .about__grid { grid-template-columns: 1fr; gap: 34px; }
   .about__title { font-size: clamp(1.5rem, 6.4vw, 1.9rem); margin: 18px 0 26px; }
   .about__body p { font-size: 1.0rem; }
+  .br-mobile { display: inline; }
+  /* 강조 문장은 모바일에서 가운데 정렬(클라이언트 요청 2026-08-28).
+     ⚠️ 좌측 보더를 그대로 두면 선은 왼쪽인데 글자는 가운데라 어긋나 보인다 →
+        선을 **위쪽 짧은 헤어라인**으로 옮긴다. 제이잼 규칙대로 면이 아니라 선으로 위계를 준다. */
+  .about__punch {
+    text-align: center;
+    border-left: 0;
+    padding-left: 0;
+    padding-top: 18px;
+    position: relative;
+  }
+  .about__punch::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 34px;
+    height: 3px;
+    background: var(--color-accent);
+  }
   .about__ceo-card { left: 14px; bottom: 14px; padding: 13px 18px; }
   .ceo-name { font-size: 1rem; }
 

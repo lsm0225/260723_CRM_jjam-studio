@@ -610,8 +610,12 @@ function applyContent(c, ov) {
     if (g) {
       g.innerHTML = c.why
         .map((w, i) => {
-          const media = w.img
-            ? `<img class="why-item__img" src="${escHtml(w.img)}" alt="${escHtml(w.title)}" loading="lazy" />`
+          // ⚠️ 관리자에서 WHY 를 저장하면 img 가 빈 문자열로 들어와 **사진이 통째로 사라졌다**
+          //    (2026-08-28 신고). CMS 기본값에 경로가 없었던 게 원인 — 기본값은 채웠지만
+          //    이미 저장된 DB 값은 빈 채로 남으므로, 비어 있으면 원래 쓰던 파일로 되돌린다.
+          const src = w.img || (i < 6 ? `assets/why/why-0${i + 1}.jpg` : "");
+          const media = src
+            ? `<img class="why-item__img" src="${escHtml(src)}" alt="${escHtml(w.title)}" loading="lazy" />`
             : `<span class="why-item__ph" aria-hidden="true"></span>`;
           return `
         <div class="why-item reveal">

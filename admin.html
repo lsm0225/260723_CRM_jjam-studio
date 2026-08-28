@@ -1182,7 +1182,7 @@ function renderWhy() {
       <label>제목</label><input data-why="${i}" data-f="title" value="${esc(w.title)}">
       <label>설명</label><textarea data-why="${i}" data-f="desc" rows="2">${esc(w.desc)}</textarea>
       <label>사진 주소 (선택 — 비워두면 사진 없이 표시됩니다)</label>
-      <input data-why="${i}" data-f="img" value="${esc(w.img||"")}" placeholder="예: assets/why-01.jpg">
+      <input data-why="${i}" data-f="img" value="${esc(w.img||"")}" placeholder="예: assets/why/why-01.jpg">
     </div>`).join("");
 }
 function collectWhy(){ document.querySelectorAll("[data-why]").forEach(el=>{ CONTENT.why[+el.dataset.why][el.dataset.f] = el.value; }); }
