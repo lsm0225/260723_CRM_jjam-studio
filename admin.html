@@ -236,8 +236,27 @@
       linear-gradient(45deg,#eef0f3 25%,transparent 25%,transparent 75%,#eef0f3 75%);
     background-size:12px 12px;background-position:0 0,6px 6px}
   .logo-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0}
-  .logo-ctl .chk{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ink2);cursor:pointer}
-  .logo-note{font-size:11.5px;color:var(--ink2);min-width:0}
+  /* ⚠️ flex item 기본 flex-shrink:1 때문에 「배경 제거」 라벨이 눌려 두 줄로 접혔다.
+     칸이 좁으면 줄이지 말고 **줄바꿈**으로 넘겨야 한다 — 안 그러면 글자가 찌그러진다. */
+  .logo-ctl > *{flex:0 0 auto}
+  /* ⚠️ 이 라벨은 **flex 로 만들지 말 것.** flex 로 두면 안쪽 텍스트가 눌려
+     「배경 제거」가 「ㅂ」만 남는다(min-width:max-content 로도 안 잡혔다).
+     전역 `label{display:block;margin:16px 0 7px}` 도 있으니 margin 을 함께 지운다.
+     그냥 인라인 박스로 두고 체크박스만 vertical-align 으로 맞추는 게 확실하다. */
+  .logo-ctl .chk{display:inline-block;white-space:nowrap;font-size:12px;color:var(--ink2);
+                 cursor:pointer;margin:0;width:auto}
+  /* ⚠️ 진짜 원인은 여기였다 — 전역 `input,textarea,select{width:100%;padding:11px 13px;border:...}` 가
+     **체크박스에도** 걸려 라벨의 폭 계산을 망가뜨렸다(라벨이 62px 로 눌려 「ㅂ」만 보였다).
+     체크박스는 그 규칙을 전부 되돌려야 한다. */
+  .logo-ctl .chk input[type="checkbox"]{
+    width:auto;padding:0;border:0;border-radius:0;box-shadow:none;background:none;
+    margin:0 5px 0 0;vertical-align:-2px;accent-color:var(--red)}
+  .logo-ctl .chk span{display:inline}
+  .logo-ctl .btn{white-space:nowrap;margin:0;min-width:max-content}
+  .logo-ctl label.btn{display:inline-flex;align-items:center;font-weight:700}
+  /* 처리 결과 안내는 항상 아랫줄 전체를 쓴다 — 버튼 사이에 끼면 폭 싸움이 난다 */
+  .logo-note{flex:1 0 100%;font-size:11.5px;color:var(--ink2);min-width:0;line-height:1.4}
+  .logo-note:empty{display:none}
   .logo-raw{grid-column:1/-1;display:none;font-size:12px}
   .logo-up.open .logo-raw{display:block}
   .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
@@ -550,7 +569,7 @@
                     <input type="file" accept="image/*" hidden
                            onchange="onLogoPick(this,'#newClLogo','#newClPv','#newClNote')">
                   </label>
-                  <label class="chk"><input type="checkbox" data-bg checked> 배경 제거</label>
+                  <label class="chk"><input type="checkbox" data-bg checked><span>배경 제거</span></label>
                   <button type="button" class="btn sm ghost" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
                   <span class="logo-note" id="newClNote"></span>
                 </div>
@@ -1477,7 +1496,7 @@ async function loadCl() {
               <input type="file" accept="image/*" hidden
                      onchange="onLogoPick(this,'[data-cl=\'${c.id}\'][data-f=\'logo_url\']','#clpv${c.id}','#clnote${c.id}')">
             </label>
-            <label class="chk"><input type="checkbox" data-bg checked> 배경 제거</label>
+            <label class="chk"><input type="checkbox" data-bg checked><span>배경 제거</span></label>
             <button type="button" class="btn sm ghost" onclick="this.closest('.logo-up').classList.toggle('open')">경로 직접 입력</button>
             <span class="logo-note" id="clnote${c.id}"></span>
           </div>
