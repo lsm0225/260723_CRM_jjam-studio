@@ -713,6 +713,44 @@ function applyClients(list) {
   initClientMore(); // 목록이 교체됐으니 더보기 상태 재계산
 }
 
+/* ── 화면 문구 표기 규칙 (2026-08-28 클라이언트 요청) ──
+   ① 문장 끝 마침표를 쓰지 않는다  ② 나열 쉼표는 가운데점(·)으로 바꾼다
+   관리자(CMS)가 저장한 값도 화면에 나오기 전에 여기서 한 번 다듬는다 —
+   admin 에서 마침표를 찍어 저장해도 사이트 표기는 일정하게 유지된다.
+   ⚠️ 건드리면 안 되는 것들:
+     · 절을 나누는 쉼표 —「운영까지, 콘텐츠의」「단, 관계 법령」「세우고, 확정」
+       (쉼표 앞이 조사·어미로 끝나면 나열이 아니다)
+     · 숫자 구분 쉼표 1,000
+     · 문장 **중간**의 마침표 —「좋습니다. 담당 PD가…」 지우면 두 문장이 붙는다
+     · 번호(1.)·약어(Tel.)·영문 표기(All rights reserved.)·URL·이메일
+       → 마침표 앞 글자가 한글일 때만 떼므로 자동으로 걸러진다 */
+const KEEP_COMMA = /(까지|으로|로|고|며|서|면|물론|단|다만|게|은|는|나|지만)$/;
+const URLISH_KEY = /^(email|video|url|link|href|src|img|thumb|logo|id|key)$/i;
+function tidyText(t) {
+  if (typeof t !== "string" || !t) return t;
+  let out = "", last = 0, m;
+  const re = /,\s*/g;
+  while ((m = re.exec(t))) {
+    const left = t.slice(last, m.index);
+    if (/\d$/.test(left) && /^\s*\d/.test(t.slice(m.index + 1))) continue;   // 1,000
+    const w = /(\S+)$/.exec(left);
+    out += left + (w && KEEP_COMMA.test(w[1]) ? m[0] : "·");
+    last = m.index + m[0].length;
+  }
+  out += t.slice(last);
+  return out.replace(/([가-힣!?」”’)])\.\s*$/u, "$1");
+}
+function tidyDeep(v, key) {
+  if (typeof v === "string") return URLISH_KEY.test(key || "") ? v : tidyText(v);
+  if (Array.isArray(v)) return v.map((x) => tidyDeep(x));
+  if (v && typeof v === "object") {
+    const o = {};
+    for (const k in v) o[k] = tidyDeep(v[k], k);
+    return o;
+  }
+  return v;
+}
+
 (async function bootCMS() {
   const j = (u) => fetch(u).then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))));
   const timeout = (ms) => new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms));
@@ -723,7 +761,7 @@ function applyClients(list) {
       timeout(4000),
     ]);
     const ov = new Set(content._overrides || []);
-    applyContent(content, ov);
+    applyContent(tidyDeep(content), ov);
     applyClients(clients);
     if (Array.isArray(pf) && pf.length) videos = pf.map((p) => ({ id: p.video_id, t: p.title || "", c: p.category || "" }));
     if (ov.has("portfolio_categories") && Array.isArray(content.portfolio_categories)) cats = content.portfolio_categories;
